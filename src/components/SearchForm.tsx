@@ -1,247 +1,249 @@
 'use client';
 
-import { useState } from 'react';
-import { MapPin, Calendar, Search, ArrowRight, ArrowLeftRight, Package, Car, Users } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { MapPin, Calendar, Search, ArrowRight, ArrowLeftRight, Package, Car, Users, Clock } from 'lucide-react';
+import BookingModal from './BookingModal';
 
-// Danh sách 63 tỉnh thành Việt Nam
-const CITIES = [
-    'Hà Nội', 'Hải Phòng', 'Quảng Ninh', 'Hải Dương', 'Hưng Yên', 'Bắc Ninh',
-    'Vĩnh Phúc', 'Thái Nguyên', 'Phú Thọ', 'Bắc Giang', 'Lạng Sơn', 'Cao Bằng',
-    'Hà Giang', 'Tuyên Quang', 'Yên Bái', 'Lào Cai', 'Điện Biên', 'Lai Châu',
-    'Sơn La', 'Hòa Bình', 'Ninh Bình', 'Nam Định', 'Thái Bình', 'Hà Nam',
-    'Thanh Hóa', 'Nghệ An', 'Hà Tĩnh', 'Quảng Bình', 'Quảng Trị', 'Thừa Thiên Huế',
-    'Đà Nẵng', 'Quảng Nam', 'Quảng Ngãi', 'Bình Định', 'Phú Yên', 'Khánh Hòa',
-    'Ninh Thuận', 'Bình Thuận', 'Kon Tum', 'Gia Lai', 'Đắk Lắk', 'Đắk Nông', 'Lâm Đồng',
-    'TP. Hồ Chí Minh', 'Bình Dương', 'Đồng Nai', 'Bà Rịa - Vũng Tàu', 'Tây Ninh',
-    'Bình Phước', 'Long An', 'Tiền Giang', 'Bến Tre', 'Trà Vinh', 'Vĩnh Long',
-    'Đồng Tháp', 'An Giang', 'Kiên Giang', 'Cần Thơ', 'Hậu Giang', 'Sóc Trăng',
-    'Bạc Liêu', 'Cà Mau',
-    'Sân bay Nội Bài', 'Sân bay Tân Sơn Nhất'
-].sort();
-
-// Các loại dịch vụ - Thiết kế mới
 const SERVICE_TYPES = [
-    { id: 'xe-ghep', name: 'Xe Tiện Chuyến', icon: Users },
-    { id: 'bao-xe', name: 'Bao Xe Trọn Gói', icon: Car },
-    { id: 'gui-do', name: 'Gửi Hàng Hóa', icon: Package },
-];
-
-const POPULAR_ROUTES = [
-    { from: 'Hà Nội', to: 'Ninh Bình', price: 180000 },
-    { from: 'Hà Nội', to: 'Hải Phòng', price: 150000 },
-    { from: 'Hà Nội', to: 'Quảng Ninh', price: 200000 },
-    { from: 'Hà Nội', to: 'Thanh Hóa', price: 200000 },
-    { from: 'Nội Bài', to: 'Hà Nội', price: 200000 },
+    { id: 'xe-ghep', name: 'Xe Tiện Chuyến', icon: Users, price: 400000, desc: 'Đi chung, tiết kiệm' },
+    { id: 'bao-xe', name: 'Bao Xe Trọn Gói', icon: Car, price: 800000, desc: 'Riêng tư, đưa đón tận nơi' },
+    { id: 'gui-do', name: 'Gửi Hàng Hỏa Tốc', icon: Package, price: 100000, desc: 'Nhận hàng trong ngày' },
 ];
 
 export default function SearchForm() {
     const [serviceType, setServiceType] = useState('xe-ghep');
-    const [from, setFrom] = useState('Hà Nội');
-    const [to, setTo] = useState('Ninh Bình');
-    const [date, setDate] = useState('');
-    const [estimatedPrice, setEstimatedPrice] = useState<number | null>(null);
+    const [direction, setDirection] = useState<'hn-th' | 'th-hn'>('hn-th');
+    const [date, setDate] = useState(new Date().toISOString().split('T')[0]);
+    const [seatCount, setSeatCount] = useState(1);
+    const [estimatedPrice, setEstimatedPrice] = useState<number>(400000);
 
-    const calculatePrice = () => {
-        const route = POPULAR_ROUTES.find(r => r.from === from && r.to === to);
-        let basePrice = route ? route.price : Math.floor(Math.random() * 100 + 50) * 1500;
+    const [isBookingModalOpen, setIsBookingModalOpen] = useState(false);
 
-        if (serviceType === 'bao-xe') basePrice *= 3;
-        if (serviceType === 'gui-do') basePrice = Math.floor(basePrice * 0.4);
+    // Auto-update price when service changes
+    useEffect(() => {
+        const service = SERVICE_TYPES.find(s => s.id === serviceType);
+        if (service) {
+            // Only xe-ghep and bao-xe might care about seats, but usually bao-xe is fixed price or per car.
+            // Requirement says "giá xe tiện chuyên 400k/1 ghế".
+            // Let's assume seat count multiplier applies primarily to 'xe-ghep'.
+            // For 'bao-xe', it's usually one price for the whole car, but let's keep it simple or strictly for xe-ghep.
+            // If service is 'xe-ghep', multiply by seatCount. Else (e.g. gui-do, bao-xe), usually fixed or different logic.
+            // However, user specifically asked for "cho phép chọn số ghế đi" in context of "giá xe tiện chuyên 400k/1 ghế".
+            // So if type is 'xe-ghep', we use seatCount.
 
-        setEstimatedPrice(basePrice);
-    };
+            if (service.id === 'xe-ghep') {
+                setEstimatedPrice(service.price * seatCount);
+            } else {
+                setEstimatedPrice(service.price);
+            }
+        }
+    }, [serviceType, seatCount]);
 
-    const handleSearch = (e: React.FormEvent) => {
-        e.preventDefault();
-        calculatePrice();
-    };
-
-    const swapLocations = () => {
-        const temp = from;
-        setFrom(to);
-        setTo(temp);
+    const toggleDirection = () => {
+        setDirection(prev => prev === 'hn-th' ? 'th-hn' : 'hn-th');
     };
 
     return (
-        <div className="bg-white rounded-3xl shadow-xl shadow-slate-200/50 p-6 lg:p-10 max-w-6xl mx-auto relative z-10 border border-slate-100">
-            <form onSubmit={handleSearch} className="space-y-8">
+        <div className="bg-white rounded-3xl shadow-2xl shadow-slate-200/50 p-6 lg:p-10 max-w-5xl mx-auto relative z-10 border border-slate-100">
+            <BookingModal
+                isOpen={isBookingModalOpen}
+                onClose={() => setIsBookingModalOpen(false)}
+                bookingData={{
+                    serviceType,
+                    direction,
+                    estimatedPrice,
+                    seatCount // Pass seat count
+                }}
+            />
 
-                {/* Header Form: Title & Service Type */}
-                <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
-                    <div>
-                        <h3 className="text-2xl font-bold text-slate-800 flex items-center gap-2">
-                            <span className="bg-amber-500 w-2 h-8 rounded-full"></span>
-                            Bạn muốn đi đâu?
-                        </h3>
-                        <p className="text-slate-500 text-sm mt-1 pl-4">Khám phá hàng nghìn chuyến xe giá rẻ mỗi ngày</p>
-                    </div>
+            <div className="absolute top-0 left-1/2 -translate-x-1/2 -mt-5 bg-amber-500 text-white px-6 py-2 rounded-full text-sm font-bold shadow-lg shadow-amber-500/30 uppercase tracking-wider flex items-center gap-2">
+                <Clock className="w-4 h-4" />
+                Chạy liên tục 24/7
+            </div>
 
-                    {/* Service Selector - Spacious Pill Design */}
-                    <div className="flex flex-wrap gap-2 bg-slate-50 p-2 rounded-2xl self-start lg:self-auto border border-slate-100">
-                        {SERVICE_TYPES.map((service) => {
-                            const isActive = serviceType === service.id;
-                            const Icon = service.icon;
-                            return (
-                                <button
-                                    key={service.id}
-                                    type="button"
-                                    onClick={() => setServiceType(service.id)}
-                                    className={`flex items-center gap-2 px-6 py-3 rounded-xl text-sm font-bold transition-all duration-300 ${isActive
-                                        ? 'bg-white text-amber-600 shadow-md ring-1 ring-slate-200 transform scale-105'
-                                        : 'text-slate-500 hover:text-slate-700 hover:bg-slate-200/50'
-                                        }`}
-                                >
-                                    <Icon className={`w-4 h-4 ${isActive ? 'text-amber-500' : 'text-slate-400'}`} />
-                                    {service.name}
-                                </button>
-                            );
-                        })}
-                    </div>
+            <form onSubmit={(e) => e.preventDefault()} className="space-y-8 mt-2">
+
+                {/* Service Type Selection - Big Cards */}
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    {SERVICE_TYPES.map((service) => {
+                        const isActive = serviceType === service.id;
+                        const Icon = service.icon;
+                        return (
+                            <button
+                                key={service.id}
+                                type="button"
+                                onClick={() => setServiceType(service.id)}
+                                className={`flex flex-col items-center p-4 rounded-2xl border-2 transition-all duration-300 relative overflow-hidden ${isActive
+                                    ? 'bg-amber-50 border-amber-500 shadow-md transform scale-[1.02]'
+                                    : 'bg-white border-slate-100 hover:border-amber-200 hover:bg-slate-50'
+                                    }`}
+                            >
+                                <div className={`p-3 rounded-full mb-3 ${isActive ? 'bg-amber-500 text-white' : 'bg-slate-100 text-slate-400'}`}>
+                                    <Icon className="w-6 h-6" />
+                                </div>
+                                <span className={`font-bold text-lg ${isActive ? 'text-slate-900' : 'text-slate-500'}`}>{service.name}</span>
+                                <span className={`text-xs ${isActive ? 'text-amber-600 font-medium' : 'text-slate-400'}`}>{service.desc}</span>
+
+                                {isActive && (
+                                    <div className="absolute top-2 right-2 w-3 h-3 bg-amber-500 rounded-full animate-pulse" />
+                                )}
+                            </button>
+                        );
+                    })}
                 </div>
 
-                {/* Input Fields Container - Spacious Grid */}
-                <div className="grid grid-cols-1 lg:grid-cols-[1.5fr_auto_1.5fr_1.2fr] gap-4 lg:gap-6 items-center">
+                {/* Route Selection - Simplified & Focused */}
+                <div className="bg-slate-50 p-6 rounded-3xl border border-slate-200 relative">
 
-                    {/* FROM */}
-                    <div className="relative group bg-slate-50 hover:bg-white p-4 rounded-2xl border border-slate-200 hover:border-amber-400 transition-all cursor-pointer h-24 flex flex-col justify-center">
-                        <label className="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1 px-1">
-                            Điểm đi
-                        </label>
-                        <div className="flex items-center">
-                            <MapPin className="w-6 h-6 text-amber-500 mr-3 group-hover:-translate-y-1 transition-transform" />
-                            <select
-                                value={from}
-                                onChange={(e) => setFrom(e.target.value)}
-                                className="w-full bg-transparent font-bold text-xl text-slate-800 outline-none appearance-none cursor-pointer truncate"
-                            >
-                                {CITIES.map(c => <option key={c} value={c}>{c}</option>)}
-                            </select>
+                    <div className="flex flex-col md:flex-row items-center gap-6 relative z-10">
+
+                        {/* FROM */}
+                        <div className="flex-1 w-full bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex items-center gap-4">
+                            <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-bold shrink-0">
+                                <MapPin className="w-5 h-5" />
+                            </div>
+                            <div>
+                                <label className="text-xs font-bold text-slate-400 uppercase block">Điểm đi</label>
+                                <p className="text-xl font-bold text-slate-800">
+                                    {direction === 'hn-th' ? 'Hà Nội' : 'Thanh Hóa'}
+                                </p>
+                            </div>
                         </div>
-                    </div>
 
-                    {/* SWAP BUTTON - Centered and Larger */}
-                    <div className="flex justify-center -my-6 lg:my-0 relative z-20">
+                        {/* SWAP BUTTON */}
                         <button
                             type="button"
-                            onClick={swapLocations}
-                            className="p-4 bg-white border border-slate-200 rounded-full text-slate-400 hover:text-amber-600 hover:border-amber-400 hover:shadow-lg transition-all active:rotate-180 transform hover:scale-110"
+                            onClick={toggleDirection}
+                            className="w-12 h-12 bg-white rounded-full border border-slate-200 shadow-md flex items-center justify-center text-amber-500 hover:scale-110 hover:shadow-lg hover:border-amber-400 transition-all rotate-90 md:rotate-0"
                         >
                             <ArrowLeftRight className="w-5 h-5" />
                         </button>
-                    </div>
 
-                    {/* TO */}
-                    <div className="relative group bg-slate-50 hover:bg-white p-4 rounded-2xl border border-slate-200 hover:border-amber-400 transition-all cursor-pointer h-24 flex flex-col justify-center">
-                        <label className="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1 px-1">
-                            Điểm đến
-                        </label>
-                        <div className="flex items-center">
-                            <MapPin className="w-6 h-6 text-orange-500 mr-3 group-hover:-translate-y-1 transition-transform" />
-                            <select
-                                value={to}
-                                onChange={(e) => setTo(e.target.value)}
-                                className="w-full bg-transparent font-bold text-xl text-slate-800 outline-none appearance-none cursor-pointer truncate"
-                            >
-                                {CITIES.map(c => <option key={c} value={c}>{c}</option>)}
-                            </select>
-                        </div>
-                    </div>
-
-                    {/* DATE & SEARCH - Combined Column for Mobile, Separate for Desktop */}
-                    <div className="flex flex-col gap-4">
-                        {/* DATE */}
-                        <div className="relative group bg-slate-50 hover:bg-white p-4 rounded-2xl border border-slate-200 hover:border-amber-400 transition-all cursor-pointer h-24 flex flex-col justify-center">
-                            <label className="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1 px-1">
-                                Ngày đi
-                            </label>
-                            <div className="flex items-center">
-                                <Calendar className="w-6 h-6 text-slate-400 mr-3 group-hover:text-amber-500 transition-colors" />
-                                <input
-                                    type="date"
-                                    value={date}
-                                    onChange={(e) => setDate(e.target.value)}
-                                    className="bg-transparent font-bold text-xl text-slate-800 outline-none w-full cursor-pointer h-full"
-                                />
+                        {/* TO */}
+                        <div className="flex-1 w-full bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex items-center gap-4">
+                            <div className="w-10 h-10 rounded-full bg-orange-100 flex items-center justify-center text-orange-600 font-bold shrink-0">
+                                <MapPin className="w-5 h-5" />
                             </div>
-                        </div>
-                    </div>
-
-                </div>
-
-                {/* Action & Price Footer */}
-                <div className="flex flex-col lg:flex-row items-center justify-between gap-6 pt-4 border-t border-slate-100">
-                    {/* Price Display */}
-                    <div className="flex-1 w-full lg:w-auto bg-emerald-50/50 p-4 rounded-2xl border border-emerald-100/50">
-                        {estimatedPrice ? (
-                            <div className="flex items-center gap-4 animate-fade-in">
-                                <div className="w-12 h-12 rounded-xl bg-emerald-100 flex items-center justify-center text-emerald-600 shadow-sm">
-                                    <span className="text-2xl">⚡</span>
-                                </div>
-                                <div>
-                                    <p className="text-xs text-emerald-600 font-bold uppercase tracking-wide">Giá ước tính ({SERVICE_TYPES.find(s => s.id === serviceType)?.name})</p>
-                                    <p className="text-2xl font-extrabold text-emerald-700">
-                                        {estimatedPrice.toLocaleString('vi-VN')} <span className="text-sm font-medium text-emerald-600">VNĐ</span>
-                                    </p>
-                                </div>
-                            </div>
-                        ) : (
-                            <div className="flex items-center gap-3 opacity-60">
-                                <div className="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center">?</div>
-                                <p className="text-slate-400 text-sm italic">
-                                    Vui lòng chọn lộ trình để xem giá
+                            <div>
+                                <label className="text-xs font-bold text-slate-400 uppercase block">Điểm đến</label>
+                                <p className="text-xl font-bold text-slate-800">
+                                    {direction === 'hn-th' ? 'Thanh Hóa' : 'Hà Nội'}
                                 </p>
                             </div>
-                        )}
+                        </div>
                     </div>
 
-                    {/* Search Button - Big & Bold */}
-                    <button
-                        type="submit"
-                        className="w-full lg:w-auto bg-gradient-to-r from-amber-500 to-orange-600 text-white px-12 py-5 rounded-2xl font-bold text-xl hover:from-amber-600 hover:to-orange-700 shadow-xl shadow-amber-200 hover:shadow-2xl hover:shadow-amber-400/30 transform hover:-translate-y-1 transition-all flex items-center justify-center gap-3 group"
-                    >
-                        <Search className="w-6 h-6" />
-                        <span className="uppercase tracking-wide">Tìm Chuyến Xe</span>
-                        <ArrowRight className="w-6 h-6 group-hover:translate-x-1 transition-transform" />
-                    </button>
+                    {/* Connector Line (Desktop) */}
+                    <div className="hidden md:block absolute top-1/2 left-10 right-10 h-0.5 bg-slate-200 border-t border-dashed border-slate-300 -z-0"></div>
+                </div>
+
+                {/* Footer: Date & Price & Action */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-end">
+                    {/* Date Picker */}
+                    <div className="bg-slate-50 p-4 rounded-2xl border border-slate-200 flex items-center gap-4 cursor-pointer hover:border-amber-300 transition-colors">
+                        <Calendar className="w-6 h-6 text-slate-400" />
+                        <div className="flex-1">
+                            <label className="text-xs font-bold text-slate-400 uppercase block">Ngày đi</label>
+                            <input
+                                type="date"
+                                value={date}
+                                onChange={(e) => setDate(e.target.value)}
+                                className="bg-transparent w-full text-lg font-bold text-slate-800 outline-none cursor-pointer"
+                            />
+                        </div>
+                    </div>
+
+                    {/* Seat Selection (Only for Xe Ghep) */}
+                    {serviceType === 'xe-ghep' && (
+                        <div className="bg-slate-50 p-4 rounded-2xl border border-slate-200 flex items-center justify-between gap-4">
+                            <div className="flex items-center gap-3">
+                                <Users className="w-6 h-6 text-slate-400" />
+                                <div>
+                                    <label className="text-xs font-bold text-slate-400 uppercase block">Số ghế</label>
+                                    <span className="text-lg font-bold text-slate-800">{seatCount} Hành khách</span>
+                                </div>
+                            </div>
+                            <div className="flex items-center gap-2">
+                                <button
+                                    type="button"
+                                    onClick={() => setSeatCount(Math.max(1, seatCount - 1))}
+                                    className="w-8 h-8 rounded-full bg-white border border-slate-200 flex items-center justify-center text-slate-500 hover:bg-amber-100 hover:text-amber-600 transition-colors"
+                                >
+                                    -
+                                </button>
+                                <button
+                                    type="button"
+                                    onClick={() => setSeatCount(Math.min(7, seatCount + 1))}
+                                    className="w-8 h-8 rounded-full bg-white border border-slate-200 flex items-center justify-center text-slate-500 hover:bg-amber-100 hover:text-amber-600 transition-colors"
+                                >
+                                    +
+                                </button>
+                            </div>
+                        </div>
+                    )}
+
+                    {/* Price & Submit */}
+                    {/* Price & Submit - Optimized for CTA */}
+                    <div className="flex flex-col md:flex-row items-center gap-4">
+                        <div className="w-full md:w-auto text-right pr-4 hidden md:block">
+                            <p className="text-xs text-slate-500 font-bold uppercase tracking-wider">Giá trọn gói</p>
+                            <p className="text-3xl font-extrabold text-emerald-600">
+                                {estimatedPrice.toLocaleString('vi-VN')} <span className="text-sm align-top text-emerald-500">đ</span>
+                            </p>
+                        </div>
+
+                        <button
+                            type="button"
+                            onClick={() => setIsBookingModalOpen(true)}
+                            className="w-full bg-gradient-to-r from-amber-500 to-orange-600 text-white py-5 px-8 rounded-2xl font-bold text-xl shadow-xl shadow-amber-500/30 hover:shadow-2xl hover:shadow-amber-500/40 hover:-translate-y-1 transition-all flex items-center justify-center gap-3 animate-pulse"
+                        >
+                            <span>ĐẶT XE NGAY</span>
+                            <ArrowRight className="w-6 h-6" />
+                        </button>
+                    </div>
+                </div>
+
+                {/* Live Driver Feed - Social Proof (Fake Supply Strategy) */}
+                <div className="pt-6 border-t border-slate-100">
+                    <div className="flex items-center justify-between mb-4">
+                        <h4 className="text-sm font-bold text-slate-400 uppercase tracking-wider flex items-center gap-2">
+                            <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
+                            Tài xế đang chờ khách
+                        </h4>
+                        <span className="text-xs text-amber-600 font-semibold cursor-pointer hover:underline">Xem tất cả ›</span>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                        {[
+                            { name: 'Nguyễn Văn Nam', car: 'Toyota Vios 2022', rating: 4.9, loc: 'Ngã Tư Sở, Hà Nội' },
+                            { name: 'Trần Tùng', car: 'Hyundai Accent 2023', rating: 5.0, loc: 'BigC Thanh Hóa' },
+                            { name: 'Phạm Hùng', car: 'Kia Cerato', rating: 4.8, loc: 'Giáp Bát, Hà Nội' },
+                            { name: 'Lê Tuấn', car: 'Xpander 7 chỗ', rating: 4.9, loc: 'Sầm Sơn, Thanh Hóa' },
+                        ].map((driver, i) => (
+                            <div key={i} className="flex items-center gap-3 p-3 rounded-xl bg-slate-50 border border-slate-100 hover:border-amber-200 transition-colors cursor-pointer group">
+                                <div className="w-10 h-10 rounded-full bg-slate-200 flex items-center justify-center text-slate-500 font-bold text-xs border-2 border-white shadow-sm">
+                                    {driver.name.split(' ').pop()?.[0]}
+                                </div>
+                                <div className="flex-1 min-w-0">
+                                    <div className="flex items-center justify-between">
+                                        <p className="text-sm font-bold text-slate-800 truncate group-hover:text-amber-600 transition-colors">{driver.name}</p>
+                                        <span className="text-xs font-bold text-amber-500 flex items-center gap-0.5">
+                                            ⭐ {driver.rating}
+                                        </span>
+                                    </div>
+                                    <p className="text-xs text-slate-500 truncate flex items-center gap-1">
+                                        <Car className="w-3 h-3" /> {driver.car} • 📍 {driver.loc}
+                                    </p>
+                                </div>
+                                <button className="text-xs font-bold text-white bg-slate-900 px-3 py-1.5 rounded-lg group-hover:bg-amber-500 transition-colors">
+                                    Chọn
+                                </button>
+                            </div>
+                        ))}
+                    </div>
                 </div>
 
             </form>
-
-            {/* Quick Suggestions */}
-            <div className="mt-8 pt-6 border-t border-slate-100">
-                <p className="text-sm font-bold text-slate-500 uppercase tracking-wide mb-4 flex items-center gap-2">
-                    <MapPin className="w-4 h-4 text-amber-500" />
-                    Tuyến đường phổ biến
-                </p>
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                    {POPULAR_ROUTES.slice(0, 4).map((r, i) => (
-                        <button
-                            key={i}
-                            type="button"
-                            onClick={() => {
-                                setFrom(r.from);
-                                setTo(r.to);
-                                // Calculate price immediately
-                                let price = r.price;
-                                if (serviceType === 'bao-xe') price *= 3;
-                                if (serviceType === 'gui-do') price = Math.floor(price * 0.4);
-                                setEstimatedPrice(price);
-                            }}
-                            className="flex flex-col items-center justify-center p-3 rounded-xl bg-slate-50 border border-slate-200 hover:border-amber-400 hover:bg-amber-50/50 hover:shadow-md transition-all group cursor-pointer"
-                        >
-                            <div className="flex items-center gap-2 text-slate-700 font-bold text-sm group-hover:text-amber-700 mb-1">
-                                <span>{r.from}</span>
-                                <ArrowRight className="w-3 h-3 text-slate-400 group-hover:text-amber-500" />
-                                <span>{r.to}</span>
-                            </div>
-                            <span className="text-xs font-semibold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full">
-                                Từ {r.price.toLocaleString()}đ
-                            </span>
-                        </button>
-                    ))}
-                </div>
-            </div>
-
         </div>
     );
 }
