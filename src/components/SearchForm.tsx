@@ -5,43 +5,33 @@ import { MapPin, Calendar, Search, ArrowRight, ArrowLeftRight, Package, Car, Use
 
 // Danh sách 63 tỉnh thành Việt Nam
 const CITIES = [
-    // Miền Bắc
     'Hà Nội', 'Hải Phòng', 'Quảng Ninh', 'Hải Dương', 'Hưng Yên', 'Bắc Ninh',
     'Vĩnh Phúc', 'Thái Nguyên', 'Phú Thọ', 'Bắc Giang', 'Lạng Sơn', 'Cao Bằng',
     'Hà Giang', 'Tuyên Quang', 'Yên Bái', 'Lào Cai', 'Điện Biên', 'Lai Châu',
     'Sơn La', 'Hòa Bình', 'Ninh Bình', 'Nam Định', 'Thái Bình', 'Hà Nam',
-    // Miền Trung
     'Thanh Hóa', 'Nghệ An', 'Hà Tĩnh', 'Quảng Bình', 'Quảng Trị', 'Thừa Thiên Huế',
     'Đà Nẵng', 'Quảng Nam', 'Quảng Ngãi', 'Bình Định', 'Phú Yên', 'Khánh Hòa',
     'Ninh Thuận', 'Bình Thuận', 'Kon Tum', 'Gia Lai', 'Đắk Lắk', 'Đắk Nông', 'Lâm Đồng',
-    // Miền Nam
     'TP. Hồ Chí Minh', 'Bình Dương', 'Đồng Nai', 'Bà Rịa - Vũng Tàu', 'Tây Ninh',
     'Bình Phước', 'Long An', 'Tiền Giang', 'Bến Tre', 'Trà Vinh', 'Vĩnh Long',
     'Đồng Tháp', 'An Giang', 'Kiên Giang', 'Cần Thơ', 'Hậu Giang', 'Sóc Trăng',
     'Bạc Liêu', 'Cà Mau',
-    // Sân bay
     'Sân bay Nội Bài', 'Sân bay Tân Sơn Nhất'
 ].sort();
 
-// Các loại dịch vụ
+// Các loại dịch vụ - Thiết kế mới
 const SERVICE_TYPES = [
-    { id: 'xe-ghep', name: 'Xe ghép', icon: Users, color: 'sky' },
-    { id: 'bao-xe', name: 'Bao xe', icon: Car, color: 'orange' },
-    { id: 'gui-do', name: 'Gửi đồ', icon: Package, color: 'green' },
+    { id: 'xe-ghep', name: 'Xe Tiện Chuyến', icon: Users },
+    { id: 'bao-xe', name: 'Bao Xe Trọn Gói', icon: Car },
+    { id: 'gui-do', name: 'Gửi Hàng Hóa', icon: Package },
 ];
 
-// Tuyến đường phổ biến
 const POPULAR_ROUTES = [
-    { from: 'Hà Nội', to: 'Ninh Bình', price: 180000, distance: 95 },
-    { from: 'Hà Nội', to: 'Hải Phòng', price: 150000, distance: 105 },
-    { from: 'Hà Nội', to: 'Quảng Ninh', price: 200000, distance: 165 },
-    { from: 'Hà Nội', to: 'Thái Bình', price: 120000, distance: 110 },
-    { from: 'Hà Nội', to: 'Nam Định', price: 140000, distance: 90 },
-    { from: 'Hà Nội', to: 'Thanh Hóa', price: 200000, distance: 150 },
-    { from: 'Sân bay Nội Bài', to: 'Hà Nội', price: 200000, distance: 30 },
-    { from: 'Sân bay Nội Bài', to: 'Hải Phòng', price: 350000, distance: 120 },
-    { from: 'TP. Hồ Chí Minh', to: 'Vũng Tàu', price: 180000, distance: 125 },
-    { from: 'TP. Hồ Chí Minh', to: 'Đà Lạt', price: 300000, distance: 300 },
+    { from: 'Hà Nội', to: 'Ninh Bình', price: 180000 },
+    { from: 'Hà Nội', to: 'Hải Phòng', price: 150000 },
+    { from: 'Hà Nội', to: 'Quảng Ninh', price: 200000 },
+    { from: 'Hà Nội', to: 'Thanh Hóa', price: 200000 },
+    { from: 'Nội Bài', to: 'Hà Nội', price: 200000 },
 ];
 
 export default function SearchForm() {
@@ -51,20 +41,12 @@ export default function SearchForm() {
     const [date, setDate] = useState('');
     const [estimatedPrice, setEstimatedPrice] = useState<number | null>(null);
 
-    // Tính giá dựa trên tuyến đường và loại dịch vụ
     const calculatePrice = () => {
-        const route = POPULAR_ROUTES.find(
-            r => r.from === from && r.to === to
-        );
-
+        const route = POPULAR_ROUTES.find(r => r.from === from && r.to === to);
         let basePrice = route ? route.price : Math.floor(Math.random() * 100 + 50) * 1500;
 
-        // Điều chỉnh giá theo loại dịch vụ
-        if (serviceType === 'bao-xe') {
-            basePrice = basePrice * 3; // Bao xe đắt gấp 3
-        } else if (serviceType === 'gui-do') {
-            basePrice = Math.floor(basePrice * 0.4); // Gửi đồ rẻ hơn
-        }
+        if (serviceType === 'bao-xe') basePrice *= 3;
+        if (serviceType === 'gui-do') basePrice = Math.floor(basePrice * 0.4);
 
         setEstimatedPrice(basePrice);
     };
@@ -72,7 +54,6 @@ export default function SearchForm() {
     const handleSearch = (e: React.FormEvent) => {
         e.preventDefault();
         calculatePrice();
-        console.log('Tìm kiếm:', { serviceType, from, to, date });
     };
 
     const swapLocations = () => {
@@ -82,154 +63,185 @@ export default function SearchForm() {
     };
 
     return (
-        <div className="bg-white rounded-2xl shadow-2xl p-6 md:p-8 max-w-4xl mx-auto">
-            <form onSubmit={handleSearch} className="space-y-6">
-                {/* Chọn loại dịch vụ */}
-                <div>
-                    <label className="block text-sm font-medium text-slate-700 mb-3">
-                        Loại dịch vụ
-                    </label>
-                    <div className="grid grid-cols-3 gap-3">
+        <div className="bg-white rounded-3xl shadow-xl shadow-slate-200/50 p-6 lg:p-10 max-w-6xl mx-auto relative z-10 border border-slate-100">
+            <form onSubmit={handleSearch} className="space-y-8">
+
+                {/* Header Form: Title & Service Type */}
+                <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+                    <div>
+                        <h3 className="text-2xl font-bold text-slate-800 flex items-center gap-2">
+                            <span className="bg-amber-500 w-2 h-8 rounded-full"></span>
+                            Bạn muốn đi đâu?
+                        </h3>
+                        <p className="text-slate-500 text-sm mt-1 pl-4">Khám phá hàng nghìn chuyến xe giá rẻ mỗi ngày</p>
+                    </div>
+
+                    {/* Service Selector - Spacious Pill Design */}
+                    <div className="flex flex-wrap gap-2 bg-slate-50 p-2 rounded-2xl self-start lg:self-auto border border-slate-100">
                         {SERVICE_TYPES.map((service) => {
-                            const Icon = service.icon;
                             const isActive = serviceType === service.id;
+                            const Icon = service.icon;
                             return (
                                 <button
                                     key={service.id}
                                     type="button"
                                     onClick={() => setServiceType(service.id)}
-                                    className={`p-4 rounded-xl border-2 transition-all ${isActive
-                                            ? `border-${service.color}-500 bg-${service.color}-50 shadow-md scale-105`
-                                            : 'border-slate-200 hover:border-slate-300 hover:bg-slate-50'
+                                    className={`flex items-center gap-2 px-6 py-3 rounded-xl text-sm font-bold transition-all duration-300 ${isActive
+                                        ? 'bg-white text-amber-600 shadow-md ring-1 ring-slate-200 transform scale-105'
+                                        : 'text-slate-500 hover:text-slate-700 hover:bg-slate-200/50'
                                         }`}
                                 >
-                                    <Icon className={`w-6 h-6 mx-auto mb-2 ${isActive ? `text-${service.color}-600` : 'text-slate-400'
-                                        }`} />
-                                    <span className={`text-sm font-medium ${isActive ? `text-${service.color}-700` : 'text-slate-600'
-                                        }`}>
-                                        {service.name}
-                                    </span>
+                                    <Icon className={`w-4 h-4 ${isActive ? 'text-amber-500' : 'text-slate-400'}`} />
+                                    {service.name}
                                 </button>
                             );
                         })}
                     </div>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-[1fr_auto_1fr] gap-4 items-end">
-                    {/* Điểm đi */}
-                    <div className="relative">
-                        <label className="block text-sm font-medium text-slate-700 mb-2">
-                            <MapPin className="inline w-4 h-4 mr-1 text-sky-500" />
+                {/* Input Fields Container - Spacious Grid */}
+                <div className="grid grid-cols-1 lg:grid-cols-[1.5fr_auto_1.5fr_1.2fr] gap-4 lg:gap-6 items-center">
+
+                    {/* FROM */}
+                    <div className="relative group bg-slate-50 hover:bg-white p-4 rounded-2xl border border-slate-200 hover:border-amber-400 transition-all cursor-pointer h-24 flex flex-col justify-center">
+                        <label className="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1 px-1">
                             Điểm đi
                         </label>
-                        <select
-                            value={from}
-                            onChange={(e) => setFrom(e.target.value)}
-                            className="w-full px-4 py-3 border-2 border-slate-200 rounded-xl focus:border-sky-500 focus:ring-2 focus:ring-sky-200 outline-none transition-all text-slate-900 bg-white appearance-none cursor-pointer"
-                            required
-                        >
-                            {CITIES.map(city => (
-                                <option key={city} value={city}>{city}</option>
-                            ))}
-                        </select>
+                        <div className="flex items-center">
+                            <MapPin className="w-6 h-6 text-amber-500 mr-3 group-hover:-translate-y-1 transition-transform" />
+                            <select
+                                value={from}
+                                onChange={(e) => setFrom(e.target.value)}
+                                className="w-full bg-transparent font-bold text-xl text-slate-800 outline-none appearance-none cursor-pointer truncate"
+                            >
+                                {CITIES.map(c => <option key={c} value={c}>{c}</option>)}
+                            </select>
+                        </div>
                     </div>
 
-                    {/* Nút đổi chiều */}
-                    <button
-                        type="button"
-                        onClick={swapLocations}
-                        className="mb-3 md:mb-0 p-3 bg-gradient-to-r from-sky-500 to-blue-600 text-white rounded-xl hover:from-sky-600 hover:to-blue-700 transition-all hover:scale-110 shadow-md"
-                        title="Đổi chiều"
-                    >
-                        <ArrowLeftRight className="w-5 h-5" />
-                    </button>
+                    {/* SWAP BUTTON - Centered and Larger */}
+                    <div className="flex justify-center -my-6 lg:my-0 relative z-20">
+                        <button
+                            type="button"
+                            onClick={swapLocations}
+                            className="p-4 bg-white border border-slate-200 rounded-full text-slate-400 hover:text-amber-600 hover:border-amber-400 hover:shadow-lg transition-all active:rotate-180 transform hover:scale-110"
+                        >
+                            <ArrowLeftRight className="w-5 h-5" />
+                        </button>
+                    </div>
 
-                    {/* Điểm đến */}
-                    <div className="relative">
-                        <label className="block text-sm font-medium text-slate-700 mb-2">
-                            <MapPin className="inline w-4 h-4 mr-1 text-orange-500" />
+                    {/* TO */}
+                    <div className="relative group bg-slate-50 hover:bg-white p-4 rounded-2xl border border-slate-200 hover:border-amber-400 transition-all cursor-pointer h-24 flex flex-col justify-center">
+                        <label className="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1 px-1">
                             Điểm đến
                         </label>
-                        <select
-                            value={to}
-                            onChange={(e) => setTo(e.target.value)}
-                            className="w-full px-4 py-3 border-2 border-slate-200 rounded-xl focus:border-sky-500 focus:ring-2 focus:ring-sky-200 outline-none transition-all text-slate-900 bg-white appearance-none cursor-pointer"
-                            required
-                        >
-                            {CITIES.map(city => (
-                                <option key={city} value={city}>{city}</option>
-                            ))}
-                        </select>
+                        <div className="flex items-center">
+                            <MapPin className="w-6 h-6 text-orange-500 mr-3 group-hover:-translate-y-1 transition-transform" />
+                            <select
+                                value={to}
+                                onChange={(e) => setTo(e.target.value)}
+                                className="w-full bg-transparent font-bold text-xl text-slate-800 outline-none appearance-none cursor-pointer truncate"
+                            >
+                                {CITIES.map(c => <option key={c} value={c}>{c}</option>)}
+                            </select>
+                        </div>
                     </div>
+
+                    {/* DATE & SEARCH - Combined Column for Mobile, Separate for Desktop */}
+                    <div className="flex flex-col gap-4">
+                        {/* DATE */}
+                        <div className="relative group bg-slate-50 hover:bg-white p-4 rounded-2xl border border-slate-200 hover:border-amber-400 transition-all cursor-pointer h-24 flex flex-col justify-center">
+                            <label className="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1 px-1">
+                                Ngày đi
+                            </label>
+                            <div className="flex items-center">
+                                <Calendar className="w-6 h-6 text-slate-400 mr-3 group-hover:text-amber-500 transition-colors" />
+                                <input
+                                    type="date"
+                                    value={date}
+                                    onChange={(e) => setDate(e.target.value)}
+                                    className="bg-transparent font-bold text-xl text-slate-800 outline-none w-full cursor-pointer h-full"
+                                />
+                            </div>
+                        </div>
+                    </div>
+
                 </div>
 
-                {/* Ngày đi */}
-                <div className="relative">
-                    <label className="block text-sm font-medium text-slate-700 mb-2">
-                        <Calendar className="inline w-4 h-4 mr-1 text-purple-500" />
-                        Ngày đi
-                    </label>
-                    <input
-                        type="date"
-                        value={date}
-                        onChange={(e) => setDate(e.target.value)}
-                        min={new Date().toISOString().split('T')[0]}
-                        className="w-full px-4 py-3 border-2 border-slate-200 rounded-xl focus:border-sky-500 focus:ring-2 focus:ring-sky-200 outline-none transition-all text-slate-900"
-                        required
-                    />
+                {/* Action & Price Footer */}
+                <div className="flex flex-col lg:flex-row items-center justify-between gap-6 pt-4 border-t border-slate-100">
+                    {/* Price Display */}
+                    <div className="flex-1 w-full lg:w-auto bg-emerald-50/50 p-4 rounded-2xl border border-emerald-100/50">
+                        {estimatedPrice ? (
+                            <div className="flex items-center gap-4 animate-fade-in">
+                                <div className="w-12 h-12 rounded-xl bg-emerald-100 flex items-center justify-center text-emerald-600 shadow-sm">
+                                    <span className="text-2xl">⚡</span>
+                                </div>
+                                <div>
+                                    <p className="text-xs text-emerald-600 font-bold uppercase tracking-wide">Giá ước tính ({SERVICE_TYPES.find(s => s.id === serviceType)?.name})</p>
+                                    <p className="text-2xl font-extrabold text-emerald-700">
+                                        {estimatedPrice.toLocaleString('vi-VN')} <span className="text-sm font-medium text-emerald-600">VNĐ</span>
+                                    </p>
+                                </div>
+                            </div>
+                        ) : (
+                            <div className="flex items-center gap-3 opacity-60">
+                                <div className="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center">?</div>
+                                <p className="text-slate-400 text-sm italic">
+                                    Vui lòng chọn lộ trình để xem giá
+                                </p>
+                            </div>
+                        )}
+                    </div>
+
+                    {/* Search Button - Big & Bold */}
+                    <button
+                        type="submit"
+                        className="w-full lg:w-auto bg-gradient-to-r from-amber-500 to-orange-600 text-white px-12 py-5 rounded-2xl font-bold text-xl hover:from-amber-600 hover:to-orange-700 shadow-xl shadow-amber-200 hover:shadow-2xl hover:shadow-amber-400/30 transform hover:-translate-y-1 transition-all flex items-center justify-center gap-3 group"
+                    >
+                        <Search className="w-6 h-6" />
+                        <span className="uppercase tracking-wide">Tìm Chuyến Xe</span>
+                        <ArrowRight className="w-6 h-6 group-hover:translate-x-1 transition-transform" />
+                    </button>
                 </div>
 
-                {/* Hiển thị giá ước tính */}
-                {estimatedPrice && (
-                    <div className="bg-gradient-to-r from-green-50 to-emerald-50 border-2 border-green-200 rounded-xl p-4">
-                        <p className="text-sm text-green-700 font-medium mb-1">
-                            💰 Giá ước tính ({SERVICE_TYPES.find(s => s.id === serviceType)?.name}):
-                        </p>
-                        <p className="text-2xl font-bold text-green-900">
-                            {estimatedPrice.toLocaleString('vi-VN')} VNĐ
-                        </p>
-                        <p className="text-xs text-green-600 mt-1">
-                            * Tuyến {from} → {to} - Giá tham khảo
-                        </p>
-                    </div>
-                )}
-
-                {/* Nút tìm kiếm */}
-                <button
-                    type="submit"
-                    className="w-full bg-gradient-to-r from-sky-500 to-blue-600 text-white py-4 rounded-xl font-semibold text-lg hover:from-sky-600 hover:to-blue-700 transition-all hover:scale-[1.02] shadow-lg hover:shadow-xl flex items-center justify-center gap-2 group"
-                >
-                    <Search className="w-5 h-5" />
-                    Tìm chuyến xe
-                    <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-                </button>
             </form>
 
-            {/* Tuyến đường phổ biến */}
-            <div className="mt-6 pt-6 border-t border-slate-200">
-                <p className="text-sm font-medium text-slate-700 mb-3">
-                    🔥 Tuyến đường phổ biến:
+            {/* Quick Suggestions */}
+            <div className="mt-8 pt-6 border-t border-slate-100">
+                <p className="text-sm font-bold text-slate-500 uppercase tracking-wide mb-4 flex items-center gap-2">
+                    <MapPin className="w-4 h-4 text-amber-500" />
+                    Tuyến đường phổ biến
                 </p>
-                <div className="flex flex-wrap gap-2">
-                    {POPULAR_ROUTES.slice(0, 6).map((route, idx) => (
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                    {POPULAR_ROUTES.slice(0, 4).map((r, i) => (
                         <button
-                            key={idx}
+                            key={i}
                             type="button"
                             onClick={() => {
-                                setFrom(route.from);
-                                setTo(route.to);
-                                const basePrice = route.price;
-                                const adjustedPrice = serviceType === 'bao-xe' ? basePrice * 3 :
-                                    serviceType === 'gui-do' ? Math.floor(basePrice * 0.4) : basePrice;
-                                setEstimatedPrice(adjustedPrice);
+                                setFrom(r.from);
+                                setTo(r.to);
+                                // Calculate price immediately
+                                let price = r.price;
+                                if (serviceType === 'bao-xe') price *= 3;
+                                if (serviceType === 'gui-do') price = Math.floor(price * 0.4);
+                                setEstimatedPrice(price);
                             }}
-                            className="px-3 py-1.5 bg-sky-50 hover:bg-sky-100 text-sky-700 text-sm rounded-lg border border-sky-200 transition-all hover:scale-105"
+                            className="flex flex-col items-center justify-center p-3 rounded-xl bg-slate-50 border border-slate-200 hover:border-amber-400 hover:bg-amber-50/50 hover:shadow-md transition-all group cursor-pointer"
                         >
-                            {route.from} ⇌ {route.to}
+                            <div className="flex items-center gap-2 text-slate-700 font-bold text-sm group-hover:text-amber-700 mb-1">
+                                <span>{r.from}</span>
+                                <ArrowRight className="w-3 h-3 text-slate-400 group-hover:text-amber-500" />
+                                <span>{r.to}</span>
+                            </div>
+                            <span className="text-xs font-semibold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full">
+                                Từ {r.price.toLocaleString()}đ
+                            </span>
                         </button>
                     ))}
                 </div>
             </div>
+
         </div>
     );
 }
