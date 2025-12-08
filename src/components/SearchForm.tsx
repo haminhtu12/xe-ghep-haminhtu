@@ -6,7 +6,7 @@ import BookingModal from './BookingModal';
 
 const SERVICE_TYPES = [
     { id: 'xe-ghep', name: 'Xe Tiện Chuyến', icon: Users, price: 400000, desc: 'Đi chung, tiết kiệm' },
-    { id: 'bao-xe', name: 'Bao Xe Trọn Gói', icon: Car, price: 800000, desc: 'Riêng tư, đưa đón tận nơi' },
+    { id: 'bao-xe', name: 'Bao Xe Trọn Gói', icon: Car, price: 1100000, desc: 'Riêng tư, đưa đón tận nơi' },
     { id: 'gui-do', name: 'Gửi Hàng Hỏa Tốc', icon: Package, price: 100000, desc: 'Nhận hàng trong ngày' },
 ];
 
@@ -188,6 +188,9 @@ export default function SearchForm() {
                         <div className="w-full md:w-auto text-right pr-4 hidden md:block">
                             <p className="text-xs text-slate-500 font-bold uppercase tracking-wider">Giá trọn gói</p>
                             <p className="text-3xl font-extrabold text-emerald-600">
+                                <span className="text-sm font-semibold text-slate-400 mr-1">
+                                    {serviceType === 'xe-ghep' ? '' : 'Từ '}
+                                </span>
                                 {estimatedPrice.toLocaleString('vi-VN')} <span className="text-sm align-top text-emerald-500">đ</span>
                             </p>
                         </div>
