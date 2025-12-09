@@ -24,14 +24,14 @@ export const MIDDLE_NAMES = [
 ];
 
 export const CAR_MODELS = [
-    { name: 'Toyota Vios 2022', img: 'https://images.unsplash.com/photo-1621007947382-bb3c3994e3fb?w=600&h=400&fit=crop' },
-    { name: 'Hyundai Accent 2023', img: 'https://images.unsplash.com/photo-1619405399517-d7fce0f13302?w=600&h=400&fit=crop' },
-    { name: 'Kia Cerato 2022', img: 'https://images.unsplash.com/photo-1617814076367-b759c7d7e738?w=600&h=400&fit=crop' },
-    { name: 'Mitsubishi Xpander', img: 'https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?w=600&h=400&fit=crop' },
-    { name: 'VinFast VF5', img: 'https://images.unsplash.com/photo-1617654112368-307921291f42?w=600&h=400&fit=crop' },
-    { name: 'Mazda 3 2023', img: 'https://images.unsplash.com/photo-1617531653332-bd46c24f2068?w=600&h=400&fit=crop' },
-    { name: 'Honda City', img: 'https://images.unsplash.com/photo-1590362891991-f776e747a588?w=600&h=400&fit=crop' },
-    { name: 'Toyota Innova', img: 'https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?w=600&h=400&fit=crop' },
+    { name: 'Toyota Vios 2022', img: 'https://images.pexels.com/photos/3802508/pexels-photo-3802508.jpeg?auto=compress&cs=tinysrgb&w=600&h=400&fit=crop' },
+    { name: 'Hyundai Accent 2023', img: 'https://images.pexels.com/photos/3752169/pexels-photo-3752169.jpeg?auto=compress&cs=tinysrgb&w=600&h=400&fit=crop' },
+    { name: 'Kia Cerato 2022', img: 'https://images.pexels.com/photos/3874337/pexels-photo-3874337.jpeg?auto=compress&cs=tinysrgb&w=600&h=400&fit=crop' },
+    { name: 'Mitsubishi Xpander', img: 'https://images.pexels.com/photos/3764984/pexels-photo-3764984.jpeg?auto=compress&cs=tinysrgb&w=600&h=400&fit=crop' },
+    { name: 'VinFast VF5', img: 'https://images.pexels.com/photos/3729464/pexels-photo-3729464.jpeg?auto=compress&cs=tinysrgb&w=600&h=400&fit=crop' },
+    { name: 'Mazda 3 2023', img: 'https://images.pexels.com/photos/3802510/pexels-photo-3802510.jpeg?auto=compress&cs=tinysrgb&w=600&h=400&fit=crop' },
+    { name: 'Honda City', img: 'https://images.pexels.com/photos/3874337/pexels-photo-3874337.jpeg?auto=compress&cs=tinysrgb&w=600&h=400&fit=crop' },
+    { name: 'Toyota Innova', img: 'https://images.pexels.com/photos/3764984/pexels-photo-3764984.jpeg?auto=compress&cs=tinysrgb&w=600&h=400&fit=crop' },
 ];
 
 export const LOCATIONS = [

@@ -319,7 +319,7 @@ export default function BookingModal({ isOpen, onClose, bookingData }: BookingMo
                             <button
                                 type="submit"
                                 disabled={isLoading}
-                                className="w-full bg-gradient-to-r from-amber-500 to-orange-600 text-white py-5 rounded-xl font-bold text-xl shadow-lg hover:shadow-xl hover:shadow-amber-500/30 hover:-translate-y-1 transition-all disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                                className="w-full bg-gradient-to-r from-amber-500 to-orange-600 text-white py-6 rounded-xl font-bold text-xl shadow-lg hover:shadow-xl hover:shadow-amber-500/30 hover:-translate-y-1 transition-all disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                             >
                                 {isLoading ? (
                                     <>
