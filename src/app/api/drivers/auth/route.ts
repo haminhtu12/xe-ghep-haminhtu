@@ -4,10 +4,16 @@ import { cookies } from 'next/headers';
 
 export async function POST(request: Request) {
     try {
-        const { phone, password } = await request.json();
+        const { phone, otp } = await request.json();
 
-        if (!phone || !password) {
-            return NextResponse.json({ error: 'Vui lòng nhập số điện thoại và mật khẩu' }, { status: 400 });
+        if (!phone || !otp) {
+            return NextResponse.json({ error: 'Vui lòng nhập số điện thoại và mã OTP' }, { status: 400 });
+        }
+
+        // --- MOCK OTP VALIDATION ---
+        // In production, verify against SMS provider or DB
+        if (otp !== '123456') {
+            return NextResponse.json({ error: 'Mã OTP không chính xác' }, { status: 400 });
         }
 
         // 1. Check if driver exists
@@ -19,22 +25,18 @@ export async function POST(request: Request) {
 
         if (existingDriver) {
             // --- LOGIN FLOW ---
-            if (existingDriver.password === password) {
-                // Set cookie
-                const cookieStore = await cookies();
-                cookieStore.set('driver_token', existingDriver.id, {
-                    httpOnly: true,
-                    maxAge: 60 * 60 * 24 * 30, // 30 days
-                });
+            // Set cookie
+            const cookieStore = await cookies();
+            cookieStore.set('driver_token', existingDriver.id, {
+                httpOnly: true,
+                maxAge: 60 * 60 * 24 * 30, // 30 days
+            });
 
-                return NextResponse.json({
-                    success: true,
-                    driver: existingDriver,
-                    message: 'Đăng nhập thành công'
-                });
-            } else {
-                return NextResponse.json({ error: 'Mật khẩu không đúng' }, { status: 401 });
-            }
+            return NextResponse.json({
+                success: true,
+                driver: existingDriver,
+                message: 'Đăng nhập thành công'
+            });
         } else {
             // --- REGISTER FLOW (Auto-create) ---
 
@@ -44,7 +46,7 @@ export async function POST(request: Request) {
                 .insert([
                     {
                         phone,
-                        password,
+                        // password: 'NO_PASSWORD_OTP_ONLY', // Removed password requirement
                         name: `Tài xế ${phone.slice(-4)}`, // Default name
                         car_type: 'Chưa cập nhật',
                         license_plate: 'Chưa cập nhật',

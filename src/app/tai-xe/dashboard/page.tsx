@@ -72,12 +72,9 @@ export default function DriverDashboard() {
                     <div className="text-3xl font-bold">
                         {driver.wallet_balance.toLocaleString('vi-VN')}đ
                     </div>
-                    <div className="mt-4 flex gap-2">
-                        <button className="flex-1 bg-white/20 hover:bg-white/30 py-2 rounded-lg text-sm font-bold backdrop-blur-sm transition-colors">
+                    <div className="mt-4">
+                        <button className="w-full bg-white/20 hover:bg-white/30 py-2 rounded-lg text-sm font-bold backdrop-blur-sm transition-colors">
                             Nạp tiền
-                        </button>
-                        <button className="flex-1 bg-white/20 hover:bg-white/30 py-2 rounded-lg text-sm font-bold backdrop-blur-sm transition-colors">
-                            Rút tiền
                         </button>
                     </div>
                 </div>

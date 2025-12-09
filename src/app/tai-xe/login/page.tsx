@@ -2,15 +2,31 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Car, Phone, Lock, ArrowRight, Gift } from 'lucide-react';
+import { Car, Phone, Lock, ArrowRight, Gift, KeyRound } from 'lucide-react';
 
 export default function DriverLogin() {
+    const [step, setStep] = useState<'phone' | 'otp'>('phone');
     const [phone, setPhone] = useState('');
-    const [password, setPassword] = useState('');
+    const [otp, setOtp] = useState('');
     const [loading, setLoading] = useState(false);
     const router = useRouter();
 
-    const handleSubmit = async (e: React.FormEvent) => {
+    const handleSendOtp = (e: React.FormEvent) => {
+        e.preventDefault();
+        if (phone.length < 10) {
+            alert('Vui lòng nhập số điện thoại hợp lệ');
+            return;
+        }
+        setLoading(true);
+        // Simulate sending OTP
+        setTimeout(() => {
+            setLoading(false);
+            setStep('otp');
+            alert('Mã xác thực của bạn là: 123456'); // Mock OTP
+        }, 1000);
+    };
+
+    const handleVerifyOtp = async (e: React.FormEvent) => {
         e.preventDefault();
         setLoading(true);
 
@@ -18,7 +34,7 @@ export default function DriverLogin() {
             const res = await fetch('/api/drivers/auth', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ phone, password }),
+                body: JSON.stringify({ phone, otp }),
             });
 
             const data = await res.json();
@@ -29,7 +45,7 @@ export default function DriverLogin() {
                 }
                 router.push('/tai-xe/dashboard');
             } else {
-                alert(data.error || 'Đăng nhập thất bại');
+                alert(data.error || 'Xác thực thất bại');
             }
         } catch (error) {
             alert('Có lỗi xảy ra. Vui lòng thử lại.');
@@ -50,7 +66,7 @@ export default function DriverLogin() {
                     Dành Cho Tài Xế
                 </h2>
                 <p className="mt-2 text-center text-sm text-slate-600">
-                    Đăng nhập hoặc nhập SĐT mới để đăng ký tự động
+                    Đăng nhập nhanh bằng mã OTP
                 </p>
             </div>
 
@@ -68,59 +84,89 @@ export default function DriverLogin() {
                         </div>
                     </div>
 
-                    <form className="space-y-6" onSubmit={handleSubmit}>
-                        <div>
-                            <label className="block text-sm font-medium text-slate-700">
-                                Số điện thoại
-                            </label>
-                            <div className="mt-1 relative rounded-md shadow-sm">
-                                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                    <Phone className="h-5 w-5 text-slate-400" />
+                    {step === 'phone' ? (
+                        <form className="space-y-6" onSubmit={handleSendOtp}>
+                            <div>
+                                <label className="block text-sm font-medium text-slate-700">
+                                    Số điện thoại
+                                </label>
+                                <div className="mt-1 relative rounded-md shadow-sm">
+                                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                        <Phone className="h-5 w-5 text-slate-400" />
+                                    </div>
+                                    <input
+                                        type="tel"
+                                        required
+                                        value={phone}
+                                        onChange={(e) => setPhone(e.target.value)}
+                                        className="block w-full pl-10 pr-3 py-3 border border-slate-300 rounded-xl focus:ring-amber-500 focus:border-amber-500 transition-colors"
+                                        placeholder="0912 xxx xxx"
+                                    />
                                 </div>
-                                <input
-                                    type="tel"
-                                    required
-                                    value={phone}
-                                    onChange={(e) => setPhone(e.target.value)}
-                                    className="block w-full pl-10 pr-3 py-3 border border-slate-300 rounded-xl focus:ring-amber-500 focus:border-amber-500 transition-colors"
-                                    placeholder="0912 xxx xxx"
-                                />
                             </div>
-                        </div>
 
-                        <div>
-                            <label className="block text-sm font-medium text-slate-700">
-                                Mật khẩu (Tự đặt)
-                            </label>
-                            <div className="mt-1 relative rounded-md shadow-sm">
-                                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                    <Lock className="h-5 w-5 text-slate-400" />
-                                </div>
-                                <input
-                                    type="password"
-                                    required
-                                    value={password}
-                                    onChange={(e) => setPassword(e.target.value)}
-                                    className="block w-full pl-10 pr-3 py-3 border border-slate-300 rounded-xl focus:ring-amber-500 focus:border-amber-500 transition-colors"
-                                    placeholder="••••••"
-                                />
-                            </div>
-                        </div>
-
-                        <div>
                             <button
                                 type="submit"
                                 disabled={loading}
                                 className="w-full flex justify-center items-center gap-2 py-4 px-4 border border-transparent rounded-xl shadow-lg text-lg font-bold text-white bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-amber-500 disabled:opacity-70 transition-all"
                             >
-                                {loading ? 'Đang xử lý...' : (
+                                {loading ? 'Đang gửi...' : (
                                     <>
-                                        Vào Nhận Khách <ArrowRight className="w-5 h-5" />
+                                        Lấy Mã Xác Thực <ArrowRight className="w-5 h-5" />
                                     </>
                                 )}
                             </button>
-                        </div>
-                    </form>
+                        </form>
+                    ) : (
+                        <form className="space-y-6" onSubmit={handleVerifyOtp}>
+                            <div className="text-center mb-4">
+                                <p className="text-sm text-slate-500">Mã xác thực đã gửi đến</p>
+                                <p className="font-bold text-lg text-slate-800">{phone}</p>
+                                <button
+                                    type="button"
+                                    onClick={() => setStep('phone')}
+                                    className="text-xs text-amber-600 hover:underline mt-1"
+                                >
+                                    Đổi số điện thoại
+                                </button>
+                            </div>
+
+                            <div>
+                                <label className="block text-sm font-medium text-slate-700">
+                                    Nhập mã OTP (6 số)
+                                </label>
+                                <div className="mt-1 relative rounded-md shadow-sm">
+                                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                        <KeyRound className="h-5 w-5 text-slate-400" />
+                                    </div>
+                                    <input
+                                        type="text"
+                                        required
+                                        maxLength={6}
+                                        value={otp}
+                                        onChange={(e) => setOtp(e.target.value)}
+                                        className="block w-full pl-10 pr-3 py-3 border border-slate-300 rounded-xl focus:ring-amber-500 focus:border-amber-500 transition-colors tracking-widest text-lg font-bold text-center"
+                                        placeholder="123456"
+                                    />
+                                </div>
+                                <p className="mt-2 text-xs text-center text-slate-500">
+                                    Mã mặc định cho bản thử nghiệm: <span className="font-mono font-bold text-slate-800">123456</span>
+                                </p>
+                            </div>
+
+                            <button
+                                type="submit"
+                                disabled={loading}
+                                className="w-full flex justify-center items-center gap-2 py-4 px-4 border border-transparent rounded-xl shadow-lg text-lg font-bold text-white bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-amber-500 disabled:opacity-70 transition-all"
+                            >
+                                {loading ? 'Đang kiểm tra...' : (
+                                    <>
+                                        Đăng Nhập <ArrowRight className="w-5 h-5" />
+                                    </>
+                                )}
+                            </button>
+                        </form>
+                    )}
 
                     <div className="mt-6">
                         <div className="relative">
