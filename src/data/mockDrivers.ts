@@ -8,22 +8,22 @@ export interface Driver {
     carImg: string;
 }
 
-const FIRST_NAMES = [
+export const FIRST_NAMES = [
     'Nam', 'Hùng', 'Tuấn', 'Dũng', 'Minh', 'Thắng', 'Đức', 'Trung', 'Hiếu', 'Hoàng',
     'Tùng', 'Sơn', 'Quân', 'Thành', 'Long', 'Hải', 'Việt', 'Cường', 'Phúc', 'Vinh',
     'Lan', 'Mai', 'Hằng', 'Thu', 'Hương'
 ];
 
-const LAST_NAMES = [
+export const LAST_NAMES = [
     'Nguyễn', 'Trần', 'Lê', 'Phạm', 'Hoàng', 'Huỳnh', 'Phan', 'Vũ', 'Võ', 'Đặng',
     'Bùi', 'Đỗ', 'Hồ', 'Ngô', 'Dương', 'Lý'
 ];
 
-const MIDDLE_NAMES = [
+export const MIDDLE_NAMES = [
     'Văn', 'Thị', 'Đức', 'Minh', 'Hoàng', 'Thanh', 'Quang', 'Ngọc', 'Hữu', 'Xuân'
 ];
 
-const CAR_MODELS = [
+export const CAR_MODELS = [
     { name: 'Toyota Vios 2022', img: 'https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?w=600&h=400&fit=crop' },
     { name: 'Hyundai Accent 2023', img: 'https://images.unsplash.com/photo-1494976388531-d1058494cdd8?w=600&h=400&fit=crop' },
     { name: 'Kia Cerato 2022', img: 'https://images.unsplash.com/photo-1503376763036-066120622c74?w=600&h=400&fit=crop' },
@@ -33,7 +33,7 @@ const CAR_MODELS = [
     { name: 'Honda City', img: 'https://images.unsplash.com/photo-1511919884226-fd3cad34687c?w=600&h=400&fit=crop' },
 ];
 
-const LOCATIONS = [
+export const LOCATIONS = [
     'Ngã Tư Sở, Hà Nội', 'BigC Thanh Hóa', 'Giáp Bát, Hà Nội', 'Sầm Sơn, Thanh Hóa',
     'Mỹ Đình, Hà Nội', 'Quảng Xương, Thanh Hóa', 'Long Biên, Hà Nội', 'Bỉm Sơn, Thanh Hóa',
     'Hà Đông, Hà Nội', 'Hoằng Hóa, Thanh Hóa', 'Hai Bà Trưng, Hà Nội', 'Tĩnh Gia, Thanh Hóa'

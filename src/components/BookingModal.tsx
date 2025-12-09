@@ -78,33 +78,34 @@ export default function BookingModal({ isOpen, onClose, bookingData }: BookingMo
                         {/* Body */}
                         <form onSubmit={handleSubmit} className="p-6 space-y-4">
 
+
                             {/* Name & Phone */}
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div className="space-y-1">
                                     <label className="text-xs font-bold text-slate-500 uppercase">Họ và tên <span className="text-red-500">*</span></label>
-                                    <div className="relative">
-                                        <User className="absolute left-1.5 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
+                                    <div className="flex items-center gap-2 border border-slate-200 rounded-xl px-3 py-2.5 focus-within:border-amber-500 focus-within:ring-2 focus-within:ring-amber-200 transition-all">
+                                        <User className="w-5 h-5 text-slate-400 shrink-0" />
                                         <input
                                             type="text"
                                             required
                                             placeholder="Nguyễn Văn A"
                                             value={formData.name}
                                             onChange={e => setFormData({ ...formData, name: e.target.value })}
-                                            className="w-full pl-14 pr-4 py-2.5 rounded-xl border border-slate-200 focus:border-amber-500 focus:ring-2 focus:ring-amber-200 outline-none transition-all font-medium"
+                                            className="flex-1 outline-none font-medium bg-transparent"
                                         />
                                     </div>
                                 </div>
                                 <div className="space-y-1">
                                     <label className="text-xs font-bold text-slate-500 uppercase">Số điện thoại <span className="text-red-500">*</span></label>
-                                    <div className="relative">
-                                        <Phone className="absolute left-1.5 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
+                                    <div className="flex items-center gap-2 border border-slate-200 rounded-xl px-3 py-2.5 focus-within:border-amber-500 focus-within:ring-2 focus-within:ring-amber-200 transition-all">
+                                        <Phone className="w-5 h-5 text-slate-400 shrink-0" />
                                         <input
                                             type="tel"
                                             required
                                             placeholder="0912 345 678"
                                             value={formData.phone}
                                             onChange={e => setFormData({ ...formData, phone: e.target.value })}
-                                            className="w-full pl-14 pr-4 py-2.5 rounded-xl border border-slate-200 focus:border-amber-500 focus:ring-2 focus:ring-amber-200 outline-none transition-all font-medium"
+                                            className="flex-1 outline-none font-medium bg-transparent"
                                         />
                                     </div>
                                 </div>
@@ -113,15 +114,15 @@ export default function BookingModal({ isOpen, onClose, bookingData }: BookingMo
                             {/* Pickup Address */}
                             <div className="space-y-1">
                                 <label className="text-xs font-bold text-slate-500 uppercase">Điểm đón chi tiết <span className="text-red-500">*</span></label>
-                                <div className="relative">
-                                    <MapPin className="absolute left-1.5 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
+                                <div className="flex items-center gap-2 border border-slate-200 rounded-xl px-3 py-2.5 focus-within:border-amber-500 focus-within:ring-2 focus-within:ring-amber-200 transition-all">
+                                    <MapPin className="w-5 h-5 text-slate-400 shrink-0" />
                                     <input
                                         type="text"
                                         required
                                         placeholder="Số 10, Ngõ 5, Đường..."
                                         value={formData.pickupAddress}
                                         onChange={e => setFormData({ ...formData, pickupAddress: e.target.value })}
-                                        className="w-full pl-14 pr-4 py-2.5 rounded-xl border border-slate-200 focus:border-amber-500 focus:ring-2 focus:ring-amber-200 outline-none transition-all font-medium"
+                                        className="flex-1 outline-none font-medium bg-transparent"
                                     />
                                 </div>
                             </div>
@@ -129,14 +130,14 @@ export default function BookingModal({ isOpen, onClose, bookingData }: BookingMo
                             {/* Dropoff Address (Optional) */}
                             <div className="space-y-1">
                                 <label className="text-xs font-bold text-slate-500 uppercase">Điểm trả (Tùy chọn)</label>
-                                <div className="relative">
-                                    <MapPin className="absolute left-1.5 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
+                                <div className="flex items-center gap-2 border border-slate-200 rounded-xl px-3 py-2.5 focus-within:border-amber-500 focus-within:ring-2 focus-within:ring-amber-200 transition-all">
+                                    <MapPin className="w-5 h-5 text-slate-400 shrink-0" />
                                     <input
                                         type="text"
                                         placeholder="Nhập điểm đến..."
                                         value={formData.dropoffAddress}
                                         onChange={e => setFormData({ ...formData, dropoffAddress: e.target.value })}
-                                        className="w-full pl-14 pr-4 py-2.5 rounded-xl border border-slate-200 focus:border-amber-500 focus:ring-2 focus:ring-amber-200 outline-none transition-all font-medium"
+                                        className="flex-1 outline-none font-medium bg-transparent"
                                     />
                                 </div>
                             </div>
@@ -144,14 +145,14 @@ export default function BookingModal({ isOpen, onClose, bookingData }: BookingMo
                             {/* Note */}
                             <div className="space-y-1">
                                 <label className="text-xs font-bold text-slate-500 uppercase">Ghi chú thêm</label>
-                                <div className="relative">
-                                    <FileText className="absolute left-1.5 top-3 w-5 h-5 text-slate-400" />
+                                <div className="flex items-start gap-2 border border-slate-200 rounded-xl px-3 py-2.5 focus-within:border-amber-500 focus-within:ring-2 focus-within:ring-amber-200 transition-all">
+                                    <FileText className="w-5 h-5 text-slate-400 shrink-0 mt-0.5" />
                                     <textarea
                                         rows={2}
                                         placeholder="Mang theo nhiều hành lý, đi cùng trẻ em..."
                                         value={formData.note}
                                         onChange={e => setFormData({ ...formData, note: e.target.value })}
-                                        className="w-full pl-14 pr-4 py-2.5 rounded-xl border border-slate-200 focus:border-amber-500 focus:ring-2 focus:ring-amber-200 outline-none transition-all font-medium resize-none"
+                                        className="flex-1 outline-none font-medium resize-none bg-transparent"
                                     />
                                 </div>
                             </div>
