@@ -54,17 +54,31 @@ export const CAR_MODELS = [
 ];
 
 export const LOCATIONS = [
-    // Hanoi
+    // Hanoi (40+ locations)
     'Cầu Giấy, Hà Nội', 'Hoàn Kiếm, Hà Nội', 'Đống Đa, Hà Nội', 'Ba Đình, Hà Nội',
     'Hai Bà Trưng, Hà Nội', 'Thanh Xuân, Hà Nội', 'Hoàng Mai, Hà Nội', 'Long Biên, Hà Nội',
     'Nam Từ Liêm, Hà Nội', 'Bắc Từ Liêm, Hà Nội', 'Tây Hồ, Hà Nội', 'Hà Đông, Hà Nội',
-    'Sóc Sơn, Hà Nội', 'Đông Anh, Hà Nội', 'Gia Lâm, Hà Nội',
+    'Sóc Sơn, Hà Nội', 'Đông Anh, Hà Nội', 'Gia Lâm, Hà Nội', 'Mê Linh, Hà Nội',
+    'Thanh Trì, Hà Nội', 'Thường Tín, Hà Nội', 'Phú Xuyên, Hà Nội', 'Ứng Hòa, Hà Nội',
+    'Mỹ Đức, Hà Nội', 'Chương Mỹ, Hà Nội', 'Thanh Oai, Hà Nội', 'Quốc Oai, Hà Nội',
+    'Thạch Thất, Hà Nội', 'Hoài Đức, Hà Nội', 'Đan Phượng, Hà Nội', 'Phúc Thọ, Hà Nội',
+    'Sơn Tây, Hà Nội', 'Ba Vì, Hà Nội', 'Nguyễn Trãi, Thanh Xuân', 'Láng Hạ, Đống Đa',
+    'Xã Đàn, Đống Đa', 'Phố Huế, Hai Bà Trưng', 'Tràng Tiền, Hoàn Kiếm', 'Mỹ Đình, Nam Từ Liêm',
+    'Cầu Diễn, Bắc Từ Liêm', 'Xuân Thủy, Cầu Giấy', 'Hoàng Quốc Việt, Cầu Giấy', 'Lạc Long Quân, Tây Hồ',
+    'Âu Cơ, Tây Hồ', 'Nguyễn Văn Cừ, Long Biên', 'Ngọc Lâm, Long Biên', 'Giải Phóng, Hoàng Mai',
 
-    // Thanh Hoa
+    // Thanh Hoa (40+ locations)
     'TP. Thanh Hóa, Thanh Hóa', 'Sầm Sơn, Thanh Hóa', 'Bỉm Sơn, Thanh Hóa', 'Nghi Sơn, Thanh Hóa',
     'Hoằng Hóa, Thanh Hóa', 'Quảng Xương, Thanh Hóa', 'Triệu Sơn, Thanh Hóa', 'Thọ Xuân, Thanh Hóa',
     'Ngọc Lặc, Thanh Hóa', 'Hà Trung, Thanh Hóa', 'Hậu Lộc, Thanh Hóa', 'Tĩnh Gia, Thanh Hóa',
-    'Nông Cống, Thanh Hóa', 'Yên Định, Thanh Hóa', 'Thạch Thành, Thanh Hóa'
+    'Nông Cống, Thanh Hóa', 'Yên Định, Thanh Hóa', 'Thạch Thành, Thanh Hóa', 'Vĩnh Lộc, Thanh Hóa',
+    'Thiệu Hóa, Thanh Hóa', 'Đông Sơn, Thanh Hóa', 'Nga Sơn, Thanh Hóa', 'Như Thanh, Thanh Hóa',
+    'Như Xuân, Thanh Hóa', 'Thường Xuân, Thanh Hóa', 'Lang Chánh, Thanh Hóa', 'Bá Thước, Thanh Hóa',
+    'Quan Hóa, Thanh Hóa', 'Quan Sơn, Thanh Hóa', 'Mường Lát, Thanh Hóa', 'Cẩm Thủy, Thanh Hóa',
+    'Quảng Thành, TP. Thanh Hóa', 'Đông Vệ, TP. Thanh Hóa', 'Lam Sơn, TP. Thanh Hóa', 'Ba Đình, TP. Thanh Hóa',
+    'Ngọc Trạo, TP. Thanh Hóa', 'Trường Thi, TP. Thanh Hóa', 'Điện Biên, TP. Thanh Hóa', 'Phú Sơn, TP. Thanh Hóa',
+    'Nam Ngạn, TP. Thanh Hóa', 'Hàm Rồng, TP. Thanh Hóa', 'Đông Thọ, TP. Thanh Hóa', 'Quảng Hưng, TP. Thanh Hóa',
+    'Quảng Phú, TP. Thanh Hóa', 'Quảng Tâm, TP. Thanh Hóa', 'Quảng Cát, TP. Thanh Hóa', 'Hải Tiến, Hoằng Hóa'
 ];
 
 // Curated Asian/Vietnamese-looking avatars from Unsplash
