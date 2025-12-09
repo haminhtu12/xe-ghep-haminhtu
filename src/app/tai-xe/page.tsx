@@ -134,85 +134,27 @@ export default function DriverRegistration() {
 
                     </div>
 
-                    {/* Registration Form */}
-                    <div className="bg-white rounded-3xl shadow-xl p-8 border border-slate-100">
-                        <div className="mb-6">
-                            <h2 className="text-2xl font-bold text-slate-800">Đăng ký ngay</h2>
-                            <p className="text-slate-500 text-sm mt-2">Điền thông tin để tham gia đội ngũ tài xế chuyên nghiệp</p>
+                    {/* Registration CTA */}
+                    <div className="bg-white rounded-3xl shadow-xl p-8 border border-slate-100 flex flex-col justify-center items-center text-center">
+                        <div className="w-20 h-20 bg-amber-100 rounded-full flex items-center justify-center mb-6 animate-pulse">
+                            <Car className="w-10 h-10 text-amber-600" />
                         </div>
+                        <h2 className="text-3xl font-bold text-slate-800 mb-4">Tham gia ngay</h2>
+                        <p className="text-slate-500 mb-8 text-lg max-w-md">
+                            Chỉ cần số điện thoại. Đăng ký trong 30 giây. <br />
+                            <span className="font-bold text-amber-600">Tặng ngay 500.000đ</span> vào tài khoản.
+                        </p>
 
-                        <form onSubmit={handleSubmit} className="space-y-5">
-                            <div>
-                                <label className="block text-sm font-semibold text-slate-700 mb-2">Họ và tên</label>
-                                <input
-                                    type="text"
-                                    required
-                                    placeholder="Nguyễn Văn A"
-                                    className="w-full px-4 py-3 rounded-xl border-2 border-slate-200 focus:border-amber-500 focus:ring-4 focus:ring-amber-500/10 outline-none transition-all font-medium"
-                                    value={formData.name}
-                                    onChange={e => setFormData({ ...formData, name: e.target.value })}
-                                />
-                            </div>
+                        <Link
+                            href="/tai-xe/login"
+                            className="w-full max-w-sm bg-gradient-to-r from-amber-500 to-orange-600 text-white font-bold text-xl py-5 rounded-2xl shadow-xl hover:shadow-2xl hover:shadow-amber-500/40 hover:-translate-y-1 transition-all flex items-center justify-center gap-3"
+                        >
+                            Đăng Ký / Đăng Nhập
+                        </Link>
 
-                            <div>
-                                <label className="block text-sm font-semibold text-slate-700 mb-2">Số điện thoại (Zalo)</label>
-                                <input
-                                    type="tel"
-                                    required
-                                    placeholder="0912 xxx xxx"
-                                    className="w-full px-4 py-3 rounded-xl border-2 border-slate-200 focus:border-amber-500 focus:ring-4 focus:ring-amber-500/10 outline-none transition-all font-medium"
-                                    value={formData.phone}
-                                    onChange={e => setFormData({ ...formData, phone: e.target.value })}
-                                />
-                            </div>
-
-                            <div className="grid grid-cols-2 gap-4">
-                                <div>
-                                    <label className="block text-sm font-semibold text-slate-700 mb-2">Loại xe</label>
-                                    <select
-                                        className="w-full px-4 py-3 rounded-xl border-2 border-slate-200 focus:border-amber-500 focus:ring-4 focus:ring-amber-500/10 outline-none transition-all font-medium bg-white"
-                                        value={formData.carType}
-                                        onChange={e => setFormData({ ...formData, carType: e.target.value })}
-                                    >
-                                        <option value="Xe 4 chỗ">Xe 4 chỗ</option>
-                                        <option value="Xe 7 chỗ">Xe 7 chỗ</option>
-                                        <option value="Bán tải">Bán tải</option>
-                                    </select>
-                                </div>
-                                <div>
-                                    <label className="block text-sm font-semibold text-slate-700 mb-2">Biển số</label>
-                                    <input
-                                        type="text"
-                                        required
-                                        placeholder="30A-123.45"
-                                        className="w-full px-4 py-3 rounded-xl border-2 border-slate-200 focus:border-amber-500 focus:ring-4 focus:ring-amber-500/10 outline-none transition-all font-medium"
-                                        value={formData.licensePlate}
-                                        onChange={e => setFormData({ ...formData, licensePlate: e.target.value })}
-                                    />
-                                </div>
-                            </div>
-
-                            <button
-                                type="submit"
-                                disabled={isLoading}
-                                className="w-full bg-gradient-to-r from-amber-500 to-orange-600 text-white font-bold text-lg py-4 rounded-xl shadow-lg hover:shadow-xl hover:shadow-amber-500/30 hover:-translate-y-1 transition-all active:scale-95 disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center gap-2"
-                            >
-                                {isLoading ? (
-                                    <>
-                                        <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                                        Đang gửi...
-                                    </>
-                                ) : (
-                                    'Gửi Đăng Ký'
-                                )}
-                            </button>
-
-                            <div className="text-center">
-                                <p className="text-xs text-slate-500">
-                                    Bằng việc đăng ký, bạn đồng ý với <Link href="#" className="text-amber-600 hover:underline">Điều khoản sử dụng</Link> của chúng tôi.
-                                </p>
-                            </div>
-                        </form>
+                        <p className="mt-6 text-sm text-slate-400">
+                            Đã có hơn 500+ tài xế tham gia tuần này
+                        </p>
                     </div>
                 </div>
             </div>
