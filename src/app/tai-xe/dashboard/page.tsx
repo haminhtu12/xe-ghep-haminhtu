@@ -46,7 +46,14 @@ export default function DriverDashboard() {
             const res = await fetch(`/api/bookings/available?location=${location}`);
             if (res.ok) {
                 const data = await res.json();
-                setBookings(data.bookings || []);
+                // Merge new data with existing accepted bookings to keep them visible
+                setBookings(prev => {
+                    const acceptedBookings = prev.filter(b => b.is_accepted);
+                    const newBookings = data.bookings || [];
+                    // Filter out duplicates if any
+                    const uniqueNewBookings = newBookings.filter((nb: any) => !acceptedBookings.find(ab => ab.id === nb.id));
+                    return [...acceptedBookings, ...uniqueNewBookings];
+                });
             }
         } catch (error) {
             console.error('Error fetching bookings:', error);
@@ -67,10 +74,21 @@ export default function DriverDashboard() {
             const data = await res.json();
 
             if (res.ok) {
-                alert(`🎉 Nhận chuyến thành công!\n\nSĐT Khách: ${data.booking.phone}\n\nHãy gọi cho khách ngay!`);
-                // Refresh data
+                // Update local state to show full phone and call button
+                setBookings(prev => prev.map(b => {
+                    if (b.id === bookingId) {
+                        return {
+                            ...b,
+                            phone: data.booking.phone,
+                            full_phone_hidden: false,
+                            is_accepted: true
+                        };
+                    }
+                    return b;
+                }));
+
+                // Refresh driver balance
                 fetchDriver();
-                fetchBookings();
             } else {
                 alert(data.error || 'Có lỗi xảy ra');
             }
@@ -79,6 +97,17 @@ export default function DriverDashboard() {
         } finally {
             setProcessingId(null);
         }
+    };
+
+    const getTimeAgo = (dateString: string) => {
+        const now = new Date();
+        const created = new Date(dateString);
+        const diffInSeconds = Math.floor((now.getTime() - created.getTime()) / 1000);
+
+        if (diffInSeconds < 60) return 'Vừa xong';
+        if (diffInSeconds < 3600) return `${Math.floor(diffInSeconds / 60)} phút trước`;
+        if (diffInSeconds < 86400) return `${Math.floor(diffInSeconds / 3600)} giờ trước`;
+        return '1 ngày trước';
     };
 
     if (loading) return <div className="min-h-screen flex items-center justify-center bg-slate-50">Đang tải...</div>;
@@ -171,10 +200,10 @@ export default function DriverDashboard() {
                         </div>
                     ) : (
                         bookings.map((booking) => (
-                            <div key={booking.id} className="bg-white p-5 rounded-2xl shadow-sm border border-slate-100 hover:border-amber-500 transition-colors relative overflow-hidden">
+                            <div key={booking.id} className={`bg-white p-5 rounded-2xl shadow-sm border transition-all relative overflow-hidden ${booking.is_accepted ? 'border-green-500 ring-2 ring-green-100' : 'border-slate-100 hover:border-amber-500'}`}>
                                 {booking.full_phone_hidden && (
-                                    <div className="absolute top-0 right-0 bg-amber-100 text-amber-700 text-[10px] font-bold px-2 py-1 rounded-bl-lg">
-                                        MỚI
+                                    <div className="absolute top-0 right-0 bg-amber-100 text-amber-700 text-[10px] font-bold px-2 py-1 rounded-bl-lg flex items-center gap-1">
+                                        <Clock className="w-3 h-3" /> {getTimeAgo(booking.created_at)}
                                     </div>
                                 )}
 
@@ -183,7 +212,9 @@ export default function DriverDashboard() {
                                         <h4 className="font-bold text-lg text-slate-800">{booking.name}</h4>
                                         <div className="flex items-center gap-1 text-slate-500 text-sm mt-1">
                                             <Phone className="w-3 h-3" />
-                                            <span className="font-mono bg-slate-100 px-1 rounded">{booking.phone}</span>
+                                            <span className={`font-mono px-1 rounded ${booking.is_accepted ? 'bg-green-100 text-green-700 font-bold' : 'bg-slate-100'}`}>
+                                                {booking.phone}
+                                            </span>
                                         </div>
                                     </div>
                                     <div className="text-right">
@@ -220,19 +251,28 @@ export default function DriverDashboard() {
                                     )}
                                 </div>
 
-                                <button
-                                    onClick={() => handleAcceptBooking(booking.id)}
-                                    disabled={processingId === booking.id}
-                                    className="w-full bg-slate-900 text-white font-bold py-3 rounded-xl shadow-lg hover:bg-slate-800 active:scale-95 transition-all flex items-center justify-center gap-2 disabled:opacity-70"
-                                >
-                                    {processingId === booking.id ? (
-                                        'Đang xử lý...'
-                                    ) : (
-                                        <>
-                                            Nhận Chuyến (Phí 20k) <CheckCircle className="w-4 h-4" />
-                                        </>
-                                    )}
-                                </button>
+                                {booking.is_accepted ? (
+                                    <a
+                                        href={`tel:${booking.phone}`}
+                                        className="w-full bg-green-600 text-white font-bold py-3 rounded-xl shadow-lg hover:bg-green-700 active:scale-95 transition-all flex items-center justify-center gap-2 animate-bounce"
+                                    >
+                                        <Phone className="w-5 h-5" /> GỌI KHÁCH NGAY
+                                    </a>
+                                ) : (
+                                    <button
+                                        onClick={() => handleAcceptBooking(booking.id)}
+                                        disabled={processingId === booking.id}
+                                        className="w-full bg-slate-900 text-white font-bold py-3 rounded-xl shadow-lg hover:bg-slate-800 active:scale-95 transition-all flex items-center justify-center gap-2 disabled:opacity-70"
+                                    >
+                                        {processingId === booking.id ? (
+                                            'Đang xử lý...'
+                                        ) : (
+                                            <>
+                                                Nhận Chuyến (Phí 20k) <CheckCircle className="w-4 h-4" />
+                                            </>
+                                        )}
+                                    </button>
+                                )}
                             </div>
                         ))
                     )}
