@@ -6,7 +6,6 @@ CREATE TABLE IF NOT EXISTS drivers (
     phone TEXT NOT NULL UNIQUE,
     car_type TEXT NOT NULL,
     license_plate TEXT NOT NULL,
-    routes TEXT,
     status TEXT DEFAULT 'pending' CHECK (status IN ('pending', 'approved', 'rejected')),
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );

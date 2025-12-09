@@ -9,8 +9,7 @@ export default function DriverRegistration() {
         name: '',
         phone: '',
         carType: '4 cho',
-        licensePlate: '',
-        routes: ''
+        licensePlate: ''
     });
 
     const [isLoading, setIsLoading] = useState(false);
@@ -36,8 +35,7 @@ export default function DriverRegistration() {
                     name: '',
                     phone: '',
                     carType: '4 cho',
-                    licensePlate: '',
-                    routes: ''
+                    licensePlate: ''
                 });
             } else {
                 alert('Có lỗi xảy ra: ' + (data.error || 'Vui lòng thử lại.'));
@@ -211,17 +209,6 @@ export default function DriverRegistration() {
                                         onChange={e => setFormData({ ...formData, licensePlate: e.target.value })}
                                     />
                                 </div>
-                            </div>
-
-                            <div>
-                                <label className="block text-sm font-semibold text-slate-700 mb-2">Tuyến đường thường chạy</label>
-                                <textarea
-                                    rows={3}
-                                    placeholder="Ví dụ: Hà Nội - Nam Định, Hà Nội - Thái Bình..."
-                                    className="w-full px-4 py-3 rounded-xl border-2 border-slate-200 focus:border-amber-500 focus:ring-4 focus:ring-amber-500/10 outline-none transition-all font-medium resize-none"
-                                    value={formData.routes}
-                                    onChange={e => setFormData({ ...formData, routes: e.target.value })}
-                                />
                             </div>
 
                             <button

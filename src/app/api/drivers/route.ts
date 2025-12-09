@@ -7,7 +7,7 @@ const TELEGRAM_CHAT_ID = process.env.TELEGRAM_CHAT_ID;
 export async function POST(request: Request) {
     try {
         const body = await request.json();
-        const { name, phone, carType, licensePlate, routes } = body;
+        const { name, phone, carType, licensePlate } = body;
 
         // 1. Validation
         if (!name || !phone || !carType || !licensePlate) {
@@ -23,7 +23,6 @@ export async function POST(request: Request) {
                     phone,
                     car_type: carType,
                     license_plate: licensePlate,
-                    routes,
                     status: 'pending'
                 }
             ])
@@ -44,7 +43,6 @@ export async function POST(request: Request) {
 📞 **SĐT:** ${phone}
 🚘 **Xe:** ${carType}
 🔢 **Biển số:** ${licensePlate}
-📍 **Tuyến:** ${routes || 'Chưa rõ'}
 
 _Vào Admin để duyệt tài xế này._
             `;
@@ -68,6 +66,46 @@ _Vào Admin để duyệt tài xế này._
 
     } catch (error) {
         console.error('Driver API Error:', error);
+        return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
+    }
+}
+
+export async function GET() {
+    try {
+        const { data: drivers, error } = await supabase
+            .from('drivers')
+            .select('*')
+            .order('created_at', { ascending: false });
+
+        if (error) {
+            console.error('Database error:', error);
+            return NextResponse.json({ error: 'Database error' }, { status: 500 });
+        }
+
+        return NextResponse.json({ drivers });
+    } catch (error) {
+        console.error('Drivers API Error:', error);
+        return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
+    }
+}
+
+export async function PATCH(request: Request) {
+    try {
+        const { id, status } = await request.json();
+
+        const { error } = await supabase
+            .from('drivers')
+            .update({ status })
+            .eq('id', id);
+
+        if (error) {
+            console.error('Database error:', error);
+            return NextResponse.json({ error: 'Database error' }, { status: 500 });
+        }
+
+        return NextResponse.json({ success: true });
+    } catch (error) {
+        console.error('Update driver API Error:', error);
         return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
     }
 }
