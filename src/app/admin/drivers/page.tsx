@@ -91,18 +91,33 @@ export default function DriversAdminPage() {
         <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 p-6">
             <div className="max-w-7xl mx-auto">
                 {/* Header */}
-                <div className="bg-white rounded-2xl shadow-lg p-6 mb-6 flex justify-between items-center">
-                    <div>
-                        <h1 className="text-3xl font-bold text-slate-800 mb-2">Quản lý Tài xế</h1>
-                        <p className="text-slate-500">Tổng số tài xế: <span className="font-bold text-amber-600">{drivers.length}</span></p>
+                <div className="bg-white rounded-2xl shadow-lg p-6 mb-6">
+                    <div className="flex justify-between items-center mb-4">
+                        <div>
+                            <h1 className="text-3xl font-bold text-slate-800 mb-2">Quản lý Tài xế</h1>
+                            <p className="text-slate-500">Tổng số tài xế: <span className="font-bold text-amber-600">{drivers.length}</span></p>
+                        </div>
+                        <button
+                            onClick={handleLogout}
+                            className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl font-semibold transition-colors flex items-center gap-2"
+                        >
+                            <LogOut className="w-4 h-4" />
+                            Đăng xuất
+                        </button>
                     </div>
-                    <button
-                        onClick={handleLogout}
-                        className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl font-semibold transition-colors flex items-center gap-2"
-                    >
-                        <LogOut className="w-4 h-4" />
-                        Đăng xuất
-                    </button>
+
+                    {/* Navigation Tabs */}
+                    <div className="flex gap-3 pt-4 border-t border-slate-100">
+                        <button
+                            onClick={() => router.push('/admin')}
+                            className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl font-semibold transition-colors"
+                        >
+                            Đơn hàng
+                        </button>
+                        <button className="px-4 py-2 bg-amber-500 text-white rounded-xl font-semibold shadow-md">
+                            Tài xế
+                        </button>
+                    </div>
                 </div>
 
                 {/* Filters */}

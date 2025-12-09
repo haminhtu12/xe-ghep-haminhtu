@@ -8,7 +8,7 @@ export default function DriverRegistration() {
     const [formData, setFormData] = useState({
         name: '',
         phone: '',
-        carType: '4 cho',
+        carType: 'Xe 4 chỗ',
         licensePlate: ''
     });
 
@@ -34,7 +34,7 @@ export default function DriverRegistration() {
                 setFormData({
                     name: '',
                     phone: '',
-                    carType: '4 cho',
+                    carType: 'Xe 4 chỗ',
                     licensePlate: ''
                 });
             } else {
@@ -132,25 +132,6 @@ export default function DriverRegistration() {
                             </div>
                         </div>
 
-                        <div className="mt-8 pt-8 border-t border-slate-100">
-                            <div className="bg-slate-50 rounded-xl p-4 border border-slate-200">
-                                <p className="font-semibold text-slate-700 mb-2">Yêu cầu tham gia:</p>
-                                <ul className="space-y-2 text-sm text-slate-600">
-                                    <li className="flex items-center gap-2">
-                                        <div className="w-1.5 h-1.5 rounded-full bg-slate-400"></div>
-                                        Xe đời mới từ 2018 trở lại đây
-                                    </li>
-                                    <li className="flex items-center gap-2">
-                                        <div className="w-1.5 h-1.5 rounded-full bg-slate-400"></div>
-                                        Có bằng lái xe B2 trở lên & CCCD
-                                    </li>
-                                    <li className="flex items-center gap-2">
-                                        <div className="w-1.5 h-1.5 rounded-full bg-slate-400"></div>
-                                        Thái độ phục vụ chuyên nghiệp
-                                    </li>
-                                </ul>
-                            </div>
-                        </div>
                     </div>
 
                     {/* Registration Form */}
@@ -193,9 +174,9 @@ export default function DriverRegistration() {
                                         value={formData.carType}
                                         onChange={e => setFormData({ ...formData, carType: e.target.value })}
                                     >
-                                        <option value="4 cho">Xe 4 chỗ</option>
-                                        <option value="7 cho">Xe 7 chỗ</option>
-                                        <option value="ban tai">Bán tải</option>
+                                        <option value="Xe 4 chỗ">Xe 4 chỗ</option>
+                                        <option value="Xe 7 chỗ">Xe 7 chỗ</option>
+                                        <option value="Bán tải">Bán tải</option>
                                     </select>
                                 </div>
                                 <div>
