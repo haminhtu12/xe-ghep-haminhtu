@@ -2,17 +2,27 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { Wallet, MapPin, Bell, LogOut, ChevronRight, History, PlusCircle, Gift } from 'lucide-react';
+import { Wallet, MapPin, Bell, LogOut, ChevronRight, History, PlusCircle, Gift, Phone, User, Clock, CheckCircle } from 'lucide-react';
 
 export default function DriverDashboard() {
     const [driver, setDriver] = useState<any>(null);
+    const [bookings, setBookings] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
     const [location, setLocation] = useState<'hanoi' | 'thanhhoa'>('hanoi');
+    const [processingId, setProcessingId] = useState<string | null>(null);
     const router = useRouter();
 
     useEffect(() => {
         fetchDriver();
+        const interval = setInterval(fetchBookings, 10000); // Poll every 10s
+        return () => clearInterval(interval);
     }, []);
+
+    useEffect(() => {
+        if (driver) {
+            fetchBookings();
+        }
+    }, [driver, location]);
 
     const fetchDriver = async () => {
         try {
@@ -31,10 +41,44 @@ export default function DriverDashboard() {
         }
     };
 
-    const toggleLocation = async () => {
-        const newLoc = location === 'hanoi' ? 'thanhhoa' : 'hanoi';
-        setLocation(newLoc);
-        // TODO: Update to server
+    const fetchBookings = async () => {
+        try {
+            const res = await fetch(`/api/bookings/available?location=${location}`);
+            if (res.ok) {
+                const data = await res.json();
+                setBookings(data.bookings || []);
+            }
+        } catch (error) {
+            console.error('Error fetching bookings:', error);
+        }
+    };
+
+    const handleAcceptBooking = async (bookingId: string) => {
+        if (!confirm('Bạn có chắc chắn muốn nhận chuyến này? Phí nhận chuyến là 20.000đ.')) return;
+
+        setProcessingId(bookingId);
+        try {
+            const res = await fetch('/api/bookings/accept', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ bookingId }),
+            });
+
+            const data = await res.json();
+
+            if (res.ok) {
+                alert(`🎉 Nhận chuyến thành công!\n\nSĐT Khách: ${data.booking.phone}\n\nHãy gọi cho khách ngay!`);
+                // Refresh data
+                fetchDriver();
+                fetchBookings();
+            } else {
+                alert(data.error || 'Có lỗi xảy ra');
+            }
+        } catch (error) {
+            alert('Lỗi kết nối');
+        } finally {
+            setProcessingId(null);
+        }
     };
 
     if (loading) return <div className="min-h-screen flex items-center justify-center bg-slate-50">Đang tải...</div>;
@@ -107,47 +151,96 @@ export default function DriverDashboard() {
                     </div>
                 </div>
 
-                {/* Main Actions */}
-                <div className="grid grid-cols-2 gap-4">
-                    <button className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex flex-col items-center gap-3 hover:border-amber-500 transition-colors group">
-                        <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform">
-                            <PlusCircle className="w-6 h-6 text-green-600" />
-                        </div>
-                        <span className="font-bold text-slate-800">Tìm Khách</span>
-                    </button>
-                    <button className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex flex-col items-center gap-3 hover:border-amber-500 transition-colors group">
-                        <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform">
-                            <History className="w-6 h-6 text-blue-600" />
-                        </div>
-                        <span className="font-bold text-slate-800">Lịch Sử</span>
-                    </button>
-                </div>
+                {/* AVAILABLE BOOKINGS LIST */}
+                <div className="space-y-4">
+                    <div className="flex items-center justify-between px-2">
+                        <h3 className="font-bold text-slate-800 flex items-center gap-2">
+                            <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                            Khách đang tìm xe ({bookings.length})
+                        </h3>
+                        <span className="text-xs text-slate-500">Tự động cập nhật</span>
+                    </div>
 
-                {/* Recent Activity (Placeholder) */}
-                <div className="bg-white p-4 rounded-2xl shadow-sm border border-slate-100">
-                    <div className="flex justify-between items-center mb-4">
-                        <h3 className="font-bold text-slate-800">Giao dịch gần đây</h3>
-                        <ChevronRight className="w-5 h-5 text-slate-400" />
-                    </div>
-                    <div className="space-y-4">
-                        <div className="flex items-center justify-between">
-                            <div className="flex items-center gap-3">
-                                <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
-                                    <Gift className="w-5 h-5 text-green-600" />
-                                </div>
-                                <div>
-                                    <p className="font-bold text-slate-800 text-sm">Thưởng thành viên mới</p>
-                                    <p className="text-xs text-slate-500">Hệ thống tặng</p>
-                                </div>
+                    {bookings.length === 0 ? (
+                        <div className="bg-white p-8 rounded-2xl text-center border border-slate-100 border-dashed">
+                            <div className="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-3">
+                                <Clock className="w-8 h-8 text-slate-300" />
                             </div>
-                            <span className="font-bold text-green-600">+500.000đ</span>
+                            <p className="text-slate-500 font-medium">Chưa có khách nào ở khu vực này.</p>
+                            <p className="text-xs text-slate-400 mt-1">Hệ thống sẽ báo ngay khi có khách mới.</p>
                         </div>
-                    </div>
+                    ) : (
+                        bookings.map((booking) => (
+                            <div key={booking.id} className="bg-white p-5 rounded-2xl shadow-sm border border-slate-100 hover:border-amber-500 transition-colors relative overflow-hidden">
+                                {booking.full_phone_hidden && (
+                                    <div className="absolute top-0 right-0 bg-amber-100 text-amber-700 text-[10px] font-bold px-2 py-1 rounded-bl-lg">
+                                        MỚI
+                                    </div>
+                                )}
+
+                                <div className="flex justify-between items-start mb-3">
+                                    <div>
+                                        <h4 className="font-bold text-lg text-slate-800">{booking.name}</h4>
+                                        <div className="flex items-center gap-1 text-slate-500 text-sm mt-1">
+                                            <Phone className="w-3 h-3" />
+                                            <span className="font-mono bg-slate-100 px-1 rounded">{booking.phone}</span>
+                                        </div>
+                                    </div>
+                                    <div className="text-right">
+                                        <div className="font-bold text-amber-600 text-lg">
+                                            {booking.estimated_price?.toLocaleString('vi-VN')}đ
+                                        </div>
+                                        <div className="text-xs text-slate-400">{booking.seat_count} ghế</div>
+                                    </div>
+                                </div>
+
+                                <div className="space-y-3 mb-4">
+                                    <div className="flex gap-3">
+                                        <div className="flex flex-col items-center mt-1">
+                                            <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+                                            <div className="w-0.5 h-full bg-slate-200 my-1"></div>
+                                            <div className="w-2 h-2 bg-orange-500 rounded-full"></div>
+                                        </div>
+                                        <div className="flex-1 space-y-2">
+                                            <div>
+                                                <p className="text-xs text-slate-400">Điểm đón</p>
+                                                <p className="text-sm font-medium text-slate-700 line-clamp-1">{booking.pickup_address}</p>
+                                            </div>
+                                            <div>
+                                                <p className="text-xs text-slate-400">Điểm trả</p>
+                                                <p className="text-sm font-medium text-slate-700 line-clamp-1">{booking.dropoff_address || 'Chưa xác định'}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {booking.note && (
+                                        <div className="bg-slate-50 p-2 rounded-lg text-xs text-slate-600 italic">
+                                            "{booking.note}"
+                                        </div>
+                                    )}
+                                </div>
+
+                                <button
+                                    onClick={() => handleAcceptBooking(booking.id)}
+                                    disabled={processingId === booking.id}
+                                    className="w-full bg-slate-900 text-white font-bold py-3 rounded-xl shadow-lg hover:bg-slate-800 active:scale-95 transition-all flex items-center justify-center gap-2 disabled:opacity-70"
+                                >
+                                    {processingId === booking.id ? (
+                                        'Đang xử lý...'
+                                    ) : (
+                                        <>
+                                            Nhận Chuyến (Phí 20k) <CheckCircle className="w-4 h-4" />
+                                        </>
+                                    )}
+                                </button>
+                            </div>
+                        ))
+                    )}
                 </div>
 
                 <button
                     onClick={() => router.push('/api/auth/logout')}
-                    className="w-full py-4 text-slate-400 font-medium flex items-center justify-center gap-2 hover:text-red-500 transition-colors"
+                    className="w-full py-4 text-slate-400 font-medium flex items-center justify-center gap-2 hover:text-red-500 transition-colors mt-8"
                 >
                     <LogOut className="w-5 h-5" /> Đăng xuất
                 </button>
