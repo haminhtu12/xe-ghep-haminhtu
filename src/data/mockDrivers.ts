@@ -25,21 +25,32 @@ export const MIDDLE_NAMES = [
 
 export const CAR_MODELS = [
     // Standard "Ordinary" Cars
-    { name: 'Toyota Vios 2023', img: 'https://images.unsplash.com/photo-1590362891991-f776e747a588?w=600&h=400&fit=crop' },
-    { name: 'Hyundai Accent 2023', img: 'https://images.unsplash.com/photo-1619682817481-e994891cd1f5?w=600&h=400&fit=crop' },
-    { name: 'Kia Soluto', img: 'https://images.unsplash.com/photo-1617788138017-80ad40651399?w=600&h=400&fit=crop' },
-    { name: 'Mitsubishi Xpander', img: 'https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?w=600&h=400&fit=crop' },
-    { name: 'Kia Morning', img: 'https://images.unsplash.com/photo-1541899481282-d53bffe3c35d?w=600&h=400&fit=crop' },
-    { name: 'Honda City', img: 'https://images.unsplash.com/photo-1580273916550-e323be2ebdd4?w=600&h=400&fit=crop' },
-    { name: 'Toyota Innova', img: 'https://images.unsplash.com/photo-1503376763036-066120622c74?w=600&h=400&fit=crop' },
-
-    // Models observed on Vucar / Uncommon but Realistic
-    { name: 'Renault Duster', img: 'https://images.unsplash.com/photo-1626245903139-2c351f7d6325?w=600&h=400&fit=crop' }, // Silver SUV
-    { name: 'Ford Ranger Wildtrak', img: 'https://images.unsplash.com/photo-1574020967732-47526de59842?w=600&h=400&fit=crop' }, // Pickup
-    { name: 'Mitsubishi Xforce', img: 'https://images.unsplash.com/photo-1626245903741-f6df30878c77?w=600&h=400&fit=crop' }, // White Mitsubishi SUV style
-    { name: 'VinFast VF9', img: 'https://images.unsplash.com/photo-1563720223523-491937f71b96?w=600&h=400&fit=crop' }, // Large SUV
-    { name: 'Ford Territory', img: 'https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?w=600&h=400&fit=crop' }, // Contemporary White SUV
-    { name: 'Hyundai Grand i10', img: 'https://images.unsplash.com/photo-1541899481282-d53bffe3c35d?w=600&h=400&fit=crop' }, // Hatchback
+    { name: 'Toyota Vios 2023', img: '/images/cars/car-1.png' },
+    { name: 'Hyundai Accent 2023', img: '/images/cars/car-2.png' },
+    { name: 'Kia Soluto', img: '/images/cars/car-3.png' },
+    { name: 'Mitsubishi Xpander', img: '/images/cars/car-4.png' },
+    { name: 'Kia Morning', img: '/images/cars/car-5.png' },
+    { name: 'Honda City', img: '/images/cars/car-6.png' },
+    { name: 'Toyota Innova', img: '/images/cars/car-7.png' },
+    { name: 'Mazda 3', img: '/images/cars/car-8.png' },
+    { name: 'Kia Cerato', img: '/images/cars/car-9.png' },
+    { name: 'Hyundai Grand i10', img: '/images/cars/car-10.png' },
+    { name: 'VinFast Fadil', img: '/images/cars/car-11.png' },
+    { name: 'Toyota Fortuner', img: '/images/cars/car-12.png' },
+    { name: 'Ford Everest', img: '/images/cars/car-13.png' },
+    { name: 'Hyundai SantaFe', img: '/images/cars/car-14.png' },
+    { name: 'VinFast VF8', img: '/images/cars/car-15.png' },
+    { name: 'VinFast VF e34', img: '/images/cars/car-16.png' },
+    { name: 'Mitsubishi Outlander', img: '/images/cars/car-17.png' },
+    { name: 'Honda CR-V', img: '/images/cars/car-18.png' },
+    { name: 'Mazda CX-5', img: '/images/cars/car-19.png' },
+    { name: 'Kia Seltos', img: '/images/cars/car-20.png' },
+    { name: 'Toyota Cross', img: '/images/cars/car-21.png' },
+    { name: 'Hyundai Tucson', img: '/images/cars/car-22.png' },
+    { name: 'Ford Ranger', img: '/images/cars/car-23.png' },
+    { name: 'Toyota Veloz', img: '/images/cars/car-24.png' },
+    { name: 'Kia Carnival', img: '/images/cars/car-25.png' },
+    { name: 'Hyundai Stargazer', img: '/images/cars/car-26.png' },
 ];
 
 export const LOCATIONS = [
