@@ -50,10 +50,11 @@ Tài liệu này phác thảo các bước phát triển tiếp theo để chuy�
 ## Giai Đoạn 3: Admin & Vận Hành (Tuần 5)
 *Mục tiêu: Bạn có công cụ để quản lý toàn bộ hệ thống.*
 
-- [ ] **Trang Quản lý Tài xế:**
-    - Xem danh sách tài xế.
-    - Nút "Nạp tiền" thủ công (khi tài xế chuyển khoản).
-    - Khóa tài khoản (nếu vi phạm).
+- [ ] **Trang Quản lý Tài xế (`/admin/drivers`):**
+    - [ ] Xem danh sách tài xế, trạng thái duyệt.
+    - [ ] **[MỚI]** Hiển thị số dư ví hiện tại.
+    - [ ] **[MỚI]** Nút "Nạp tiền" (+ Modal nhập số tiền).
+    - [ ] API nạp tiền: Cộng tiền vào ví + Ghi log giao dịch (`driver_transactions`).
 - [ ] **Thống kê:** Xem doanh thu, số lượng chuyến đi thành công trong ngày.
 
 ---

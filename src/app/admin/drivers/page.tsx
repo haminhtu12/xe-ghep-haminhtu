@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { CheckCircle, XCircle, Phone, Car, Calendar, LogOut } from 'lucide-react';
+import { CheckCircle, XCircle, Phone, Car, Calendar, LogOut, Wallet, Plus } from 'lucide-react';
 
 interface Driver {
     id: string;
@@ -12,12 +12,19 @@ interface Driver {
     license_plate: string;
     status: 'pending' | 'approved' | 'rejected';
     created_at: string;
+    wallet_balance: number;
 }
 
 export default function DriversAdminPage() {
     const [drivers, setDrivers] = useState<Driver[]>([]);
     const [loading, setLoading] = useState(true);
     const [filter, setFilter] = useState<string>('all');
+    const [topUpModal, setTopUpModal] = useState<{ isOpen: boolean; driverId: string | null; driverName: string; amount: string }>({
+        isOpen: false,
+        driverId: null,
+        driverName: '',
+        amount: ''
+    });
     const router = useRouter();
 
     useEffect(() => {
@@ -46,6 +53,34 @@ export default function DriversAdminPage() {
             fetchDrivers(); // Refresh list
         } catch (error) {
             console.error('Failed to update status:', error);
+        }
+    };
+
+    const handleTopUp = async (e: React.FormEvent) => {
+        e.preventDefault();
+        if (!topUpModal.driverId || !topUpModal.amount) return;
+
+        try {
+            const res = await fetch('/api/admin/drivers/topup', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    driverId: topUpModal.driverId,
+                    amount: parseInt(topUpModal.amount)
+                }),
+            });
+
+            const data = await res.json();
+            if (res.ok) {
+                alert(data.message);
+                setTopUpModal({ isOpen: false, driverId: null, driverName: '', amount: '' });
+                fetchDrivers();
+            } else {
+                alert(data.error || 'Lỗi nạp tiền');
+            }
+        } catch (error) {
+            console.error('Top up error:', error);
+            alert('Lỗi kết nối');
         }
     };
 
@@ -158,7 +193,7 @@ export default function DriversAdminPage() {
                                     {getStatusBadge(driver.status)}
                                 </div>
 
-                                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                                <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
                                     <div>
                                         <p className="text-xs text-slate-500 font-bold uppercase mb-1">Loại xe</p>
                                         <p className="text-slate-700 font-semibold flex items-center gap-2">
@@ -171,6 +206,13 @@ export default function DriversAdminPage() {
                                         <p className="text-slate-700 font-semibold">{driver.license_plate}</p>
                                     </div>
                                     <div>
+                                        <p className="text-xs text-slate-500 font-bold uppercase mb-1">Ví tài xế</p>
+                                        <p className="text-emerald-600 font-bold text-lg flex items-center gap-1">
+                                            <Wallet className="w-4 h-4" />
+                                            {(driver.wallet_balance || 0).toLocaleString('vi-VN')}đ
+                                        </p>
+                                    </div>
+                                    <div>
                                         <p className="text-xs text-slate-500 font-bold uppercase mb-1">Ngày đăng ký</p>
                                         <p className="text-slate-700 flex items-center gap-2">
                                             <Calendar className="w-4 h-4" />
@@ -180,7 +222,15 @@ export default function DriversAdminPage() {
                                 </div>
 
                                 {/* Action Buttons */}
-                                <div className="flex gap-2 flex-wrap">
+                                <div className="flex gap-2 flex-wrap border-t border-slate-100 pt-4">
+                                    <button
+                                        onClick={() => setTopUpModal({ isOpen: true, driverId: driver.id, driverName: driver.name, amount: '' })}
+                                        className="px-4 py-2 bg-amber-100 text-amber-700 hover:bg-amber-200 rounded-xl font-bold transition-colors flex items-center gap-2"
+                                    >
+                                        <Plus className="w-4 h-4" />
+                                        Nạp tiền
+                                    </button>
+
                                     {driver.status === 'pending' && (
                                         <>
                                             <button
@@ -214,6 +264,67 @@ export default function DriversAdminPage() {
                     )}
                 </div>
             </div>
+
+            {/* Top Up Modal */}
+            {topUpModal.isOpen && (
+                <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+                    <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md p-6 animate-in fade-in zoom-in duration-200">
+                        <div className="flex justify-between items-center mb-6">
+                            <h3 className="text-xl font-bold text-slate-800">Nạp tiền cho tài xế</h3>
+                            <button
+                                onClick={() => setTopUpModal(prev => ({ ...prev, isOpen: false }))}
+                                className="p-2 hover:bg-slate-100 rounded-full"
+                            >
+                                <XCircle className="w-6 h-6 text-slate-400" />
+                            </button>
+                        </div>
+
+                        <form onSubmit={handleTopUp}>
+                            <div className="mb-4">
+                                <label className="block text-sm font-medium text-slate-700 mb-1">Tài xế</label>
+                                <input
+                                    type="text"
+                                    value={topUpModal.driverName}
+                                    disabled
+                                    className="w-full px-4 py-3 rounded-xl bg-slate-100 border-none font-bold text-slate-600"
+                                />
+                            </div>
+
+                            <div className="mb-6">
+                                <label className="block text-sm font-medium text-slate-700 mb-1">Số tiền nạp (VNĐ)</label>
+                                <input
+                                    type="number"
+                                    value={topUpModal.amount}
+                                    onChange={(e) => setTopUpModal(prev => ({ ...prev, amount: e.target.value }))}
+                                    placeholder="Ví dụ: 500000"
+                                    className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-amber-500 focus:border-transparent outline-none font-bold text-lg"
+                                    autoFocus
+                                    required
+                                />
+                                <div className="flex gap-2 mt-2">
+                                    {[100000, 200000, 500000, 1000000].map(amt => (
+                                        <button
+                                            key={amt}
+                                            type="button"
+                                            onClick={() => setTopUpModal(prev => ({ ...prev, amount: amt.toString() }))}
+                                            className="px-3 py-1 bg-slate-100 hover:bg-amber-100 text-slate-600 hover:text-amber-700 rounded-lg text-xs font-bold transition-colors"
+                                        >
+                                            +{amt.toLocaleString()}
+                                        </button>
+                                    ))}
+                                </div>
+                            </div>
+
+                            <button
+                                type="submit"
+                                className="w-full bg-amber-500 text-white font-bold py-3 rounded-xl shadow-lg hover:bg-amber-600 active:scale-95 transition-all"
+                            >
+                                Xác nhận nạp tiền
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }

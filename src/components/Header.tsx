@@ -2,12 +2,13 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Car, Menu, X, Phone } from 'lucide-react';
+import { Car, Menu, X, Phone, LayoutDashboard } from 'lucide-react';
 import { useState, useEffect } from 'react';
 
 export default function Header() {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [scrolled, setScrolled] = useState(false);
+    const [isDriver, setIsDriver] = useState(false);
     const pathname = usePathname();
 
     // Handle scroll effect
@@ -17,6 +18,21 @@ export default function Header() {
         };
         window.addEventListener('scroll', handleScroll);
         return () => window.removeEventListener('scroll', handleScroll);
+    }, []);
+
+    // Check driver login status
+    useEffect(() => {
+        const checkDriver = async () => {
+            try {
+                const res = await fetch('/api/drivers/me');
+                if (res.ok) {
+                    setIsDriver(true);
+                }
+            } catch (error) {
+                console.error('Auth check failed', error);
+            }
+        };
+        checkDriver();
     }, []);
 
     // Close menu when route changes
@@ -54,15 +70,25 @@ export default function Header() {
                         </Link>
 
                         {/* Driver CTA Button */}
-                        <Link
-                            href="/tai-xe"
-                            className={`px-5 py-2.5 rounded-full font-bold transition-all transform hover:scale-105 ${pathname === '/tai-xe'
-                                ? 'bg-amber-100 text-amber-700 border border-amber-200'
-                                : 'bg-white text-slate-900 shadow-lg hover:shadow-amber-500/20'
-                                }`}
-                        >
-                            Đăng ký Tài xế
-                        </Link>
+                        {isDriver ? (
+                            <Link
+                                href="/tai-xe/dashboard"
+                                className="px-5 py-2.5 rounded-full font-bold bg-amber-500 text-white shadow-lg hover:bg-amber-600 transition-all transform hover:scale-105 flex items-center gap-2"
+                            >
+                                <LayoutDashboard className="w-4 h-4" />
+                                Vào Dashboard
+                            </Link>
+                        ) : (
+                            <Link
+                                href="/tai-xe"
+                                className={`px-5 py-2.5 rounded-full font-bold transition-all transform hover:scale-105 ${pathname === '/tai-xe'
+                                    ? 'bg-amber-100 text-amber-700 border border-amber-200'
+                                    : 'bg-white text-slate-900 shadow-lg hover:shadow-amber-500/20'
+                                    }`}
+                            >
+                                Đăng ký Tài xế
+                            </Link>
+                        )}
                     </nav>
 
                     {/* Mobile Menu Button */}
@@ -82,10 +108,17 @@ export default function Header() {
                         <Link href="/" className="px-4 py-3 rounded-xl hover:bg-slate-50 font-medium text-slate-700">
                             Trang chủ
                         </Link>
-                        <Link href="/tai-xe" className="px-4 py-3 rounded-xl bg-amber-50 text-amber-700 font-bold flex items-center justify-between">
-                            Đăng ký Tài xế
-                            <Car className="w-5 h-5" />
-                        </Link>
+                        {isDriver ? (
+                            <Link href="/tai-xe/dashboard" className="px-4 py-3 rounded-xl bg-amber-500 text-white font-bold flex items-center justify-between">
+                                Vào Dashboard
+                                <LayoutDashboard className="w-5 h-5" />
+                            </Link>
+                        ) : (
+                            <Link href="/tai-xe" className="px-4 py-3 rounded-xl bg-amber-50 text-amber-700 font-bold flex items-center justify-between">
+                                Đăng ký Tài xế
+                                <Car className="w-5 h-5" />
+                            </Link>
+                        )}
                         <div className="border-t border-slate-100 pt-4 mt-2">
                             <a href="tel:0912345678" className="px-4 py-3 rounded-xl bg-green-50 text-green-700 font-bold flex items-center gap-3 justify-center">
                                 <Phone className="w-5 h-5" />

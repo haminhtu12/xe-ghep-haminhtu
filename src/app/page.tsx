@@ -1,7 +1,26 @@
+'use client';
+
 import SearchForm from '@/components/SearchForm';
 import { Car, Shield, Clock, DollarSign } from 'lucide-react';
+import { useState, useEffect } from 'react';
 
 export default function Home() {
+  const [isDriver, setIsDriver] = useState(false);
+
+  useEffect(() => {
+    const checkDriver = async () => {
+      try {
+        const res = await fetch('/api/drivers/me');
+        if (res.ok) {
+          setIsDriver(true);
+        }
+      } catch (error) {
+        console.error('Auth check failed', error);
+      }
+    };
+    checkDriver();
+  }, []);
+
   return (
     <main className="min-h-screen pb-20">
       {/* Hero Section - Updated with Warm/Dark Styling */}
@@ -34,13 +53,15 @@ export default function Home() {
       <div className="px-4 relative z-20 -mt-16">
         <SearchForm />
 
-        {/* Subtle Driver CTA */}
-        <div className="text-center mt-6">
-          <a href="/tai-xe" className="inline-flex items-center gap-2 text-slate-500 hover:text-amber-600 transition-colors font-medium bg-white/80 backdrop-blur px-4 py-2 rounded-full border border-slate-200 shadow-sm hover:shadow-md">
-            <span>🚗 Bạn là tài xế tiện chuyến?</span>
-            <span className="underline decoration-amber-500 underline-offset-2 font-bold text-amber-600">Đăng ký nhận khách ngay</span>
-          </a>
-        </div>
+        {/* Subtle Driver CTA - Hide if Driver */}
+        {!isDriver && (
+          <div className="text-center mt-6">
+            <a href="/tai-xe" className="inline-flex items-center gap-2 text-slate-500 hover:text-amber-600 transition-colors font-medium bg-white/80 backdrop-blur px-4 py-2 rounded-full border border-slate-200 shadow-sm hover:shadow-md">
+              <span>🚗 Bạn là tài xế tiện chuyến?</span>
+              <span className="underline decoration-amber-500 underline-offset-2 font-bold text-amber-600">Đăng ký nhận khách ngay</span>
+            </a>
+          </div>
+        )}
       </div>
 
       {/* Features Section - Clean & Trustworthy */}
@@ -103,50 +124,52 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Driver CTA Section */}
-      <section className="py-20 bg-slate-900 relative overflow-hidden">
-        <div className="absolute right-0 top-0 w-1/2 h-full bg-slate-800/30 skew-x-12 transform origin-top"></div>
+      {/* Driver CTA Section - Hide if Driver */}
+      {!isDriver && (
+        <section className="py-20 bg-slate-900 relative overflow-hidden">
+          <div className="absolute right-0 top-0 w-1/2 h-full bg-slate-800/30 skew-x-12 transform origin-top"></div>
 
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 flex flex-col md:flex-row items-center justify-between gap-12">
-          <div className="text-left max-w-2xl">
-            <span className="text-amber-500 font-bold tracking-wider uppercase mb-2 block">Cơ hội cho tài xế</span>
-            <h2 className="text-3xl md:text-5xl font-bold mb-6 text-white leading-tight">
-              Có xe nhàn rỗi? <br /> Kiếm thêm <span className="text-amber-500">15 - 20 triệu/tháng</span>
-            </h2>
-            <div className="space-y-4 mb-8">
-              <div className="flex items-center gap-3">
-                <div className="w-8 h-8 rounded-full bg-green-500/20 flex items-center justify-center">
-                  <span className="text-green-500 font-bold">✓</span>
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 flex flex-col md:flex-row items-center justify-between gap-12">
+            <div className="text-left max-w-2xl">
+              <span className="text-amber-500 font-bold tracking-wider uppercase mb-2 block">Cơ hội cho tài xế</span>
+              <h2 className="text-3xl md:text-5xl font-bold mb-6 text-white leading-tight">
+                Có xe nhàn rỗi? <br /> Kiếm thêm <span className="text-amber-500">15 - 20 triệu/tháng</span>
+              </h2>
+              <div className="space-y-4 mb-8">
+                <div className="flex items-center gap-3">
+                  <div className="w-8 h-8 rounded-full bg-green-500/20 flex items-center justify-center">
+                    <span className="text-green-500 font-bold">✓</span>
+                  </div>
+                  <p className="text-xl text-slate-300">Kết hợp chở khách tiện chuyến - <span className="text-white font-bold">Không áp doanh số</span></p>
                 </div>
-                <p className="text-xl text-slate-300">Kết hợp chở khách tiện chuyến - <span className="text-white font-bold">Không áp doanh số</span></p>
+                <div className="flex items-center gap-3">
+                  <div className="w-8 h-8 rounded-full bg-green-500/20 flex items-center justify-center">
+                    <span className="text-green-500 font-bold">✓</span>
+                  </div>
+                  <p className="text-xl text-slate-300">Hệ thống tự động bắn khách - <span className="text-white font-bold">Không cắt phế</span></p>
+                </div>
+                <div className="flex items-center gap-3">
+                  <div className="w-8 h-8 rounded-full bg-green-500/20 flex items-center justify-center">
+                    <span className="text-green-500 font-bold">✓</span>
+                  </div>
+                  <p className="text-xl text-slate-300">Nhận tiền mặt ngay sau chuyến đi</p>
+                </div>
               </div>
-              <div className="flex items-center gap-3">
-                <div className="w-8 h-8 rounded-full bg-green-500/20 flex items-center justify-center">
-                  <span className="text-green-500 font-bold">✓</span>
-                </div>
-                <p className="text-xl text-slate-300">Hệ thống tự động bắn khách - <span className="text-white font-bold">Không cắt phế</span></p>
-              </div>
-              <div className="flex items-center gap-3">
-                <div className="w-8 h-8 rounded-full bg-green-500/20 flex items-center justify-center">
-                  <span className="text-green-500 font-bold">✓</span>
-                </div>
-                <p className="text-xl text-slate-300">Nhận tiền mặt ngay sau chuyến đi</p>
+              <div className="flex gap-4">
+                <a href="/tai-xe" className="bg-amber-500 text-white px-8 py-4 rounded-xl font-bold text-lg hover:bg-amber-600 transition-all shadow-lg hover:shadow-amber-500/20">
+                  Đăng ký ngay
+                </a>
+                <a href="/tai-xe" className="px-8 py-4 rounded-xl font-bold text-lg text-slate-300 border border-slate-700 hover:bg-slate-800 transition-all">
+                  Tìm hiểu thêm
+                </a>
               </div>
             </div>
-            <div className="flex gap-4">
-              <a href="/tai-xe" className="bg-amber-500 text-white px-8 py-4 rounded-xl font-bold text-lg hover:bg-amber-600 transition-all shadow-lg hover:shadow-amber-500/20">
-                Đăng ký ngay
-              </a>
-              <a href="/tai-xe" className="px-8 py-4 rounded-xl font-bold text-lg text-slate-300 border border-slate-700 hover:bg-slate-800 transition-all">
-                Tìm hiểu thêm
-              </a>
-            </div>
+
+            {/* Abstract Graphic Element placeholder */}
+            <div className="w-full md:w-1/3 aspect-square bg-gradient-to-tr from-amber-500 to-orange-600 rounded-3xl opacity-20 rotate-12 transform translate-x-10"></div>
           </div>
-
-          {/* Abstract Graphic Element placeholder */}
-          <div className="w-full md:w-1/3 aspect-square bg-gradient-to-tr from-amber-500 to-orange-600 rounded-3xl opacity-20 rotate-12 transform translate-x-10"></div>
-        </div>
-      </section>
+        </section>
+      )}
     </main>
   );
 }
