@@ -436,11 +436,11 @@ export default function SearchForm() {
                                 </div>
 
                                 {/* Car Image Preview */}
-                                <div className="relative w-full h-24 rounded-lg overflow-hidden group-hover:shadow-md transition-all">
+                                <div className="relative w-full h-24 rounded-lg overflow-hidden group-hover:shadow-md transition-all bg-slate-100 flex items-center justify-center">
                                     <img
                                         src={driver.carImg}
                                         alt={driver.car}
-                                        className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-500"
+                                        className="w-full h-full object-contain transform group-hover:scale-105 transition-transform duration-500"
                                     />
                                     <div className="absolute bottom-2 left-2 bg-black/50 backdrop-blur-sm text-white text-[10px] px-2 py-1 rounded-full font-medium flex items-center gap-1">
                                         <MapPin className="w-3 h-3" /> {driver.loc}

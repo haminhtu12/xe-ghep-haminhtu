@@ -47,7 +47,7 @@ export default function Header() {
                             Trang chủ
                         </Link>
                         <Link
-                            href="#"
+                            href="/ve-chung-toi"
                             className={`font-medium hover:text-amber-500 transition-colors ${scrolled || pathname !== '/' ? 'text-slate-600' : 'text-slate-200'}`}
                         >
                             Về chúng tôi
@@ -57,8 +57,8 @@ export default function Header() {
                         <Link
                             href="/tai-xe"
                             className={`px-5 py-2.5 rounded-full font-bold transition-all transform hover:scale-105 ${pathname === '/tai-xe'
-                                    ? 'bg-amber-100 text-amber-700 border border-amber-200'
-                                    : 'bg-white text-slate-900 shadow-lg hover:shadow-amber-500/20'
+                                ? 'bg-amber-100 text-amber-700 border border-amber-200'
+                                : 'bg-white text-slate-900 shadow-lg hover:shadow-amber-500/20'
                                 }`}
                         >
                             Đăng ký Tài xế
