@@ -33,6 +33,14 @@ export default function Home() {
       {/* Search Form - Overlapping layout with reduced negative margin for balance */}
       <div className="px-4 relative z-20 -mt-16">
         <SearchForm />
+
+        {/* Subtle Driver CTA */}
+        <div className="text-center mt-6">
+          <a href="/tai-xe" className="inline-flex items-center gap-2 text-slate-500 hover:text-amber-600 transition-colors font-medium bg-white/80 backdrop-blur px-4 py-2 rounded-full border border-slate-200 shadow-sm hover:shadow-md">
+            <span>🚗 Bạn là tài xế tiện chuyến?</span>
+            <span className="underline decoration-amber-500 underline-offset-2 font-bold text-amber-600">Đăng ký nhận khách ngay</span>
+          </a>
+        </div>
       </div>
 
       {/* Features Section - Clean & Trustworthy */}
@@ -101,20 +109,37 @@ export default function Home() {
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 flex flex-col md:flex-row items-center justify-between gap-12">
           <div className="text-left max-w-2xl">
-            <span className="text-amber-500 font-bold tracking-wider uppercase mb-2 block">Dành cho đối tác</span>
+            <span className="text-amber-500 font-bold tracking-wider uppercase mb-2 block">Cơ hội cho tài xế</span>
             <h2 className="text-3xl md:text-5xl font-bold mb-6 text-white leading-tight">
-              Gia tăng thu nhập cùng <br /> đội ngũ tài xế chuyên nghiệp
+              Có xe nhàn rỗi? <br /> Kiếm thêm <span className="text-amber-500">15 - 20 triệu/tháng</span>
             </h2>
-            <p className="text-xl text-slate-400 mb-8">
-              Tận dụng ghế trống, kiếm thêm thu nhập thụ động mỗi ngày. Cộng đồng hơn 10,000 tài xế đang hoạt động.
-            </p>
+            <div className="space-y-4 mb-8">
+              <div className="flex items-center gap-3">
+                <div className="w-8 h-8 rounded-full bg-green-500/20 flex items-center justify-center">
+                  <span className="text-green-500 font-bold">✓</span>
+                </div>
+                <p className="text-xl text-slate-300">Kết hợp chở khách tiện chuyến - <span className="text-white font-bold">Không áp doanh số</span></p>
+              </div>
+              <div className="flex items-center gap-3">
+                <div className="w-8 h-8 rounded-full bg-green-500/20 flex items-center justify-center">
+                  <span className="text-green-500 font-bold">✓</span>
+                </div>
+                <p className="text-xl text-slate-300">Hệ thống tự động bắn khách - <span className="text-white font-bold">Không cắt phế</span></p>
+              </div>
+              <div className="flex items-center gap-3">
+                <div className="w-8 h-8 rounded-full bg-green-500/20 flex items-center justify-center">
+                  <span className="text-green-500 font-bold">✓</span>
+                </div>
+                <p className="text-xl text-slate-300">Nhận tiền mặt ngay sau chuyến đi</p>
+              </div>
+            </div>
             <div className="flex gap-4">
-              <button className="bg-amber-500 text-white px-8 py-4 rounded-xl font-bold text-lg hover:bg-amber-600 transition-all shadow-lg hover:shadow-amber-500/20">
+              <a href="/tai-xe" className="bg-amber-500 text-white px-8 py-4 rounded-xl font-bold text-lg hover:bg-amber-600 transition-all shadow-lg hover:shadow-amber-500/20">
                 Đăng ký ngay
-              </button>
-              <button className="px-8 py-4 rounded-xl font-bold text-lg text-slate-300 border border-slate-700 hover:bg-slate-800 transition-all">
+              </a>
+              <a href="/tai-xe" className="px-8 py-4 rounded-xl font-bold text-lg text-slate-300 border border-slate-700 hover:bg-slate-800 transition-all">
                 Tìm hiểu thêm
-              </button>
+              </a>
             </div>
           </div>
 

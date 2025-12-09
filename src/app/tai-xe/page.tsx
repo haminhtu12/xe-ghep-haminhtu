@@ -13,10 +13,41 @@ export default function DriverRegistration() {
         routes: ''
     });
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const [isLoading, setIsLoading] = useState(false);
+
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        // In a real app, this would send data to a backend (Supabase/Firebase)
-        alert('Đăng ký thành công! Chào mừng bạn đến với đội ngũ.');
+        setIsLoading(true);
+
+        try {
+            const response = await fetch('/api/drivers', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(formData),
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                alert('Đăng ký thành công! Chúng tôi sẽ liên hệ lại sớm.');
+                setFormData({
+                    name: '',
+                    phone: '',
+                    carType: '4 cho',
+                    licensePlate: '',
+                    routes: ''
+                });
+            } else {
+                alert('Có lỗi xảy ra: ' + (data.error || 'Vui lòng thử lại.'));
+            }
+        } catch (error) {
+            console.error('Error submitting form:', error);
+            alert('Có lỗi xảy ra. Vui lòng kiểm tra lại kết nối.');
+        } finally {
+            setIsLoading(false);
+        }
     };
 
     return (
@@ -195,9 +226,17 @@ export default function DriverRegistration() {
 
                             <button
                                 type="submit"
-                                className="w-full bg-gradient-to-r from-amber-500 to-orange-600 text-white font-bold text-lg py-4 rounded-xl shadow-lg hover:shadow-xl hover:shadow-amber-500/30 hover:-translate-y-1 transition-all active:scale-95"
+                                disabled={isLoading}
+                                className="w-full bg-gradient-to-r from-amber-500 to-orange-600 text-white font-bold text-lg py-4 rounded-xl shadow-lg hover:shadow-xl hover:shadow-amber-500/30 hover:-translate-y-1 transition-all active:scale-95 disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                             >
-                                Gửi Đăng Ký
+                                {isLoading ? (
+                                    <>
+                                        <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                                        Đang gửi...
+                                    </>
+                                ) : (
+                                    'Gửi Đăng Ký'
+                                )}
                             </button>
 
                             <div className="text-center">
