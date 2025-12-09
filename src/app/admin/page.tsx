@@ -1,7 +1,8 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { CheckCircle, Clock, XCircle, Phone, MapPin, Calendar } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { CheckCircle, Clock, XCircle, Phone, MapPin, Calendar, LogOut } from 'lucide-react';
 
 interface Booking {
     id: string;
@@ -22,6 +23,7 @@ export default function AdminPage() {
     const [bookings, setBookings] = useState<Booking[]>([]);
     const [loading, setLoading] = useState(true);
     const [filter, setFilter] = useState<string>('all');
+    const router = useRouter();
 
     useEffect(() => {
         fetchBookings();
@@ -50,6 +52,11 @@ export default function AdminPage() {
         } catch (error) {
             console.error('Failed to update status:', error);
         }
+    };
+
+    const handleLogout = async () => {
+        await fetch('/api/auth/logout', { method: 'POST' });
+        router.push('/admin/login');
     };
 
     const filteredBookings = filter === 'all'
@@ -91,9 +98,18 @@ export default function AdminPage() {
         <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 p-6">
             <div className="max-w-7xl mx-auto">
                 {/* Header */}
-                <div className="bg-white rounded-2xl shadow-lg p-6 mb-6">
-                    <h1 className="text-3xl font-bold text-slate-800 mb-2">Quản lý Đơn hàng</h1>
-                    <p className="text-slate-500">Tổng số đơn: <span className="font-bold text-amber-600">{bookings.length}</span></p>
+                <div className="bg-white rounded-2xl shadow-lg p-6 mb-6 flex justify-between items-center">
+                    <div>
+                        <h1 className="text-3xl font-bold text-slate-800 mb-2">Quản lý Đơn hàng</h1>
+                        <p className="text-slate-500">Tổng số đơn: <span className="font-bold text-amber-600">{bookings.length}</span></p>
+                    </div>
+                    <button
+                        onClick={handleLogout}
+                        className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl font-semibold transition-colors flex items-center gap-2"
+                    >
+                        <LogOut className="w-4 h-4" />
+                        Đăng xuất
+                    </button>
                 </div>
 
                 {/* Filters */}
@@ -103,8 +119,8 @@ export default function AdminPage() {
                             key={status}
                             onClick={() => setFilter(status)}
                             className={`px-4 py-2 rounded-xl font-semibold transition-all ${filter === status
-                                    ? 'bg-amber-500 text-white shadow-lg'
-                                    : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                                ? 'bg-amber-500 text-white shadow-lg'
+                                : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
                                 }`}
                         >
                             {status === 'all' ? 'Tất cả' : status === 'pending' ? 'Chờ xử lý' : status === 'confirmed' ? 'Đã xác nhận' : status === 'completed' ? 'Hoàn thành' : 'Đã hủy'}
