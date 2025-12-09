@@ -24,11 +24,25 @@ export default function SearchForm() {
     const [activeDrivers, setActiveDrivers] = useState<any[]>([]);
 
     useEffect(() => {
-        // Generate pool and pick 4 random ones on mount
-        const pool = generateDrivers(50); // Generate 50 drivers
-        // Shuffle and pick 4
+        // Generate pool
+        const pool = generateDrivers(50);
+
+        // Pick 4 unique drivers, ensuring no duplicate avatars
+        const uniqueDrivers: any[] = [];
+        const usedAvatars = new Set();
+
+        // Shuffle pool first
         const shuffled = [...pool].sort(() => 0.5 - Math.random());
-        setActiveDrivers(shuffled.slice(0, 4));
+
+        for (const driver of shuffled) {
+            if (!usedAvatars.has(driver.avatar)) {
+                uniqueDrivers.push(driver);
+                usedAvatars.add(driver.avatar);
+            }
+            if (uniqueDrivers.length >= 4) break;
+        }
+
+        setActiveDrivers(uniqueDrivers);
     }, []);
 
     // Auto-update price when service changes
