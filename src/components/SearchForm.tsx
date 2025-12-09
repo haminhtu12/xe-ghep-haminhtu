@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { MapPin, Calendar, Search, ArrowRight, ArrowLeftRight, Package, Car, Users, Clock } from 'lucide-react';
 import BookingModal from './BookingModal';
+import { generateDrivers } from '@/data/mockDrivers';
 
 const SERVICE_TYPES = [
     { id: 'xe-ghep', name: 'Xe Tiện Chuyến', icon: Users, price: 400000, desc: 'Đi chung, tiết kiệm' },
@@ -19,18 +20,21 @@ export default function SearchForm() {
 
     const [isBookingModalOpen, setIsBookingModalOpen] = useState(false);
 
+    // State for random drivers
+    const [activeDrivers, setActiveDrivers] = useState<any[]>([]);
+
+    useEffect(() => {
+        // Generate pool and pick 4 random ones on mount
+        const pool = generateDrivers(50); // Generate 50 drivers
+        // Shuffle and pick 4
+        const shuffled = [...pool].sort(() => 0.5 - Math.random());
+        setActiveDrivers(shuffled.slice(0, 4));
+    }, []);
+
     // Auto-update price when service changes
     useEffect(() => {
         const service = SERVICE_TYPES.find(s => s.id === serviceType);
         if (service) {
-            // Only xe-ghep and bao-xe might care about seats, but usually bao-xe is fixed price or per car.
-            // Requirement says "giá xe tiện chuyên 400k/1 ghế".
-            // Let's assume seat count multiplier applies primarily to 'xe-ghep'.
-            // For 'bao-xe', it's usually one price for the whole car, but let's keep it simple or strictly for xe-ghep.
-            // If service is 'xe-ghep', multiply by seatCount. Else (e.g. gui-do, bao-xe), usually fixed or different logic.
-            // However, user specifically asked for "cho phép chọn số ghế đi" in context of "giá xe tiện chuyên 400k/1 ghế".
-            // So if type is 'xe-ghep', we use seatCount.
-
             if (service.id === 'xe-ghep') {
                 setEstimatedPrice(service.price * seatCount);
             } else {
@@ -52,7 +56,7 @@ export default function SearchForm() {
                     serviceType,
                     direction,
                     estimatedPrice,
-                    seatCount // Pass seat count
+                    seatCount
                 }}
             />
 
@@ -182,7 +186,6 @@ export default function SearchForm() {
                         </div>
                     )}
 
-                    {/* Price & Submit */}
                     {/* Price & Submit - Optimized for CTA */}
                     <div className="flex flex-col md:flex-row items-center gap-4">
                         <div className="w-full md:w-auto text-right pr-4 hidden md:block">
@@ -206,7 +209,7 @@ export default function SearchForm() {
                     </div>
                 </div>
 
-                {/* Live Driver Feed - Social Proof (Fake Supply Strategy) */}
+                {/* Live Driver Feed - Social Proof (Randomized) */}
                 <div className="pt-6 border-t border-slate-100">
                     <div className="flex items-center justify-between mb-4">
                         <h4 className="text-sm font-bold text-slate-400 uppercase tracking-wider flex items-center gap-2">
@@ -217,36 +220,52 @@ export default function SearchForm() {
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                        {[
-                            { name: 'Nguyễn Văn Nam', car: 'Toyota Vios 2022', rating: 4.9, loc: 'Ngã Tư Sở, Hà Nội' },
-                            { name: 'Trần Tùng', car: 'Hyundai Accent 2023', rating: 5.0, loc: 'BigC Thanh Hóa' },
-                            { name: 'Phạm Hùng', car: 'Kia Cerato', rating: 4.8, loc: 'Giáp Bát, Hà Nội' },
-                            { name: 'Lê Tuấn', car: 'Xpander 7 chỗ', rating: 4.9, loc: 'Sầm Sơn, Thanh Hóa' },
-                        ].map((driver, i) => (
-                            <div key={i} className="flex items-center gap-3 p-3 rounded-xl bg-slate-50 border border-slate-100 hover:border-amber-200 transition-colors cursor-pointer group">
-                                <div className="w-10 h-10 rounded-full bg-slate-200 flex items-center justify-center text-slate-500 font-bold text-xs border-2 border-white shadow-sm">
-                                    {driver.name.split(' ').pop()?.[0]}
-                                </div>
-                                <div className="flex-1 min-w-0">
-                                    <div className="flex items-center justify-between">
-                                        <p className="text-sm font-bold text-slate-800 truncate group-hover:text-amber-600 transition-colors">{driver.name}</p>
-                                        <span className="text-xs font-bold text-amber-500 flex items-center gap-0.5">
-                                            ⭐ {driver.rating}
-                                        </span>
+                        {activeDrivers.map((driver, i) => (
+                            <div key={i} className="flex flex-col gap-3 p-3 rounded-xl bg-slate-50 border border-slate-100 transition-colors group overflow-hidden">
+                                <div className="flex items-center gap-3">
+                                    <div className="w-12 h-12 rounded-full border-2 border-white shadow-sm relative shrink-0">
+                                        <img
+                                            src={driver.avatar}
+                                            alt={driver.name}
+                                            className="w-full h-full rounded-full object-cover"
+                                        />
+                                        <div className="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 bg-green-500 border-2 border-white rounded-full"></div>
                                     </div>
-                                    <p className="text-xs text-slate-500 truncate flex items-center gap-1">
-                                        <Car className="w-3 h-3" /> {driver.car} • 📍 {driver.loc}
-                                    </p>
+                                    <div className="flex-1 min-w-0">
+                                        <div className="flex items-center justify-between">
+                                            <p className="text-sm font-bold text-slate-800 truncate">{driver.name}</p>
+                                            <div className="flex items-center gap-2">
+                                                <span className="text-xs font-bold text-amber-500 flex items-center gap-0.5">
+                                                    ⭐ {driver.rating}
+                                                </span>
+                                                <div className="px-1.5 py-0.5 rounded bg-green-100 text-green-700 text-[10px] font-bold uppercase tracking-wide">
+                                                    Đã xác thực
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <p className="text-xs text-slate-500 truncate flex items-center gap-1 mt-0.5">
+                                            <Car className="w-3 h-3" /> {driver.car}
+                                        </p>
+                                    </div>
                                 </div>
-                                <button className="text-xs font-bold text-white bg-slate-900 px-3 py-1.5 rounded-lg group-hover:bg-amber-500 transition-colors">
-                                    Chọn
-                                </button>
+
+                                {/* Car Image Preview */}
+                                <div className="relative w-full h-24 rounded-lg overflow-hidden group-hover:shadow-md transition-all">
+                                    <img
+                                        src={driver.carImg}
+                                        alt={driver.car}
+                                        className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-500"
+                                    />
+                                    <div className="absolute bottom-2 left-2 bg-black/50 backdrop-blur-sm text-white text-[10px] px-2 py-1 rounded-full font-medium flex items-center gap-1">
+                                        <MapPin className="w-3 h-3" /> {driver.loc}
+                                    </div>
+                                </div>
                             </div>
                         ))}
                     </div>
                 </div>
 
-            </form>
-        </div>
+            </form >
+        </div >
     );
 }
