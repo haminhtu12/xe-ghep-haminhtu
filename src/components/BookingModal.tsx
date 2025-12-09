@@ -1,7 +1,7 @@
 'use client';
 
-import { useState } from 'react';
-import { X, CheckCircle, Phone, MapPin, User, FileText, Loader2 } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { X, CheckCircle, Phone, MapPin, User, FileText, Loader2, Users, Car, Package } from 'lucide-react';
 
 interface BookingModalProps {
     isOpen: boolean;
@@ -14,21 +14,45 @@ interface BookingModalProps {
     };
 }
 
+const SERVICE_TYPES = [
+    { id: 'xe-ghep', name: 'Xe Ghép', icon: Users, basePrice: 400000 },
+    { id: 'bao-xe', name: 'Bao Xe', icon: Car, basePrice: 1100000 },
+    { id: 'gui-do', name: 'Gửi Hàng', icon: Package, basePrice: 100000 },
+];
+
 export default function BookingModal({ isOpen, onClose, bookingData }: BookingModalProps) {
     const [step, setStep] = useState<'form' | 'success'>('form');
     const [isLoading, setIsLoading] = useState(false);
+
+    // Internal state for service type and seat count
+    const [selectedService, setSelectedService] = useState(bookingData.serviceType);
+    const [seatCount, setSeatCount] = useState(bookingData.seatCount || 1);
+    const [estimatedPrice, setEstimatedPrice] = useState(bookingData.estimatedPrice);
+
     const [formData, setFormData] = useState({
         name: '',
         phone: '',
         pickupAddress: '',
         dropoffAddress: '',
         note: '',
+        // For package delivery
+        packageWeight: '',
+        packageDescription: '',
     });
 
-    if (!isOpen) return null;
+    // Update price when service or seat count changes
+    useEffect(() => {
+        const service = SERVICE_TYPES.find(s => s.id === selectedService);
+        if (service) {
+            if (service.id === 'xe-ghep') {
+                setEstimatedPrice(service.basePrice * seatCount);
+            } else {
+                setEstimatedPrice(service.basePrice);
+            }
+        }
+    }, [selectedService, seatCount]);
 
-    // Use seatCount from props or default to 1 if undefined (legacy safety)
-    const seatCount = bookingData.seatCount || 1;
+    if (!isOpen) return null;
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -42,7 +66,10 @@ export default function BookingModal({ isOpen, onClose, bookingData }: BookingMo
                 },
                 body: JSON.stringify({
                     ...formData,
-                    ...bookingData,
+                    serviceType: selectedService,
+                    direction: bookingData.direction,
+                    estimatedPrice,
+                    seatCount: selectedService === 'xe-ghep' ? seatCount : 1,
                 }),
             });
 
@@ -65,12 +92,16 @@ export default function BookingModal({ isOpen, onClose, bookingData }: BookingMo
         }
     };
 
+    const getServiceName = (id: string) => {
+        return SERVICE_TYPES.find(s => s.id === id)?.name || id;
+    };
+
     return (
         <div
             className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 backdrop-blur-sm p-4 animate-in fade-in duration-200"
             onClick={handleBackdropClick}
         >
-            <div className="bg-white rounded-3xl w-full max-w-lg shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200 relative">
+            <div className="bg-white rounded-3xl w-full max-w-lg shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200 relative max-h-[90vh] overflow-y-auto">
 
                 {/* Close Button */}
                 <button
@@ -89,107 +120,190 @@ export default function BookingModal({ isOpen, onClose, bookingData }: BookingMo
                                 <span className="font-semibold text-amber-600">
                                     {bookingData.direction === 'hn-th' ? 'Hà Nội ➝ Thanh Hóa' : 'Thanh Hóa ➝ Hà Nội'}
                                 </span>
-                                <span>•</span>
-                                <span>{seatCount} ghế</span>
-                                <span>•</span>
-                                <span className="font-bold text-emerald-600">
-                                    {bookingData.estimatedPrice.toLocaleString('vi-VN')}đ
-                                </span>
                             </div>
                         </div>
 
-                        {/* Body */}
-                        <form onSubmit={handleSubmit} className="p-6 space-y-4">
+                        {/* Form */}
+                        <form onSubmit={handleSubmit} className="p-6 space-y-5">
 
+                            {/* Service Type Selection */}
+                            <div>
+                                <label className="block text-sm font-bold text-slate-700 mb-3">Loại dịch vụ</label>
+                                <div className="grid grid-cols-3 gap-2">
+                                    {SERVICE_TYPES.map((service) => {
+                                        const Icon = service.icon;
+                                        const isActive = selectedService === service.id;
+                                        return (
+                                            <button
+                                                key={service.id}
+                                                type="button"
+                                                onClick={() => setSelectedService(service.id)}
+                                                className={`flex flex-col items-center p-3 rounded-xl border-2 transition-all ${isActive
+                                                        ? 'bg-amber-50 border-amber-500 shadow-md'
+                                                        : 'bg-white border-slate-200 hover:border-amber-300'
+                                                    }`}
+                                            >
+                                                <Icon className={`w-5 h-5 mb-1 ${isActive ? 'text-amber-600' : 'text-slate-400'}`} />
+                                                <span className={`text-xs font-semibold ${isActive ? 'text-slate-800' : 'text-slate-500'}`}>
+                                                    {service.name}
+                                                </span>
+                                            </button>
+                                        );
+                                    })}
+                                </div>
+                            </div>
 
-                            {/* Name & Phone */}
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <div className="space-y-1">
-                                    <label className="text-xs font-bold text-slate-500 uppercase">Họ và tên <span className="text-red-500">*</span></label>
-                                    <div className="flex items-center gap-2 border border-slate-200 rounded-xl px-3 py-2.5 focus-within:border-amber-500 focus-within:ring-2 focus-within:ring-amber-200 transition-all">
-                                        <User className="w-5 h-5 text-slate-400 shrink-0" />
+                            {/* Seat Count (Only for Xe Ghep) */}
+                            {selectedService === 'xe-ghep' && (
+                                <div>
+                                    <label className="block text-sm font-bold text-slate-700 mb-2">Số ghế</label>
+                                    <div className="flex items-center gap-3">
+                                        <button
+                                            type="button"
+                                            onClick={() => setSeatCount(Math.max(1, seatCount - 1))}
+                                            className="w-10 h-10 rounded-full bg-slate-100 hover:bg-amber-100 text-slate-700 font-bold transition-colors"
+                                        >
+                                            -
+                                        </button>
+                                        <span className="text-2xl font-bold text-slate-800 min-w-[60px] text-center">
+                                            {seatCount}
+                                        </span>
+                                        <button
+                                            type="button"
+                                            onClick={() => setSeatCount(Math.min(7, seatCount + 1))}
+                                            className="w-10 h-10 rounded-full bg-slate-100 hover:bg-amber-100 text-slate-700 font-bold transition-colors"
+                                        >
+                                            +
+                                        </button>
+                                        <span className="text-sm text-slate-500 ml-2">Tối đa 7 ghế</span>
+                                    </div>
+                                </div>
+                            )}
+
+                            {/* Package Details (Only for Gui Hang) */}
+                            {selectedService === 'gui-do' && (
+                                <>
+                                    <div>
+                                        <label className="block text-sm font-bold text-slate-700 mb-2">Khối lượng hàng (kg)</label>
+                                        <input
+                                            type="number"
+                                            placeholder="Ví dụ: 5"
+                                            className="w-full px-4 py-3 border-2 border-slate-200 rounded-xl focus:border-amber-500 focus:ring-4 focus:ring-amber-500/10 outline-none transition-all"
+                                            value={formData.packageWeight}
+                                            onChange={(e) => setFormData({ ...formData, packageWeight: e.target.value })}
+                                        />
+                                    </div>
+                                    <div>
+                                        <label className="block text-sm font-bold text-slate-700 mb-2">Mô tả hàng hóa</label>
                                         <input
                                             type="text"
-                                            required
-                                            placeholder="Nguyễn Văn A"
-                                            value={formData.name}
-                                            onChange={e => setFormData({ ...formData, name: e.target.value })}
-                                            className="flex-1 outline-none font-medium bg-transparent"
+                                            placeholder="Ví dụ: Quần áo, điện tử..."
+                                            className="w-full px-4 py-3 border-2 border-slate-200 rounded-xl focus:border-amber-500 focus:ring-4 focus:ring-amber-500/10 outline-none transition-all"
+                                            value={formData.packageDescription}
+                                            onChange={(e) => setFormData({ ...formData, packageDescription: e.target.value })}
                                         />
                                     </div>
+                                </>
+                            )}
+
+                            {/* Price Display */}
+                            <div className="bg-emerald-50 border-2 border-emerald-200 rounded-xl p-4">
+                                <div className="flex justify-between items-center">
+                                    <span className="text-sm font-semibold text-slate-600">Tổng tiền ước tính:</span>
+                                    <span className="text-2xl font-bold text-emerald-600">
+                                        {estimatedPrice.toLocaleString('vi-VN')}đ
+                                    </span>
                                 </div>
-                                <div className="space-y-1">
-                                    <label className="text-xs font-bold text-slate-500 uppercase">Số điện thoại <span className="text-red-500">*</span></label>
-                                    <div className="flex items-center gap-2 border border-slate-200 rounded-xl px-3 py-2.5 focus-within:border-amber-500 focus-within:ring-2 focus-within:ring-amber-200 transition-all">
-                                        <Phone className="w-5 h-5 text-slate-400 shrink-0" />
-                                        <input
-                                            type="tel"
-                                            required
-                                            placeholder="0912 345 678"
-                                            value={formData.phone}
-                                            onChange={e => setFormData({ ...formData, phone: e.target.value })}
-                                            className="flex-1 outline-none font-medium bg-transparent"
-                                        />
-                                    </div>
-                                </div>
+                            </div>
+
+                            {/* Name */}
+                            <div>
+                                <label className="block text-sm font-bold text-slate-700 mb-2">
+                                    <User className="w-4 h-4 inline mr-1" />
+                                    Họ và tên
+                                </label>
+                                <input
+                                    type="text"
+                                    required
+                                    placeholder="Nguyễn Văn A"
+                                    className="w-full px-4 py-3 border-2 border-slate-200 rounded-xl focus:border-amber-500 focus:ring-4 focus:ring-amber-500/10 outline-none transition-all"
+                                    value={formData.name}
+                                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                                />
+                            </div>
+
+                            {/* Phone */}
+                            <div>
+                                <label className="block text-sm font-bold text-slate-700 mb-2">
+                                    <Phone className="w-4 h-4 inline mr-1" />
+                                    Số điện thoại
+                                </label>
+                                <input
+                                    type="tel"
+                                    required
+                                    placeholder="0912 xxx xxx"
+                                    className="w-full px-4 py-3 border-2 border-slate-200 rounded-xl focus:border-amber-500 focus:ring-4 focus:ring-amber-500/10 outline-none transition-all"
+                                    value={formData.phone}
+                                    onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                                />
                             </div>
 
                             {/* Pickup Address */}
-                            <div className="space-y-1">
-                                <label className="text-xs font-bold text-slate-500 uppercase">Điểm đón chi tiết <span className="text-red-500">*</span></label>
-                                <div className="flex items-center gap-2 border border-slate-200 rounded-xl px-3 py-2.5 focus-within:border-amber-500 focus-within:ring-2 focus-within:ring-amber-200 transition-all">
-                                    <MapPin className="w-5 h-5 text-slate-400 shrink-0" />
-                                    <input
-                                        type="text"
-                                        required
-                                        placeholder="Số 10, Ngõ 5, Đường..."
-                                        value={formData.pickupAddress}
-                                        onChange={e => setFormData({ ...formData, pickupAddress: e.target.value })}
-                                        className="flex-1 outline-none font-medium bg-transparent"
-                                    />
-                                </div>
+                            <div>
+                                <label className="block text-sm font-bold text-slate-700 mb-2">
+                                    <MapPin className="w-4 h-4 inline mr-1" />
+                                    Điểm đón
+                                </label>
+                                <input
+                                    type="text"
+                                    required
+                                    placeholder={bookingData.direction === 'hn-th' ? 'Địa chỉ tại Hà Nội' : 'Địa chỉ tại Thanh Hóa'}
+                                    className="w-full px-4 py-3 border-2 border-slate-200 rounded-xl focus:border-amber-500 focus:ring-4 focus:ring-amber-500/10 outline-none transition-all"
+                                    value={formData.pickupAddress}
+                                    onChange={(e) => setFormData({ ...formData, pickupAddress: e.target.value })}
+                                />
                             </div>
 
-                            {/* Dropoff Address (Optional) */}
-                            <div className="space-y-1">
-                                <label className="text-xs font-bold text-slate-500 uppercase">Điểm trả (Tùy chọn)</label>
-                                <div className="flex items-center gap-2 border border-slate-200 rounded-xl px-3 py-2.5 focus-within:border-amber-500 focus-within:ring-2 focus-within:ring-amber-200 transition-all">
-                                    <MapPin className="w-5 h-5 text-slate-400 shrink-0" />
-                                    <input
-                                        type="text"
-                                        placeholder="Nhập điểm đến..."
-                                        value={formData.dropoffAddress}
-                                        onChange={e => setFormData({ ...formData, dropoffAddress: e.target.value })}
-                                        className="flex-1 outline-none font-medium bg-transparent"
-                                    />
-                                </div>
+                            {/* Dropoff Address */}
+                            <div>
+                                <label className="block text-sm font-bold text-slate-700 mb-2">
+                                    <MapPin className="w-4 h-4 inline mr-1" />
+                                    Điểm trả (Tùy chọn)
+                                </label>
+                                <input
+                                    type="text"
+                                    placeholder={bookingData.direction === 'hn-th' ? 'Địa chỉ tại Thanh Hóa' : 'Địa chỉ tại Hà Nội'}
+                                    className="w-full px-4 py-3 border-2 border-slate-200 rounded-xl focus:border-amber-500 focus:ring-4 focus:ring-amber-500/10 outline-none transition-all"
+                                    value={formData.dropoffAddress}
+                                    onChange={(e) => setFormData({ ...formData, dropoffAddress: e.target.value })}
+                                />
                             </div>
 
                             {/* Note */}
-                            <div className="space-y-1">
-                                <label className="text-xs font-bold text-slate-500 uppercase">Ghi chú thêm</label>
-                                <div className="flex items-start gap-2 border border-slate-200 rounded-xl px-3 py-2.5 focus-within:border-amber-500 focus-within:ring-2 focus-within:ring-amber-200 transition-all">
-                                    <FileText className="w-5 h-5 text-slate-400 shrink-0 mt-0.5" />
-                                    <textarea
-                                        rows={2}
-                                        placeholder="Mang theo nhiều hành lý, đi cùng trẻ em..."
-                                        value={formData.note}
-                                        onChange={e => setFormData({ ...formData, note: e.target.value })}
-                                        className="flex-1 outline-none font-medium resize-none bg-transparent"
-                                    />
-                                </div>
+                            <div>
+                                <label className="block text-sm font-bold text-slate-700 mb-2">
+                                    <FileText className="w-4 h-4 inline mr-1" />
+                                    Ghi chú (Tùy chọn)
+                                </label>
+                                <textarea
+                                    rows={3}
+                                    placeholder="Thời gian đón mong muốn, yêu cầu đặc biệt..."
+                                    className="w-full px-4 py-3 border-2 border-slate-200 rounded-xl focus:border-amber-500 focus:ring-4 focus:ring-amber-500/10 outline-none transition-all resize-none"
+                                    value={formData.note}
+                                    onChange={(e) => setFormData({ ...formData, note: e.target.value })}
+                                />
                             </div>
 
                             {/* Submit Button */}
                             <button
                                 type="submit"
                                 disabled={isLoading}
-                                className="w-full bg-gradient-to-r from-amber-500 to-orange-600 text-white py-3.5 rounded-xl font-bold text-lg shadow-lg shadow-amber-500/30 hover:shadow-xl hover:shadow-amber-500/40 hover:-translate-y-0.5 transition-all mt-2 disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                                className="w-full bg-gradient-to-r from-amber-500 to-orange-600 text-white py-4 rounded-xl font-bold text-lg shadow-lg hover:shadow-xl hover:shadow-amber-500/30 hover:-translate-y-1 transition-all disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                             >
                                 {isLoading ? (
                                     <>
                                         <Loader2 className="w-5 h-5 animate-spin" />
-                                        Đang gửi...
+                                        Đang xử lý...
                                     </>
                                 ) : (
                                     'Xác nhận đặt xe'
@@ -198,24 +312,24 @@ export default function BookingModal({ isOpen, onClose, bookingData }: BookingMo
                         </form>
                     </>
                 ) : (
-                    /* Success View */
-                    <div className="p-10 flex flex-col items-center justify-center text-center space-y-4">
-                        <div className="w-20 h-20 bg-green-100 text-green-500 rounded-full flex items-center justify-center mb-2 animate-bounce">
-                            <CheckCircle className="w-10 h-10" />
+                    /* Success State */
+                    <div className="p-8 text-center">
+                        <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                            <CheckCircle className="w-12 h-12 text-green-600" />
                         </div>
-                        <h3 className="text-2xl font-bold text-slate-800">Đặt xe thành công!</h3>
-                        <p className="text-slate-500 max-w-xs mx-auto">
-                            Cảm ơn bạn đã tin tưởng. Nhà xe đã nhận được thông tin và sẽ liên hệ lại với bạn trong ít phút để xác nhận chuyến đi.
+                        <h3 className="text-2xl font-bold text-slate-800 mb-3">Đặt xe thành công!</h3>
+                        <p className="text-slate-600 mb-6">
+                            Chúng tôi sẽ liên hệ lại với bạn trong vòng <span className="font-bold text-amber-600">5 phút</span>.
                         </p>
                         <button
                             onClick={onClose}
-                            className="mt-4 px-8 py-3 bg-slate-100 text-slate-700 font-bold rounded-xl hover:bg-slate-200 transition-colors"
+                            className="bg-amber-500 text-white px-8 py-3 rounded-xl font-bold hover:bg-amber-600 transition-colors"
                         >
-                            Hoàn tất
+                            Đóng
                         </button>
                     </div>
                 )}
             </div>
-        </div >
+        </div>
     );
 }
