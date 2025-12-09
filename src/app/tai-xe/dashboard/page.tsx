@@ -61,7 +61,7 @@ export default function DriverDashboard() {
     };
 
     const handleAcceptBooking = async (bookingId: string) => {
-        if (!confirm('Bạn có chắc chắn muốn nhận chuyến này? Phí nhận chuyến là 20.000đ.')) return;
+        if (!confirm('Bạn có chắc chắn muốn nhận chuyến này? Phí nhận chuyến là 25.000đ.')) return;
 
         setProcessingId(bookingId);
         try {
@@ -180,6 +180,16 @@ export default function DriverDashboard() {
                     </div>
                 </div>
 
+                {/* Main Actions */}
+                <div className="grid grid-cols-1 gap-4">
+                    <button className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex flex-col items-center gap-3 hover:border-amber-500 transition-colors group">
+                        <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform">
+                            <History className="w-6 h-6 text-blue-600" />
+                        </div>
+                        <span className="font-bold text-slate-800">Lịch Sử Chuyến Đi</span>
+                    </button>
+                </div>
+
                 {/* AVAILABLE BOOKINGS LIST */}
                 <div className="space-y-4">
                     <div className="flex items-center justify-between px-2">
@@ -268,7 +278,7 @@ export default function DriverDashboard() {
                                             'Đang xử lý...'
                                         ) : (
                                             <>
-                                                Nhận Chuyến (Phí 20k) <CheckCircle className="w-4 h-4" />
+                                                Nhận Chuyến (Phí 25k) <CheckCircle className="w-4 h-4" />
                                             </>
                                         )}
                                     </button>

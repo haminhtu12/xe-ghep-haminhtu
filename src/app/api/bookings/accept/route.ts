@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import { supabase } from '@/lib/supabase';
 import { cookies } from 'next/headers';
 
-const BOOKING_FEE = 20000;
+const BOOKING_FEE = 25000;
 
 export async function POST(request: Request) {
     try {
