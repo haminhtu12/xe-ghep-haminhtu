@@ -278,7 +278,7 @@ export default function BookingModal({ isOpen, onClose, bookingData }: BookingMo
                                 <input
                                     type="text"
                                     required
-                                    placeholder={bookingData.direction === 'hn-th' ? 'Địa chỉ tại Hà Nội' : 'Địa chỉ tại Thanh Hóa'}
+                                    placeholder="Ví dụ: 123 Trần Phú, Ba Đình, Hà Nội"
                                     className="w-full px-4 py-3 border-2 border-slate-200 rounded-xl focus:border-amber-500 focus:ring-4 focus:ring-amber-500/10 outline-none transition-all"
                                     value={formData.pickupAddress}
                                     onChange={(e) => setFormData({ ...formData, pickupAddress: e.target.value })}
@@ -293,7 +293,7 @@ export default function BookingModal({ isOpen, onClose, bookingData }: BookingMo
                                 </label>
                                 <input
                                     type="text"
-                                    placeholder={bookingData.direction === 'hn-th' ? 'Địa chỉ tại Thanh Hóa' : 'Địa chỉ tại Hà Nội'}
+                                    placeholder="Ví dụ: 456 Quang Trung, Thanh Hóa (Có thể để trống)"
                                     className="w-full px-4 py-3 border-2 border-slate-200 rounded-xl focus:border-amber-500 focus:ring-4 focus:ring-amber-500/10 outline-none transition-all"
                                     value={formData.dropoffAddress}
                                     onChange={(e) => setFormData({ ...formData, dropoffAddress: e.target.value })}
