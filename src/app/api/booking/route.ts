@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { supabase } from '@/lib/supabase';
 
 const TELEGRAM_BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN;
 const TELEGRAM_CHAT_ID = process.env.TELEGRAM_CHAT_ID;
@@ -67,7 +68,34 @@ _Copy tin nhắn này gửi vào nhóm Zalo tài xế!_
             console.warn('Telegram credentials not set. Message logged to console only.');
         }
 
-        return NextResponse.json({ success: true, message: 'Booking received' });
+        // 4. Save to Database
+        const { data: booking, error: dbError } = await supabase
+            .from('bookings')
+            .insert([
+                {
+                    name,
+                    phone,
+                    pickup_address: pickupAddress,
+                    dropoff_address: dropoffAddress || null,
+                    service_type: serviceType,
+                    direction,
+                    estimated_price: estimatedPrice,
+                    seat_count: seatCount || 1,
+                    note: note || null,
+                    status: 'pending',
+                },
+            ])
+            .select()
+            .single();
+
+        if (dbError) {
+            console.error('Database error:', dbError);
+            // Don't fail the request if DB fails, just log it
+        } else {
+            console.log('Booking saved to database:', booking?.id);
+        }
+
+        return NextResponse.json({ success: true, message: 'Booking received', bookingId: booking?.id });
 
     } catch (error) {
         console.error('Booking API Error:', error);
