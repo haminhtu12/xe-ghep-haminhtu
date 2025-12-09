@@ -1,14 +1,12 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { MapPin, Calendar, Search, ArrowRight, ArrowLeftRight, Package, Car, Users, Clock } from 'lucide-react';
-import BookingModal from './BookingModal';
+import { MapPin, Calendar, ArrowRight, ArrowLeftRight, Car, Users, Clock, User, Phone, FileText, Loader2 } from 'lucide-react';
 import { generateDrivers } from '@/data/mockDrivers';
 
 const SERVICE_TYPES = [
     { id: 'xe-ghep', name: 'Xe Tiện Chuyến', icon: Users, price: 400000, desc: 'Đi chung, tiết kiệm' },
     { id: 'bao-xe', name: 'Bao Xe Trọn Gói', icon: Car, price: 1100000, desc: 'Riêng tư, đưa đón tận nơi' },
-    { id: 'gui-do', name: 'Gửi Hàng Hỏa Tốc', icon: Package, price: 100000, desc: 'Nhận hàng trong ngày' },
 ];
 
 export default function SearchForm() {
@@ -17,8 +15,17 @@ export default function SearchForm() {
     const [date, setDate] = useState(new Date().toISOString().split('T')[0]);
     const [seatCount, setSeatCount] = useState(1);
     const [estimatedPrice, setEstimatedPrice] = useState<number>(400000);
+    const [isLoading, setIsLoading] = useState(false);
+    const [isSuccess, setIsSuccess] = useState(false);
 
-    const [isBookingModalOpen, setIsBookingModalOpen] = useState(false);
+    // Form data state
+    const [formData, setFormData] = useState({
+        name: '',
+        phone: '',
+        pickupAddress: '',
+        dropoffAddress: '',
+        note: '',
+    });
 
     // State for random drivers
     const [activeDrivers, setActiveDrivers] = useState<any[]>([]);
@@ -61,28 +68,59 @@ export default function SearchForm() {
         setDirection(prev => prev === 'hn-th' ? 'th-hn' : 'hn-th');
     };
 
-    return (
-        <div className="bg-white rounded-3xl shadow-2xl shadow-slate-200/50 p-6 lg:p-10 max-w-5xl mx-auto relative z-10 border border-slate-100">
-            <BookingModal
-                isOpen={isBookingModalOpen}
-                onClose={() => setIsBookingModalOpen(false)}
-                bookingData={{
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        setIsLoading(true);
+
+        try {
+            const response = await fetch('/api/booking', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    ...formData,
                     serviceType,
                     direction,
+                    date,
                     estimatedPrice,
-                    seatCount
-                }}
-            />
+                    seatCount: serviceType === 'xe-ghep' ? seatCount : 1,
+                }),
+            });
 
+            if (response.ok) {
+                setIsSuccess(true);
+                // Reset form
+                setFormData({
+                    name: '',
+                    phone: '',
+                    pickupAddress: '',
+                    dropoffAddress: '',
+                    note: '',
+                });
+            } else {
+                alert('Có lỗi xảy ra. Vui lòng thử lại hoặc gọi hotline.');
+            }
+        } catch (error) {
+            console.error('Booking error:', error);
+            alert('Có lỗi kết nối. Vui lòng kiểm tra mạng.');
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+
+    return (
+        <div className="bg-white rounded-3xl shadow-2xl shadow-slate-200/50 p-6 lg:p-10 max-w-5xl mx-auto relative z-10 border border-slate-100">
             <div className="absolute top-0 left-1/2 -translate-x-1/2 -mt-5 bg-amber-500 text-white px-6 py-2 rounded-full text-sm font-bold shadow-lg shadow-amber-500/30 uppercase tracking-wider flex items-center gap-2">
                 <Clock className="w-4 h-4" />
                 Chạy liên tục 24/7
             </div>
 
-            <form onSubmit={(e) => e.preventDefault()} className="space-y-8 mt-2">
+            <form onSubmit={handleSubmit} className="space-y-8 mt-2">
 
                 {/* Service Type Selection - Big Cards */}
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {SERVICE_TYPES.map((service) => {
                         const isActive = serviceType === service.id;
                         const Icon = service.icon;
@@ -155,8 +193,8 @@ export default function SearchForm() {
                     <div className="hidden md:block absolute top-1/2 left-10 right-10 h-0.5 bg-slate-200 border-t border-dashed border-slate-300 -z-0"></div>
                 </div>
 
-                {/* Footer: Date & Price & Action */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-end">
+                {/* Date & Seat Count */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     {/* Date Picker */}
                     <div className="bg-slate-50 p-4 rounded-2xl border border-slate-200 flex items-center gap-4 cursor-pointer hover:border-amber-300 transition-colors">
                         <Calendar className="w-6 h-6 text-slate-400" />
@@ -199,29 +237,163 @@ export default function SearchForm() {
                             </div>
                         </div>
                     )}
+                </div>
 
-                    {/* Price & Submit - Optimized for CTA */}
-                    <div className="flex flex-col md:flex-row items-center gap-4">
-                        <div className="w-full md:w-auto text-right pr-4 hidden md:block">
-                            <p className="text-xs text-slate-500 font-bold uppercase tracking-wider">Giá trọn gói</p>
-                            <p className="text-3xl font-extrabold text-emerald-600">
-                                <span className="text-sm font-semibold text-slate-400 mr-1">
-                                    {serviceType === 'xe-ghep' ? '' : 'Từ '}
-                                </span>
-                                {estimatedPrice.toLocaleString('vi-VN')} <span className="text-sm align-top text-emerald-500">đ</span>
+                {/* Price Display */}
+                <div className="bg-emerald-50 border-2 border-emerald-200 rounded-xl p-4">
+                    <div className="flex justify-between items-center">
+                        <span className="text-sm font-semibold text-slate-600">
+                            {serviceType === 'xe-ghep' ? 'Tổng tiền:' : 'Giá ước tính:'}
+                        </span>
+                        <div className="text-right">
+                            <span className="text-2xl font-bold text-emerald-600">
+                                {serviceType !== 'xe-ghep' && <span className="text-sm font-semibold text-slate-500 mr-1">Từ </span>}
+                                {estimatedPrice.toLocaleString('vi-VN')}đ
+                            </span>
+                            {serviceType === 'bao-xe' && (
+                                <p className="text-xs text-slate-500 mt-1">Tùy loại xe 4-7 chỗ</p>
+                            )}
+                        </div>
+                    </div>
+                    {serviceType !== 'xe-ghep' && (
+                        <div className="pt-2 border-t border-emerald-200 mt-2">
+                            <p className="text-xs text-slate-600 flex items-start gap-1">
+                                <span>💬</span>
+                                <span>Giá cuối cùng sẽ được xác nhận khi tài xế liên hệ lại với bạn</span>
                             </p>
                         </div>
-
-                        <button
-                            type="button"
-                            onClick={() => setIsBookingModalOpen(true)}
-                            className="w-full bg-gradient-to-r from-amber-500 to-orange-600 text-white py-5 px-8 rounded-2xl font-bold text-xl shadow-xl shadow-amber-500/30 hover:shadow-2xl hover:shadow-amber-500/40 hover:-translate-y-1 transition-all flex items-center justify-center gap-3 animate-pulse"
-                        >
-                            <span>ĐẶT XE NGAY</span>
-                            <ArrowRight className="w-6 h-6" />
-                        </button>
-                    </div>
+                    )}
                 </div>
+
+                {/* Booking Form Fields */}
+                {!isSuccess ? (
+                    <>
+                        <div className="border-t border-slate-200 pt-6">
+                            <h3 className="text-lg font-bold text-slate-800 mb-4">Thông tin đặt xe</h3>
+
+                            <div className="space-y-4">
+                                {/* Name */}
+                                <div>
+                                    <label className="block text-sm font-bold text-slate-700 mb-2">
+                                        <User className="w-4 h-4 inline mr-1" />
+                                        Họ và tên
+                                    </label>
+                                    <input
+                                        type="text"
+                                        required
+                                        placeholder="Nguyễn Văn A"
+                                        className="w-full px-4 py-3 border-2 border-slate-200 rounded-xl focus:border-amber-500 focus:ring-4 focus:ring-amber-500/10 outline-none transition-all"
+                                        value={formData.name}
+                                        onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                                    />
+                                </div>
+
+                                {/* Phone */}
+                                <div>
+                                    <label className="block text-sm font-bold text-slate-700 mb-2">
+                                        <Phone className="w-4 h-4 inline mr-1" />
+                                        Số điện thoại
+                                    </label>
+                                    <input
+                                        type="tel"
+                                        required
+                                        placeholder="0912 xxx xxx"
+                                        className="w-full px-4 py-3 border-2 border-slate-200 rounded-xl focus:border-amber-500 focus:ring-4 focus:ring-amber-500/10 outline-none transition-all"
+                                        value={formData.phone}
+                                        onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                                    />
+                                </div>
+
+                                {/* Pickup Address */}
+                                <div>
+                                    <label className="block text-sm font-bold text-slate-700 mb-2">
+                                        <MapPin className="w-4 h-4 inline mr-1" />
+                                        Điểm đón
+                                    </label>
+                                    <input
+                                        type="text"
+                                        required
+                                        placeholder="Ví dụ: 123 Trần Phú, Ba Đình, Hà Nội"
+                                        className="w-full px-4 py-3 border-2 border-slate-200 rounded-xl focus:border-amber-500 focus:ring-4 focus:ring-amber-500/10 outline-none transition-all"
+                                        value={formData.pickupAddress}
+                                        onChange={(e) => setFormData({ ...formData, pickupAddress: e.target.value })}
+                                    />
+                                </div>
+
+                                {/* Dropoff Address */}
+                                <div>
+                                    <label className="block text-sm font-bold text-slate-700 mb-2">
+                                        <MapPin className="w-4 h-4 inline mr-1" />
+                                        Điểm trả (Tùy chọn)
+                                    </label>
+                                    <input
+                                        type="text"
+                                        placeholder="Ví dụ: 456 Quang Trung, Thanh Hóa (Có thể để trống)"
+                                        className="w-full px-4 py-3 border-2 border-slate-200 rounded-xl focus:border-amber-500 focus:ring-4 focus:ring-amber-500/10 outline-none transition-all"
+                                        value={formData.dropoffAddress}
+                                        onChange={(e) => setFormData({ ...formData, dropoffAddress: e.target.value })}
+                                    />
+                                </div>
+
+                                {/* Note */}
+                                <div>
+                                    <label className="block text-sm font-bold text-slate-700 mb-2">
+                                        <FileText className="w-4 h-4 inline mr-1" />
+                                        Ghi chú (Tùy chọn)
+                                    </label>
+                                    <textarea
+                                        rows={3}
+                                        placeholder="Thời gian đón mong muốn, yêu cầu đặc biệt..."
+                                        className="w-full px-4 py-3 border-2 border-slate-200 rounded-xl focus:border-amber-500 focus:ring-4 focus:ring-amber-500/10 outline-none transition-all resize-none"
+                                        value={formData.note}
+                                        onChange={(e) => setFormData({ ...formData, note: e.target.value })}
+                                    />
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Submit Button */}
+                        <button
+                            type="submit"
+                            disabled={isLoading}
+                            className="w-full bg-gradient-to-r from-amber-500 to-orange-600 text-white py-5 px-8 rounded-2xl font-bold text-xl shadow-xl shadow-amber-500/30 hover:shadow-2xl hover:shadow-amber-500/40 hover:-translate-y-1 transition-all flex items-center justify-center gap-3 disabled:opacity-70 disabled:cursor-not-allowed"
+                        >
+                            {isLoading ? (
+                                <>
+                                    <Loader2 className="w-6 h-6 animate-spin" />
+                                    Đang xử lý...
+                                </>
+                            ) : (
+                                <>
+                                    <span>ĐẶT XE NGAY</span>
+                                    <ArrowRight className="w-6 h-6" />
+                                </>
+                            )}
+                        </button>
+                    </>
+                ) : (
+                    /* Success Message */
+                    <div className="border-t border-slate-200 pt-6">
+                        <div className="bg-green-50 border-2 border-green-200 rounded-2xl p-8 text-center">
+                            <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                                <svg className="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                                </svg>
+                            </div>
+                            <h3 className="text-2xl font-bold text-slate-800 mb-2">Đặt xe thành công!</h3>
+                            <p className="text-slate-600 mb-6">
+                                Chúng tôi sẽ liên hệ lại với bạn trong vòng <span className="font-bold text-amber-600">5 phút</span>.
+                            </p>
+                            <button
+                                type="button"
+                                onClick={() => setIsSuccess(false)}
+                                className="bg-amber-500 text-white px-8 py-3 rounded-xl font-bold hover:bg-amber-600 transition-colors"
+                            >
+                                Đặt xe mới
+                            </button>
+                        </div>
+                    </div>
+                )}
 
                 {/* Live Driver Feed - Social Proof (Randomized) */}
                 <div className="pt-6 border-t border-slate-100">
@@ -283,3 +455,4 @@ export default function SearchForm() {
         </div >
     );
 }
+

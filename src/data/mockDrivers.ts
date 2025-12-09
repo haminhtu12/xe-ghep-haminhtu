@@ -24,20 +24,36 @@ export const MIDDLE_NAMES = [
 ];
 
 export const CAR_MODELS = [
-    { name: 'Toyota Vios 2022', img: 'https://images.pexels.com/photos/3802508/pexels-photo-3802508.jpeg?auto=compress&cs=tinysrgb&w=600&h=400&fit=crop' },
-    { name: 'Hyundai Accent 2023', img: 'https://images.pexels.com/photos/3752169/pexels-photo-3752169.jpeg?auto=compress&cs=tinysrgb&w=600&h=400&fit=crop' },
-    { name: 'Kia Cerato 2022', img: 'https://images.pexels.com/photos/3874337/pexels-photo-3874337.jpeg?auto=compress&cs=tinysrgb&w=600&h=400&fit=crop' },
-    { name: 'Mitsubishi Xpander', img: 'https://images.pexels.com/photos/3764984/pexels-photo-3764984.jpeg?auto=compress&cs=tinysrgb&w=600&h=400&fit=crop' },
-    { name: 'VinFast VF5', img: 'https://images.pexels.com/photos/3729464/pexels-photo-3729464.jpeg?auto=compress&cs=tinysrgb&w=600&h=400&fit=crop' },
-    { name: 'Mazda 3 2023', img: 'https://images.pexels.com/photos/3802510/pexels-photo-3802510.jpeg?auto=compress&cs=tinysrgb&w=600&h=400&fit=crop' },
-    { name: 'Honda City', img: 'https://images.pexels.com/photos/3874337/pexels-photo-3874337.jpeg?auto=compress&cs=tinysrgb&w=600&h=400&fit=crop' },
-    { name: 'Toyota Innova', img: 'https://images.pexels.com/photos/3764984/pexels-photo-3764984.jpeg?auto=compress&cs=tinysrgb&w=600&h=400&fit=crop' },
+    // Standard "Ordinary" Cars
+    { name: 'Toyota Vios 2023', img: 'https://images.unsplash.com/photo-1590362891991-f776e747a588?w=600&h=400&fit=crop' },
+    { name: 'Hyundai Accent 2023', img: 'https://images.unsplash.com/photo-1619682817481-e994891cd1f5?w=600&h=400&fit=crop' },
+    { name: 'Kia Soluto', img: 'https://images.unsplash.com/photo-1617788138017-80ad40651399?w=600&h=400&fit=crop' },
+    { name: 'Mitsubishi Xpander', img: 'https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?w=600&h=400&fit=crop' },
+    { name: 'Kia Morning', img: 'https://images.unsplash.com/photo-1541899481282-d53bffe3c35d?w=600&h=400&fit=crop' },
+    { name: 'Honda City', img: 'https://images.unsplash.com/photo-1580273916550-e323be2ebdd4?w=600&h=400&fit=crop' },
+    { name: 'Toyota Innova', img: 'https://images.unsplash.com/photo-1503376763036-066120622c74?w=600&h=400&fit=crop' },
+
+    // Models observed on Vucar / Uncommon but Realistic
+    { name: 'Renault Duster', img: 'https://images.unsplash.com/photo-1626245903139-2c351f7d6325?w=600&h=400&fit=crop' }, // Silver SUV
+    { name: 'Ford Ranger Wildtrak', img: 'https://images.unsplash.com/photo-1574020967732-47526de59842?w=600&h=400&fit=crop' }, // Pickup
+    { name: 'Mitsubishi Xforce', img: 'https://images.unsplash.com/photo-1626245903741-f6df30878c77?w=600&h=400&fit=crop' }, // White Mitsubishi SUV style
+    { name: 'VinFast VF9', img: 'https://images.unsplash.com/photo-1563720223523-491937f71b96?w=600&h=400&fit=crop' }, // Large SUV
+    { name: 'Ford Territory', img: 'https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?w=600&h=400&fit=crop' }, // Contemporary White SUV
+    { name: 'Hyundai Grand i10', img: 'https://images.unsplash.com/photo-1541899481282-d53bffe3c35d?w=600&h=400&fit=crop' }, // Hatchback
 ];
 
 export const LOCATIONS = [
-    'Ngã Tư Sở, Hà Nội', 'BigC Thanh Hóa', 'Giáp Bát, Hà Nội', 'Sầm Sơn, Thanh Hóa',
-    'Mỹ Đình, Hà Nội', 'Quảng Xương, Thanh Hóa', 'Long Biên, Hà Nội', 'Bỉm Sơn, Thanh Hóa',
-    'Hà Đông, Hà Nội', 'Hoằng Hóa, Thanh Hóa', 'Hai Bà Trưng, Hà Nội', 'Tĩnh Gia, Thanh Hóa'
+    // Hanoi
+    'Cầu Giấy, Hà Nội', 'Hoàn Kiếm, Hà Nội', 'Đống Đa, Hà Nội', 'Ba Đình, Hà Nội',
+    'Hai Bà Trưng, Hà Nội', 'Thanh Xuân, Hà Nội', 'Hoàng Mai, Hà Nội', 'Long Biên, Hà Nội',
+    'Nam Từ Liêm, Hà Nội', 'Bắc Từ Liêm, Hà Nội', 'Tây Hồ, Hà Nội', 'Hà Đông, Hà Nội',
+    'Sóc Sơn, Hà Nội', 'Đông Anh, Hà Nội', 'Gia Lâm, Hà Nội',
+
+    // Thanh Hoa
+    'TP. Thanh Hóa, Thanh Hóa', 'Sầm Sơn, Thanh Hóa', 'Bỉm Sơn, Thanh Hóa', 'Nghi Sơn, Thanh Hóa',
+    'Hoằng Hóa, Thanh Hóa', 'Quảng Xương, Thanh Hóa', 'Triệu Sơn, Thanh Hóa', 'Thọ Xuân, Thanh Hóa',
+    'Ngọc Lặc, Thanh Hóa', 'Hà Trung, Thanh Hóa', 'Hậu Lộc, Thanh Hóa', 'Tĩnh Gia, Thanh Hóa',
+    'Nông Cống, Thanh Hóa', 'Yên Định, Thanh Hóa', 'Thạch Thành, Thanh Hóa'
 ];
 
 // Curated Asian/Vietnamese-looking avatars from Unsplash
