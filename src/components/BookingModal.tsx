@@ -139,8 +139,8 @@ export default function BookingModal({ isOpen, onClose, bookingData }: BookingMo
                                                 type="button"
                                                 onClick={() => setSelectedService(service.id)}
                                                 className={`flex flex-col items-center p-3 rounded-xl border-2 transition-all ${isActive
-                                                        ? 'bg-amber-50 border-amber-500 shadow-md'
-                                                        : 'bg-white border-slate-200 hover:border-amber-300'
+                                                    ? 'bg-amber-50 border-amber-500 shadow-md'
+                                                    : 'bg-white border-slate-200 hover:border-amber-300'
                                                     }`}
                                             >
                                                 <Icon className={`w-5 h-5 mb-1 ${isActive ? 'text-amber-600' : 'text-slate-400'}`} />
@@ -206,15 +206,36 @@ export default function BookingModal({ isOpen, onClose, bookingData }: BookingMo
                                 </>
                             )}
 
+
                             {/* Price Display */}
                             <div className="bg-emerald-50 border-2 border-emerald-200 rounded-xl p-4">
-                                <div className="flex justify-between items-center">
-                                    <span className="text-sm font-semibold text-slate-600">Tổng tiền ước tính:</span>
-                                    <span className="text-2xl font-bold text-emerald-600">
-                                        {estimatedPrice.toLocaleString('vi-VN')}đ
+                                <div className="flex justify-between items-center mb-2">
+                                    <span className="text-sm font-semibold text-slate-600">
+                                        {selectedService === 'xe-ghep' ? 'Tổng tiền:' : 'Giá ước tính:'}
                                     </span>
+                                    <div className="text-right">
+                                        <span className="text-2xl font-bold text-emerald-600">
+                                            {selectedService !== 'xe-ghep' && <span className="text-sm font-semibold text-slate-500 mr-1">Từ </span>}
+                                            {estimatedPrice.toLocaleString('vi-VN')}đ
+                                        </span>
+                                        {selectedService === 'bao-xe' && (
+                                            <p className="text-xs text-slate-500 mt-1">Tùy loại xe 4-7 chỗ</p>
+                                        )}
+                                        {selectedService === 'gui-do' && (
+                                            <p className="text-xs text-slate-500 mt-1">Tùy khối lượng hàng</p>
+                                        )}
+                                    </div>
                                 </div>
+                                {selectedService !== 'xe-ghep' && (
+                                    <div className="pt-2 border-t border-emerald-200">
+                                        <p className="text-xs text-slate-600 flex items-start gap-1">
+                                            <span>💬</span>
+                                            <span>Giá cuối cùng sẽ được xác nhận khi tài xế liên hệ lại với bạn</span>
+                                        </p>
+                                    </div>
+                                )}
                             </div>
+
 
                             {/* Name */}
                             <div>
