@@ -24,13 +24,14 @@ export const MIDDLE_NAMES = [
 ];
 
 export const CAR_MODELS = [
-    { name: 'Toyota Vios 2022', img: 'https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?w=600&h=400&fit=crop' },
-    { name: 'Hyundai Accent 2023', img: 'https://images.unsplash.com/photo-1494976388531-d1058494cdd8?w=600&h=400&fit=crop' },
-    { name: 'Kia Cerato 2022', img: 'https://images.unsplash.com/photo-1503376763036-066120622c74?w=600&h=400&fit=crop' },
-    { name: 'Mitsubishi Xpander', img: 'https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?w=600&h=400&fit=crop' },
-    { name: 'VinFast VF5', img: 'https://images.unsplash.com/photo-1617788138017-80ad40651399?w=600&h=400&fit=crop' },
-    { name: 'Mazda 3 2023', img: 'https://images.unsplash.com/photo-1542362567-b07e54358753?w=600&h=400&fit=crop' },
-    { name: 'Honda City', img: 'https://images.unsplash.com/photo-1511919884226-fd3cad34687c?w=600&h=400&fit=crop' },
+    { name: 'Toyota Vios 2022', img: 'https://source.unsplash.com/600x400/?toyota,vios,white,sedan' },
+    { name: 'Hyundai Accent 2023', img: 'https://source.unsplash.com/600x400/?hyundai,accent,white,sedan' },
+    { name: 'Kia Cerato 2022', img: 'https://source.unsplash.com/600x400/?kia,cerato,white,car' },
+    { name: 'Mitsubishi Xpander', img: 'https://source.unsplash.com/600x400/?mitsubishi,xpander,suv,white' },
+    { name: 'VinFast VF5', img: 'https://source.unsplash.com/600x400/?vinfast,car,electric,suv' },
+    { name: 'Mazda 3 2023', img: 'https://source.unsplash.com/600x400/?mazda3,gray,sedan,car' },
+    { name: 'Honda City', img: 'https://source.unsplash.com/600x400/?honda,city,car,sedan' },
+    { name: 'Toyota Innova', img: 'https://source.unsplash.com/600x400/?toyota,innova,mpv,silver' },
 ];
 
 export const LOCATIONS = [

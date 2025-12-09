@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { X, CheckCircle, Phone, MapPin, User, FileText } from 'lucide-react';
+import { X, CheckCircle, Phone, MapPin, User, FileText, Loader2 } from 'lucide-react';
 
 interface BookingModalProps {
     isOpen: boolean;
@@ -16,6 +16,7 @@ interface BookingModalProps {
 
 export default function BookingModal({ isOpen, onClose, bookingData }: BookingModalProps) {
     const [step, setStep] = useState<'form' | 'success'>('form');
+    const [isLoading, setIsLoading] = useState(false);
     const [formData, setFormData] = useState({
         name: '',
         phone: '',
@@ -29,11 +30,33 @@ export default function BookingModal({ isOpen, onClose, bookingData }: BookingMo
     // Use seatCount from props or default to 1 if undefined (legacy safety)
     const seatCount = bookingData.seatCount || 1;
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        // In a real app, we would send this data to an API
-        console.log('Booking Data:', { ...formData, ...bookingData });
-        setStep('success');
+        setIsLoading(true);
+
+        try {
+            const response = await fetch('/api/booking', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    ...formData,
+                    ...bookingData,
+                }),
+            });
+
+            if (response.ok) {
+                setStep('success');
+            } else {
+                alert('Có lỗi xảy ra. Vui lòng thử lại hoặc gọi hotline.');
+            }
+        } catch (error) {
+            console.error('Booking error:', error);
+            alert('Có lỗi kết nối. Vui lòng kiểm tra mạng.');
+        } finally {
+            setIsLoading(false);
+        }
     };
 
     const handleBackdropClick = (e: React.MouseEvent) => {
@@ -44,7 +67,7 @@ export default function BookingModal({ isOpen, onClose, bookingData }: BookingMo
 
     return (
         <div
-            className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4 animate-in fade-in duration-200"
+            className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 backdrop-blur-sm p-4 animate-in fade-in duration-200"
             onClick={handleBackdropClick}
         >
             <div className="bg-white rounded-3xl w-full max-w-lg shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200 relative">
@@ -160,9 +183,17 @@ export default function BookingModal({ isOpen, onClose, bookingData }: BookingMo
                             {/* Submit Button */}
                             <button
                                 type="submit"
-                                className="w-full bg-gradient-to-r from-amber-500 to-orange-600 text-white py-3.5 rounded-xl font-bold text-lg shadow-lg shadow-amber-500/30 hover:shadow-xl hover:shadow-amber-500/40 hover:-translate-y-0.5 transition-all mt-2"
+                                disabled={isLoading}
+                                className="w-full bg-gradient-to-r from-amber-500 to-orange-600 text-white py-3.5 rounded-xl font-bold text-lg shadow-lg shadow-amber-500/30 hover:shadow-xl hover:shadow-amber-500/40 hover:-translate-y-0.5 transition-all mt-2 disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                             >
-                                Xác nhận đặt xe
+                                {isLoading ? (
+                                    <>
+                                        <Loader2 className="w-5 h-5 animate-spin" />
+                                        Đang gửi...
+                                    </>
+                                ) : (
+                                    'Xác nhận đặt xe'
+                                )}
                             </button>
                         </form>
                     </>
@@ -174,13 +205,13 @@ export default function BookingModal({ isOpen, onClose, bookingData }: BookingMo
                         </div>
                         <h3 className="text-2xl font-bold text-slate-800">Đặt xe thành công!</h3>
                         <p className="text-slate-500 max-w-xs mx-auto">
-                            Cảm ơn bạn, tài xế sẽ gọi điện xác nhận lại với bạn trong vòng <span className="font-bold text-slate-800">5 phút</span> nữa.
+                            Cảm ơn bạn đã tin tưởng. Nhà xe đã nhận được thông tin và sẽ liên hệ lại với bạn trong ít phút để xác nhận chuyến đi.
                         </p>
                         <button
                             onClick={onClose}
                             className="mt-4 px-8 py-3 bg-slate-100 text-slate-700 font-bold rounded-xl hover:bg-slate-200 transition-colors"
                         >
-                            Đóng cửa sổ này
+                            Hoàn tất
                         </button>
                     </div>
                 )}
