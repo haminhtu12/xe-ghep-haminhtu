@@ -25,7 +25,7 @@ export default function Home() {
   return (
     <main className="min-h-screen pb-20">
       {/* Hero Section - Updated with Warm/Dark Styling */}
-      <section className="relative bg-slate-900 text-white pb-32 pt-32 overflow-hidden">
+      <section className="relative bg-slate-900 text-white pb-24 pt-24 md:pb-32 md:pt-32 overflow-hidden">
         {/* Abstract Background - Gold & Dark */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
           <div className="absolute -top-20 -right-20 w-[600px] h-[600px] bg-amber-500 rounded-full blur-[120px] opacity-20 animate-pulse"></div>
@@ -35,12 +35,12 @@ export default function Home() {
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center z-10">
 
 
-          <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold tracking-tight mb-6 leading-tight">
+          <h1 className="text-3xl md:text-6xl lg:text-7xl font-bold tracking-tight mb-4 md:mb-6 leading-tight">
             Chuyên Tuyến <br />
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-orange-500">Hà Nội ⇄ Thanh Hóa</span>
           </h1>
 
-          <p className="text-lg md:text-xl text-slate-400 max-w-2xl mx-auto mb-10 leading-relaxed">
+          <p className="text-base md:text-xl text-slate-400 max-w-2xl mx-auto mb-8 md:mb-10 leading-relaxed">
             Dịch vụ xe ghép, xe tiện chuyến giá rẻ, uy tín. <br className="hidden md:block" />
             Đón trả tận nơi - Không bắt khách dọc đường.
           </p>
@@ -89,7 +89,7 @@ export default function Home() {
       </div>
 
       {/* Features Section - Clean & Trustworthy */}
-      <section className="pt-32 pb-24 bg-white">
+      <section className="pt-20 pb-16 md:pt-32 md:pb-24 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-4">
@@ -102,7 +102,7 @@ export default function Home() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
             {/* Feature 1 */}
-            <div className="p-8 rounded-2xl bg-slate-50 border border-slate-100 hover:border-amber-200 hover:shadow-xl hover:shadow-amber-100/20 transition-all duration-300 group">
+            <div className="p-6 md:p-8 rounded-2xl bg-slate-50 border border-slate-100 hover:border-amber-200 hover:shadow-xl hover:shadow-amber-100/20 transition-all duration-300 group">
               <div className="w-14 h-14 bg-white rounded-xl flex items-center justify-center mb-6 shadow-sm border border-slate-100 group-hover:scale-110 transition-transform">
                 <Clock className="w-7 h-7 text-amber-500" />
               </div>
@@ -113,7 +113,7 @@ export default function Home() {
             </div>
 
             {/* Feature 2 */}
-            <div className="p-8 rounded-2xl bg-slate-50 border border-slate-100 hover:border-amber-200 hover:shadow-xl hover:shadow-amber-100/20 transition-all duration-300 group">
+            <div className="p-6 md:p-8 rounded-2xl bg-slate-50 border border-slate-100 hover:border-amber-200 hover:shadow-xl hover:shadow-amber-100/20 transition-all duration-300 group">
               <div className="w-14 h-14 bg-white rounded-xl flex items-center justify-center mb-6 shadow-sm border border-slate-100 group-hover:scale-110 transition-transform">
                 <DollarSign className="w-7 h-7 text-emerald-500" />
               </div>
@@ -124,7 +124,7 @@ export default function Home() {
             </div>
 
             {/* Feature 3 */}
-            <div className="p-8 rounded-2xl bg-slate-50 border border-slate-100 hover:border-amber-200 hover:shadow-xl hover:shadow-amber-100/20 transition-all duration-300 group">
+            <div className="p-6 md:p-8 rounded-2xl bg-slate-50 border border-slate-100 hover:border-amber-200 hover:shadow-xl hover:shadow-amber-100/20 transition-all duration-300 group">
               <div className="w-14 h-14 bg-white rounded-xl flex items-center justify-center mb-6 shadow-sm border border-slate-100 group-hover:scale-110 transition-transform">
                 <Shield className="w-7 h-7 text-blue-500" />
               </div>
@@ -135,7 +135,7 @@ export default function Home() {
             </div>
 
             {/* Feature 4 */}
-            <div className="p-8 rounded-2xl bg-slate-50 border border-slate-100 hover:border-amber-200 hover:shadow-xl hover:shadow-amber-100/20 transition-all duration-300 group">
+            <div className="p-6 md:p-8 rounded-2xl bg-slate-50 border border-slate-100 hover:border-amber-200 hover:shadow-xl hover:shadow-amber-100/20 transition-all duration-300 group">
               <div className="w-14 h-14 bg-white rounded-xl flex items-center justify-center mb-6 shadow-sm border border-slate-100 group-hover:scale-110 transition-transform">
                 <Car className="w-7 h-7 text-purple-500" />
               </div>

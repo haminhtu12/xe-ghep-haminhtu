@@ -122,16 +122,16 @@ export default function SearchForm() {
 
 
     return (
-        <div className="bg-white rounded-3xl shadow-2xl shadow-slate-200/50 p-6 lg:p-10 max-w-5xl mx-auto relative z-10 border border-slate-100">
+        <div className="bg-white rounded-3xl shadow-2xl shadow-slate-200/50 p-4 md:p-10 max-w-5xl mx-auto relative z-10 border border-slate-100">
             <div className="absolute top-0 left-1/2 -translate-x-1/2 -mt-5 bg-amber-500 text-white px-6 py-2 rounded-full text-sm font-bold shadow-lg shadow-amber-500/30 uppercase tracking-wider flex items-center gap-2 z-20">
                 <Clock className="w-4 h-4" />
                 Chạy liên tục 24/7
             </div>
 
-            <form onSubmit={handleSubmit} className="space-y-8 mt-2">
+            <form onSubmit={handleSubmit} className="space-y-5 md:space-y-8 mt-2">
 
                 {/* Service Type Selection - Big Cards */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="grid grid-cols-2 md:grid-cols-2 gap-3 md:gap-4">
                     {SERVICE_TYPES.map((service) => {
                         const isActive = serviceType === service.id;
                         const Icon = service.icon;
@@ -160,12 +160,12 @@ export default function SearchForm() {
                 </div>
 
                 {/* Route Selection - Simplified & Focused */}
-                <div className="bg-slate-50 p-6 rounded-3xl border border-slate-200 relative">
+                <div className="bg-slate-50 p-4 md:p-6 rounded-3xl border border-slate-200 relative">
 
                     <div className="flex flex-col md:flex-row items-center gap-6 relative z-10">
 
                         {/* FROM */}
-                        <div className="flex-1 w-full bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex items-center gap-4">
+                        <div className="flex-1 w-full bg-white p-3 md:p-4 rounded-2xl border border-slate-200 shadow-sm flex items-center gap-3 md:gap-4">
                             <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-bold shrink-0">
                                 <MapPin className="w-5 h-5" />
                             </div>
@@ -187,7 +187,7 @@ export default function SearchForm() {
                         </button>
 
                         {/* TO */}
-                        <div className="flex-1 w-full bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex items-center gap-4">
+                        <div className="flex-1 w-full bg-white p-3 md:p-4 rounded-2xl border border-slate-200 shadow-sm flex items-center gap-3 md:gap-4">
                             <div className="w-10 h-10 rounded-full bg-orange-100 flex items-center justify-center text-orange-600 font-bold shrink-0">
                                 <MapPin className="w-5 h-5" />
                             </div>
@@ -324,7 +324,7 @@ export default function SearchForm() {
                                         type="text"
                                         required
                                         placeholder="Nguyễn Văn A"
-                                        className="w-full px-4 py-3 border-2 border-slate-200 rounded-xl focus:border-amber-500 focus:ring-4 focus:ring-amber-500/10 outline-none transition-all"
+                                        className="w-full px-4 py-2.5 md:py-3 border-2 border-slate-200 rounded-xl focus:border-amber-500 focus:ring-4 focus:ring-amber-500/10 outline-none transition-all"
                                         value={formData.name}
                                         onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                                     />
@@ -340,7 +340,7 @@ export default function SearchForm() {
                                         type="tel"
                                         required
                                         placeholder="0912 xxx xxx"
-                                        className="w-full px-4 py-3 border-2 border-slate-200 rounded-xl focus:border-amber-500 focus:ring-4 focus:ring-amber-500/10 outline-none transition-all"
+                                        className="w-full px-4 py-2.5 md:py-3 border-2 border-slate-200 rounded-xl focus:border-amber-500 focus:ring-4 focus:ring-amber-500/10 outline-none transition-all"
                                         value={formData.phone}
                                         onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                                     />
@@ -356,7 +356,7 @@ export default function SearchForm() {
                                         type="text"
                                         required
                                         placeholder="Ví dụ: 123 Trần Phú, Ba Đình, Hà Nội"
-                                        className="w-full px-4 py-3 border-2 border-slate-200 rounded-xl focus:border-amber-500 focus:ring-4 focus:ring-amber-500/10 outline-none transition-all"
+                                        className="w-full px-4 py-2.5 md:py-3 border-2 border-slate-200 rounded-xl focus:border-amber-500 focus:ring-4 focus:ring-amber-500/10 outline-none transition-all"
                                         value={formData.pickupAddress}
                                         onChange={(e) => setFormData({ ...formData, pickupAddress: e.target.value })}
                                     />
@@ -371,7 +371,7 @@ export default function SearchForm() {
                                     <input
                                         type="text"
                                         placeholder="Ví dụ: 456 Quang Trung, Thanh Hóa (Có thể để trống)"
-                                        className="w-full px-4 py-3 border-2 border-slate-200 rounded-xl focus:border-amber-500 focus:ring-4 focus:ring-amber-500/10 outline-none transition-all"
+                                        className="w-full px-4 py-2.5 md:py-3 border-2 border-slate-200 rounded-xl focus:border-amber-500 focus:ring-4 focus:ring-amber-500/10 outline-none transition-all"
                                         value={formData.dropoffAddress}
                                         onChange={(e) => setFormData({ ...formData, dropoffAddress: e.target.value })}
                                     />
@@ -398,7 +398,7 @@ export default function SearchForm() {
                         <button
                             type="submit"
                             disabled={isLoading}
-                            className="w-full bg-gradient-to-r from-amber-500 to-orange-600 text-white py-5 px-8 rounded-2xl font-bold text-xl shadow-xl shadow-amber-500/30 hover:shadow-2xl hover:shadow-amber-500/40 hover:-translate-y-1 transition-all flex items-center justify-center gap-3 disabled:opacity-70 disabled:cursor-not-allowed"
+                            className="w-full bg-gradient-to-r from-amber-500 to-orange-600 text-white py-3 md:py-5 px-8 rounded-2xl font-bold text-xl shadow-xl shadow-amber-500/30 hover:shadow-2xl hover:shadow-amber-500/40 hover:-translate-y-1 transition-all flex items-center justify-center gap-3 disabled:opacity-70 disabled:cursor-not-allowed"
                         >
                             {isLoading ? (
                                 <>
