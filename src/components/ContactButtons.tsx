@@ -5,12 +5,13 @@ import { usePathname } from 'next/navigation';
 export default function ContactButtons() {
     const pathname = usePathname();
 
-    // Move buttons to left side on driver registration pages to avoid covering the form
-    const isDriverPage = pathname === '/tai-xe' || pathname === '/tai-xe/login';
-    const positionClass = isDriverPage ? 'left-6' : 'right-6';
+    // Hide contact buttons completely on driver pages to avoid cluttering the dashboard
+    if (pathname?.startsWith('/tai-xe')) {
+        return null;
+    }
 
     return (
-        <div className={`fixed bottom-6 ${positionClass} z-40 flex flex-col gap-3 items-end animate-in fade-in duration-300`}>
+        <div className={`fixed bottom-6 right-6 z-40 flex flex-col gap-3 items-end animate-in fade-in duration-300`}>
             {/* Book Now Button */}
             <button
                 onClick={() => {

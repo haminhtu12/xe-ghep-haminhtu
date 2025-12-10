@@ -2,12 +2,14 @@
 
 import { useState, useEffect } from 'react';
 import { ShieldCheck, MapPin, X } from 'lucide-react';
+import { usePathname } from 'next/navigation';
 import { FIRST_NAMES, LAST_NAMES, MIDDLE_NAMES, LOCATIONS } from '@/data/mockDrivers';
 
 // Helper to get random item
 const getRandom = <T,>(arr: T[]): T => arr[Math.floor(Math.random() * arr.length)];
 
 export default function RecentBookingNotification() {
+    const pathname = usePathname();
     const [visible, setVisible] = useState(false);
     const [data, setData] = useState<{ name: string; from: string; to: string; time: string } | null>(null);
 
@@ -55,7 +57,7 @@ export default function RecentBookingNotification() {
         }, 6000);
     };
 
-    if (!visible || !data) return null;
+    if (!visible || !data || pathname?.startsWith('/tai-xe')) return null;
 
     return (
         <div className="fixed bottom-24 right-6 md:bottom-6 md:left-6 md:right-auto z-40 max-w-sm animate-in slide-in-from-bottom-5 fade-in duration-500">

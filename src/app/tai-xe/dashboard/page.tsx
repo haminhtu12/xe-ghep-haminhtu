@@ -465,13 +465,13 @@ export default function DriverDashboard() {
                                     <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center shrink-0">
                                         <Phone className="w-5 h-5 text-blue-600" />
                                     </div>
-                                    <div className="flex-1">
-                                        <p className="text-xs text-slate-500 mb-1">Số điện thoại khách</p>
-                                        <p className="font-bold text-lg text-slate-800">{successBooking.phone}</p>
+                                    <div className="flex-1 min-w-0">
+                                        <p className="text-xs text-slate-500 mb-1 truncate">Số điện thoại khách</p>
+                                        <p className="font-bold text-lg text-slate-800 truncate">{successBooking.phone}</p>
                                     </div>
                                     <a
                                         href={`tel:${successBooking.phone}`}
-                                        className="bg-blue-600 text-white px-4 py-2 rounded-lg font-bold hover:bg-blue-700 transition-all flex items-center gap-2"
+                                        className="bg-blue-600 text-white px-4 py-2 rounded-lg font-bold hover:bg-blue-700 transition-all flex items-center gap-2 shrink-0 whitespace-nowrap"
                                     >
                                         <Phone className="w-4 h-4" />
                                         Gọi
