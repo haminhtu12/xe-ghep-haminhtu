@@ -40,6 +40,11 @@ export default function Header() {
         setIsMenuOpen(false);
     }, [pathname]);
 
+    // Hide header on driver dashboard as it has its own header
+    if (pathname?.startsWith('/tai-xe/dashboard')) {
+        return null;
+    }
+
     return (
         <header className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${scrolled ? 'bg-white/90 backdrop-blur-md shadow-md py-3' : 'bg-transparent py-5'}`}>
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -87,14 +92,14 @@ export default function Header() {
                             <div className="flex items-center gap-3">
                                 <Link
                                     href="/tai-xe/dashboard"
-                                    className="px-6 py-3 rounded-full font-bold bg-amber-500 text-white shadow-lg hover:bg-amber-600 transition-all transform hover:scale-105 flex items-center gap-2 border border-amber-400"
+                                    className="pl-6 pr-8 py-3 rounded-full font-bold bg-amber-500 text-white shadow-lg hover:bg-amber-600 transition-all transform hover:scale-105 flex items-center gap-2 border border-amber-400"
                                 >
                                     <LayoutDashboard className="w-5 h-5" />
                                     Trang Tài Xế
                                 </Link>
                                 <a
                                     href="/api/drivers/logout"
-                                    className="px-4 py-3 rounded-full font-bold bg-red-500 text-white shadow-lg hover:bg-red-600 transition-all transform hover:scale-105 flex items-center gap-2"
+                                    className="pl-4 pr-6 py-3 rounded-full font-bold bg-red-500 text-white shadow-lg hover:bg-red-600 transition-all transform hover:scale-105 flex items-center gap-2"
                                     title="Đăng xuất"
                                 >
                                     <LogOut className="w-5 h-5" />

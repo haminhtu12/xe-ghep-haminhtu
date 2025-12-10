@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { Wallet, MapPin, Bell, LogOut, ChevronRight, History, PlusCircle, Gift, Phone, User, Clock, CheckCircle, XCircle } from 'lucide-react';
+import { Wallet, MapPin, Bell, LogOut, ChevronRight, History, PlusCircle, Gift, Phone, User, Clock, CheckCircle, XCircle, Home } from 'lucide-react';
 
 export default function DriverDashboard() {
     const [driver, setDriver] = useState<any>(null);
@@ -155,7 +155,14 @@ export default function DriverDashboard() {
                         <h1 className="text-2xl font-bold">{driver.name}</h1>
                         <p className="text-sm text-slate-400 mt-1">{driver.phone}</p>
                     </div>
-                    <div className="flex gap-2">
+                    <div className="flex gap-3">
+                        <a
+                            href="/"
+                            className="p-2 bg-slate-800 rounded-full hover:bg-slate-700 transition-colors"
+                            title="Về trang chủ"
+                        >
+                            <Home className="w-6 h-6 text-white" />
+                        </a>
                         <button className="p-2 bg-slate-800 rounded-full hover:bg-slate-700 transition-colors relative">
                             <Bell className="w-6 h-6 text-white" />
                             <span className="absolute top-0 right-0 w-3 h-3 bg-red-500 rounded-full border-2 border-slate-900"></span>
@@ -471,7 +478,7 @@ export default function DriverDashboard() {
                                     </div>
                                     <a
                                         href={`tel:${successBooking.phone}`}
-                                        className="bg-blue-600 text-white px-4 py-2 rounded-lg font-bold hover:bg-blue-700 transition-all flex items-center gap-2 shrink-0 whitespace-nowrap"
+                                        className="bg-blue-600 text-white pl-4 pr-6 py-2 rounded-lg font-bold hover:bg-blue-700 transition-all flex items-center gap-2 shrink-0 whitespace-nowrap"
                                     >
                                         <Phone className="w-4 h-4" />
                                         Gọi
