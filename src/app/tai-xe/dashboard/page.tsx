@@ -128,10 +128,19 @@ export default function DriverDashboard() {
                         <h1 className="text-2xl font-bold">{driver.name}</h1>
                         <p className="text-sm text-slate-400 mt-1">{driver.phone}</p>
                     </div>
-                    <button className="p-2 bg-slate-800 rounded-full hover:bg-slate-700 transition-colors relative">
-                        <Bell className="w-6 h-6 text-white" />
-                        <span className="absolute top-0 right-0 w-3 h-3 bg-red-500 rounded-full border-2 border-slate-900"></span>
-                    </button>
+                    <div className="flex gap-2">
+                        <button className="p-2 bg-slate-800 rounded-full hover:bg-slate-700 transition-colors relative">
+                            <Bell className="w-6 h-6 text-white" />
+                            <span className="absolute top-0 right-0 w-3 h-3 bg-red-500 rounded-full border-2 border-slate-900"></span>
+                        </button>
+                        <a
+                            href="/api/drivers/logout"
+                            className="p-2 bg-red-500/20 rounded-full hover:bg-red-500 transition-colors group"
+                            title="Đăng xuất"
+                        >
+                            <LogOut className="w-6 h-6 text-red-400 group-hover:text-white" />
+                        </a>
+                    </div>
                 </div>
 
                 {/* Wallet Card */}
@@ -299,12 +308,6 @@ export default function DriverDashboard() {
                     )}
                 </div>
 
-                <button
-                    onClick={() => router.push('/api/auth/logout')}
-                    className="w-full py-4 text-slate-400 font-medium flex items-center justify-center gap-2 hover:text-red-500 transition-colors mt-8"
-                >
-                    <LogOut className="w-5 h-5" /> Đăng xuất
-                </button>
             </div>
 
             {/* Top Up Modal */}

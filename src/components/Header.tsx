@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Car, Menu, X, Phone, LayoutDashboard } from 'lucide-react';
+import { Car, Menu, X, Phone, LayoutDashboard, LogOut } from 'lucide-react';
 import { useState, useEffect } from 'react';
 
 export default function Header() {
@@ -84,13 +84,23 @@ export default function Header() {
 
                         {/* Driver CTA Button */}
                         {isDriver ? (
-                            <Link
-                                href="/tai-xe/dashboard"
-                                className="px-6 py-3 rounded-full font-bold bg-amber-500 text-white shadow-lg hover:bg-amber-600 transition-all transform hover:scale-105 flex items-center gap-2 border border-amber-400"
-                            >
-                                <LayoutDashboard className="w-5 h-5" />
-                                Vào Dashboard
-                            </Link>
+                            <div className="flex items-center gap-3">
+                                <Link
+                                    href="/tai-xe/dashboard"
+                                    className="px-6 py-3 rounded-full font-bold bg-amber-500 text-white shadow-lg hover:bg-amber-600 transition-all transform hover:scale-105 flex items-center gap-2 border border-amber-400"
+                                >
+                                    <LayoutDashboard className="w-5 h-5" />
+                                    Trang Tài Xế
+                                </Link>
+                                <a
+                                    href="/api/drivers/logout"
+                                    className="px-4 py-3 rounded-full font-bold bg-red-500 text-white shadow-lg hover:bg-red-600 transition-all transform hover:scale-105 flex items-center gap-2"
+                                    title="Đăng xuất"
+                                >
+                                    <LogOut className="w-5 h-5" />
+                                    Đăng xuất
+                                </a>
+                            </div>
                         ) : (
                             <Link
                                 href="/tai-xe"
@@ -123,7 +133,7 @@ export default function Header() {
                         </Link>
                         {isDriver ? (
                             <Link href="/tai-xe/dashboard" className="px-4 py-3 rounded-xl bg-amber-500 text-white font-bold flex items-center justify-between">
-                                Vào Dashboard
+                                Trang Tài Xế
                                 <LayoutDashboard className="w-5 h-5" />
                             </Link>
                         ) : (
