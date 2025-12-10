@@ -12,19 +12,40 @@ export default function DriverRegistration() {
     const [loading, setLoading] = useState(false);
     const router = useRouter();
 
-    const handleSendOtp = (e: React.FormEvent) => {
+    const handleSendOtp = async (e: React.FormEvent) => {
         e.preventDefault();
         if (phone.length < 10) {
             alert('Vui lòng nhập số điện thoại hợp lệ');
             return;
         }
         setLoading(true);
-        // Simulate sending OTP
-        setTimeout(() => {
+
+        try {
+            const res = await fetch('/api/drivers/send-otp', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ phone }),
+            });
+
+            const data = await res.json();
+
+            if (res.ok) {
+                setStep('otp');
+                if (data.devMode && data.otp) {
+                    // Development mode: Show OTP in alert
+                    alert(`[DEV MODE] Mã OTP của bạn là: ${data.otp}\n\nMã này có hiệu lực trong 5 phút.`);
+                } else {
+                    alert('Mã OTP đã được gửi đến số điện thoại của bạn. Vui lòng kiểm tra tin nhắn.');
+                }
+            } else {
+                alert(data.error || 'Không thể gửi mã OTP. Vui lòng thử lại.');
+            }
+        } catch (error) {
+            console.error('Send OTP error:', error);
+            alert('Có lỗi xảy ra. Vui lòng kiểm tra kết nối và thử lại.');
+        } finally {
             setLoading(false);
-            setStep('otp');
-            alert('Mã xác thực của bạn là: 123456'); // Mock OTP
-        }, 1000);
+        }
     };
 
     const handleVerifyOtp = async (e: React.FormEvent) => {
@@ -32,7 +53,7 @@ export default function DriverRegistration() {
         setLoading(true);
 
         try {
-            const res = await fetch('/api/drivers/auth', {
+            const res = await fetch('/api/drivers/verify-otp', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ phone, otp }),
@@ -42,13 +63,16 @@ export default function DriverRegistration() {
 
             if (res.ok) {
                 if (data.isNew) {
-                    alert(`🎉 Chúc mừng! Bạn đã đăng ký thành công và nhận được 150.000đ vào ví!`);
+                    alert(`🎉 ${data.message}`);
+                } else {
+                    alert(data.message);
                 }
                 router.push('/tai-xe/dashboard');
             } else {
-                alert(data.error || 'Xác thực thất bại');
+                alert(data.error || 'Xác thực thất bại. Vui lòng thử lại.');
             }
         } catch (error) {
+            console.error('Verify OTP error:', error);
             alert('Có lỗi xảy ra. Vui lòng thử lại.');
         } finally {
             setLoading(false);
