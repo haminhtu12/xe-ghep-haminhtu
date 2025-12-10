@@ -1,11 +1,59 @@
 'use client';
 
 import { useState } from 'react';
-import { Shield, Car, CheckCircle, DollarSign, Clock, Users } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { Shield, Car, CheckCircle, DollarSign, Clock, Users, Phone, Gift, KeyRound, ArrowRight } from 'lucide-react';
 import Link from 'next/link';
 
 export default function DriverRegistration() {
+    const [step, setStep] = useState<'phone' | 'otp'>('phone');
+    const [phone, setPhone] = useState('');
+    const [otp, setOtp] = useState('');
+    const [loading, setLoading] = useState(false);
+    const router = useRouter();
 
+    const handleSendOtp = (e: React.FormEvent) => {
+        e.preventDefault();
+        if (phone.length < 10) {
+            alert('Vui lòng nhập số điện thoại hợp lệ');
+            return;
+        }
+        setLoading(true);
+        // Simulate sending OTP
+        setTimeout(() => {
+            setLoading(false);
+            setStep('otp');
+            alert('Mã xác thực của bạn là: 123456'); // Mock OTP
+        }, 1000);
+    };
+
+    const handleVerifyOtp = async (e: React.FormEvent) => {
+        e.preventDefault();
+        setLoading(true);
+
+        try {
+            const res = await fetch('/api/drivers/auth', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ phone, otp }),
+            });
+
+            const data = await res.json();
+
+            if (res.ok) {
+                if (data.isNew) {
+                    alert(`🎉 Chúc mừng! Bạn đã đăng ký thành công và nhận được 150.000đ vào ví!`);
+                }
+                router.push('/tai-xe/dashboard');
+            } else {
+                alert(data.error || 'Xác thực thất bại');
+            }
+        } catch (error) {
+            alert('Có lỗi xảy ra. Vui lòng thử lại.');
+        } finally {
+            setLoading(false);
+        }
+    };
 
 
     return (
@@ -97,25 +145,114 @@ export default function DriverRegistration() {
 
                     </div>
 
-                    {/* Registration CTA */}
-                    <div className="bg-white rounded-3xl shadow-xl p-8 border border-slate-100 flex flex-col justify-center items-center text-center">
-                        <div className="w-20 h-20 bg-amber-100 rounded-full flex items-center justify-center mb-6 animate-pulse">
-                            <Car className="w-10 h-10 text-amber-600" />
+                    {/* Registration Form - Embedded */}
+                    <div className="bg-white rounded-3xl shadow-xl p-8 border border-slate-100">
+                        <div className="flex justify-center mb-6">
+                            <div className="w-16 h-16 bg-amber-100 rounded-full flex items-center justify-center animate-pulse">
+                                <Car className="w-8 h-8 text-amber-600" />
+                            </div>
                         </div>
-                        <h2 className="text-3xl font-bold text-slate-800 mb-4">Tham gia ngay</h2>
-                        <p className="text-slate-500 mb-8 text-lg max-w-md">
-                            Chỉ cần số điện thoại. Đăng ký trong 30 giây. <br />
-                            <span className="font-bold text-amber-600">Tặng ngay 150.000đ</span> vào tài khoản.
+                        <h2 className="text-3xl font-bold text-slate-800 mb-2 text-center">Đăng ký ngay</h2>
+                        <p className="text-slate-500 mb-6 text-center">
+                            Chỉ cần 30 giây. <span className="font-bold text-amber-600">Tặng ngay 150.000đ</span>
                         </p>
 
-                        <Link
-                            href="/tai-xe/login"
-                            className="w-full max-w-sm bg-gradient-to-r from-amber-500 to-orange-600 text-white font-bold text-xl py-5 rounded-2xl shadow-xl hover:shadow-2xl hover:shadow-amber-500/40 hover:-translate-y-1 transition-all flex items-center justify-center gap-3"
-                        >
-                            Đăng Ký / Đăng Nhập
-                        </Link>
+                        {/* Promotion Banner */}
+                        <div className="mb-6 bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-100 rounded-xl p-4 flex items-center gap-3">
+                            <div className="w-10 h-10 bg-amber-100 rounded-full flex items-center justify-center shrink-0">
+                                <Gift className="w-6 h-6 text-amber-600" />
+                            </div>
+                            <div>
+                                <p className="text-sm font-bold text-slate-800">Quà tặng thành viên mới</p>
+                                <p className="text-xs text-slate-600">Tặng ngay <span className="text-amber-600 font-bold">150.000đ</span> khi đăng nhập lần đầu.</p>
+                            </div>
+                        </div>
 
-                        <p className="mt-6 text-sm text-slate-400">
+                        {step === 'phone' ? (
+                            <form className="space-y-6" onSubmit={handleSendOtp}>
+                                <div>
+                                    <label className="block text-sm font-medium text-slate-700 mb-2">
+                                        Số điện thoại
+                                    </label>
+                                    <div className="relative">
+                                        <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                            <Phone className="h-5 w-5 text-slate-400" />
+                                        </div>
+                                        <input
+                                            type="tel"
+                                            required
+                                            value={phone}
+                                            onChange={(e) => setPhone(e.target.value)}
+                                            className="block w-full pl-10 pr-3 py-3 border border-slate-300 rounded-xl focus:ring-amber-500 focus:border-amber-500 transition-colors"
+                                            placeholder="0912 xxx xxx"
+                                        />
+                                    </div>
+                                </div>
+
+                                <button
+                                    type="submit"
+                                    disabled={loading}
+                                    className="w-full flex justify-center items-center gap-2 py-4 px-4 border border-transparent rounded-xl shadow-lg text-lg font-bold text-white bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-amber-500 disabled:opacity-70 transition-all"
+                                >
+                                    {loading ? 'Đang gửi...' : (
+                                        <>
+                                            Lấy Mã Xác Thực <ArrowRight className="w-5 h-5" />
+                                        </>
+                                    )}
+                                </button>
+                            </form>
+                        ) : (
+                            <form className="space-y-6" onSubmit={handleVerifyOtp}>
+                                <div className="text-center mb-4">
+                                    <p className="text-sm text-slate-500">Mã xác thực đã gửi đến</p>
+                                    <p className="font-bold text-lg text-slate-800">{phone}</p>
+                                    <button
+                                        type="button"
+                                        onClick={() => setStep('phone')}
+                                        className="text-xs text-amber-600 hover:underline mt-1"
+                                    >
+                                        Đổi số điện thoại
+                                    </button>
+                                </div>
+
+                                <div>
+                                    <label className="block text-sm font-medium text-slate-700 mb-2">
+                                        Nhập mã OTP (6 số)
+                                    </label>
+                                    <div className="relative">
+                                        <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                            <KeyRound className="h-5 w-5 text-slate-400" />
+                                        </div>
+                                        <input
+                                            type="text"
+                                            required
+                                            maxLength={6}
+                                            value={otp}
+                                            onChange={(e) => setOtp(e.target.value)}
+                                            className="block w-full pl-10 pr-3 py-3 border border-slate-300 rounded-xl focus:ring-amber-500 focus:border-amber-500 transition-colors tracking-widest text-lg font-bold text-center"
+                                            placeholder="123456"
+                                        />
+                                    </div>
+                                    <p className="mt-2 text-xs text-center text-slate-500">
+                                        Mã mặc định cho bản thử nghiệm: <span className="font-mono font-bold text-slate-800">123456</span>
+                                    </p>
+                                </div>
+
+                                <button
+                                    type="submit"
+                                    disabled={loading}
+                                    className="w-full flex justify-center items-center gap-2 py-4 px-4 border border-transparent rounded-xl shadow-lg text-lg font-bold text-white bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-amber-500 disabled:opacity-70 transition-all"
+                                >
+                                    {loading ? 'Đang kiểm tra...' : (
+                                        <>
+                                            Đăng Nhập <ArrowRight className="w-5 h-5" />
+                                        </>
+                                    )}
+                                </button>
+                            </form>
+                        )}
+
+                        <p className="mt-6 text-sm text-slate-400 text-center">
                             Đã có hơn 500+ tài xế tham gia tuần này
                         </p>
                     </div>
