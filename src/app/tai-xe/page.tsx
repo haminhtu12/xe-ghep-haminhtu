@@ -5,48 +5,8 @@ import { Shield, Car, CheckCircle, DollarSign, Clock, Users } from 'lucide-react
 import Link from 'next/link';
 
 export default function DriverRegistration() {
-    const [formData, setFormData] = useState({
-        name: '',
-        phone: '',
-        carType: 'Xe 4 chỗ',
-        licensePlate: ''
-    });
 
-    const [isLoading, setIsLoading] = useState(false);
 
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
-        setIsLoading(true);
-
-        try {
-            const response = await fetch('/api/drivers', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(formData),
-            });
-
-            const data = await response.json();
-
-            if (response.ok) {
-                alert('Đăng ký thành công! Chúng tôi sẽ liên hệ lại sớm.');
-                setFormData({
-                    name: '',
-                    phone: '',
-                    carType: 'Xe 4 chỗ',
-                    licensePlate: ''
-                });
-            } else {
-                alert('Có lỗi xảy ra: ' + (data.error || 'Vui lòng thử lại.'));
-            }
-        } catch (error) {
-            console.error('Error submitting form:', error);
-            alert('Có lỗi xảy ra. Vui lòng kiểm tra lại kết nối.');
-        } finally {
-            setIsLoading(false);
-        }
-    };
 
     return (
         <main className="min-h-screen bg-slate-50">
@@ -77,11 +37,14 @@ export default function DriverRegistration() {
                         <div className="bg-slate-900 rounded-xl p-4 flex flex-col md:flex-row items-center justify-between gap-4">
                             <div className="text-left">
                                 <p className="text-amber-500 font-bold text-xs uppercase tracking-wider mb-1">Dành cho 100 đối tác đầu tiên</p>
-                                <p className="text-white font-bold text-lg">Tặng ngay <span className="text-amber-400 text-2xl">500.000đ</span> vào tài khoản</p>
+                                <p className="text-white font-bold text-lg">Tặng ngay <span className="text-amber-400 text-2xl">150.000đ</span> vào tài khoản</p>
                             </div>
-                            <div className="bg-white text-orange-600 font-bold px-4 py-2 rounded-lg text-sm whitespace-nowrap shadow-md">
-                                🔥 Chỉ còn 12 slot
-                            </div>
+                            <Link href="/tai-xe/login" className="bg-amber-500 text-white px-8 py-4 rounded-xl font-bold text-lg hover:bg-amber-600 transition-all shadow-lg hover:shadow-amber-500/20">
+                                Đăng ký ngay
+                            </Link>
+                        </div>
+                        <div className="bg-white text-orange-600 font-bold px-4 py-2 rounded-b-xl text-sm whitespace-nowrap shadow-md text-center">
+                            🔥 Chỉ còn 12 slot
                         </div>
                     </div>
                 </div>
@@ -142,7 +105,7 @@ export default function DriverRegistration() {
                         <h2 className="text-3xl font-bold text-slate-800 mb-4">Tham gia ngay</h2>
                         <p className="text-slate-500 mb-8 text-lg max-w-md">
                             Chỉ cần số điện thoại. Đăng ký trong 30 giây. <br />
-                            <span className="font-bold text-amber-600">Tặng ngay 500.000đ</span> vào tài khoản.
+                            <span className="font-bold text-amber-600">Tặng ngay 150.000đ</span> vào tài khoản.
                         </p>
 
                         <Link

@@ -6,7 +6,14 @@ export default function ContactButtons() {
         <div className="fixed bottom-6 right-6 z-40 flex flex-col gap-3 items-end animate-in fade-in duration-300">
             {/* Book Now Button */}
             <button
-                onClick={() => document.getElementById('booking-form')?.scrollIntoView({ behavior: 'smooth' })}
+                onClick={() => {
+                    const bookingForm = document.getElementById('booking-form');
+                    if (bookingForm) {
+                        bookingForm.scrollIntoView({ behavior: 'smooth' });
+                    } else {
+                        window.location.href = '/#booking-form';
+                    }
+                }}
                 className="flex items-center gap-2 bg-gradient-to-r from-amber-500 to-orange-600 text-white pl-3 pr-4 py-2.5 rounded-full shadow-lg shadow-amber-500/40 hover:shadow-xl hover:shadow-amber-500/50 hover:-translate-y-1 transition-all animate-bounce-slow origin-right scale-95 hover:scale-100 opacity-90 hover:opacity-100"
             >
                 <div className="w-7 h-7 rounded-full bg-white/20 flex items-center justify-center animate-pulse">

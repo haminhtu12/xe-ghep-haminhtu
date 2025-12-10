@@ -41,7 +41,7 @@ export default function DriverLogin() {
 
             if (res.ok) {
                 if (data.isNew) {
-                    alert(`🎉 Chúc mừng! Bạn đã đăng ký thành công và nhận được 500.000đ vào ví!`);
+                    alert(`🎉 Chúc mừng! Bạn đã đăng ký thành công và nhận được 150.000đ vào ví!`);
                 }
                 router.push('/tai-xe/dashboard');
             } else {
@@ -80,7 +80,7 @@ export default function DriverLogin() {
                         </div>
                         <div>
                             <p className="text-sm font-bold text-slate-800">Quà tặng thành viên mới</p>
-                            <p className="text-xs text-slate-600">Tặng ngay <span className="text-amber-600 font-bold">500.000đ</span> khi đăng nhập lần đầu.</p>
+                            <p className="text-xs text-slate-600">Tặng ngay <span className="text-amber-600 font-bold">150.000đ</span> khi đăng nhập lần đầu.</p>
                         </div>
                     </div>
 
