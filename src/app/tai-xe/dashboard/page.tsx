@@ -308,8 +308,14 @@ export default function DriverDashboard() {
 
             {/* Top Up Modal */}
             {showTopUpModal && (
-                <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4 animate-in fade-in duration-200">
-                    <div className="bg-white rounded-3xl shadow-2xl w-full max-w-sm p-6 relative">
+                <div
+                    onClick={() => setShowTopUpModal(false)}
+                    className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4 animate-in fade-in duration-200"
+                >
+                    <div
+                        onClick={(e) => e.stopPropagation()}
+                        className="bg-white rounded-3xl shadow-2xl w-full max-w-sm p-6 relative"
+                    >
                         <button
                             onClick={() => setShowTopUpModal(false)}
                             className="absolute top-4 right-4 p-2 bg-slate-100 rounded-full hover:bg-slate-200 transition-colors z-10"
