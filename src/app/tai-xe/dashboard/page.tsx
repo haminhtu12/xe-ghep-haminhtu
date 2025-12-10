@@ -166,20 +166,25 @@ export default function DriverDashboard() {
                         <MapPin className="w-5 h-5 text-amber-500" />
                         Vị trí hiện tại của bạn
                     </p>
-                    <div className="flex bg-slate-100 p-1.5 rounded-xl relative">
-                        <div
-                            className={`absolute top-1.5 bottom-1.5 w-[calc(50%-6px)] bg-white rounded-lg shadow-sm transition-all duration-300 ${location === 'hanoi' ? 'left-1.5' : 'left-[calc(50%+4.5px)]'}`}
-                        ></div>
+                    <div className="grid grid-cols-2 gap-3">
                         <button
                             onClick={() => setLocation('hanoi')}
-                            className={`flex-1 py-4 text-center font-bold text-base relative z-10 transition-colors ${location === 'hanoi' ? 'text-slate-900' : 'text-slate-400'}`}
+                            className={`py-4 rounded-xl font-bold text-base transition-all flex items-center justify-center gap-2 ${location === 'hanoi'
+                                ? 'bg-amber-500 text-white shadow-lg shadow-amber-500/30 ring-2 ring-amber-500 ring-offset-2'
+                                : 'bg-slate-100 text-slate-500 hover:bg-slate-200'
+                                }`}
                         >
+                            <MapPin className={`w-5 h-5 ${location === 'hanoi' ? 'text-white' : 'text-slate-400'}`} />
                             Hà Nội
                         </button>
                         <button
                             onClick={() => setLocation('thanhhoa')}
-                            className={`flex-1 py-4 text-center font-bold text-base relative z-10 transition-colors ${location === 'thanhhoa' ? 'text-slate-900' : 'text-slate-400'}`}
+                            className={`py-4 rounded-xl font-bold text-base transition-all flex items-center justify-center gap-2 ${location === 'thanhhoa'
+                                ? 'bg-amber-500 text-white shadow-lg shadow-amber-500/30 ring-2 ring-amber-500 ring-offset-2'
+                                : 'bg-slate-100 text-slate-500 hover:bg-slate-200'
+                                }`}
                         >
+                            <MapPin className={`w-5 h-5 ${location === 'thanhhoa' ? 'text-white' : 'text-slate-400'}`} />
                             Thanh Hóa
                         </button>
                     </div>
@@ -307,9 +312,9 @@ export default function DriverDashboard() {
                     <div className="bg-white rounded-3xl shadow-2xl w-full max-w-sm p-6 relative">
                         <button
                             onClick={() => setShowTopUpModal(false)}
-                            className="absolute top-4 right-4 p-2 bg-slate-100 rounded-full hover:bg-slate-200 transition-colors"
+                            className="absolute top-4 right-4 p-2 bg-slate-100 rounded-full hover:bg-slate-200 transition-colors z-10"
                         >
-                            <XCircle className="w-6 h-6 text-slate-500" />
+                            <XCircle className="w-8 h-8 text-slate-400 hover:text-slate-600" />
                         </button>
 
                         <div className="text-center mb-6">
@@ -355,6 +360,13 @@ export default function DriverDashboard() {
                         >
                             <CheckCircle className="w-5 h-5" />
                             Tôi đã chuyển khoản
+                        </button>
+
+                        <button
+                            onClick={() => setShowTopUpModal(false)}
+                            className="w-full mt-3 bg-slate-100 text-slate-600 font-bold py-3 rounded-xl hover:bg-slate-200 transition-all"
+                        >
+                            Đóng lại
                         </button>
                     </div>
                 </div>
