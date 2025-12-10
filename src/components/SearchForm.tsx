@@ -6,7 +6,13 @@ import { generateDrivers } from '@/data/mockDrivers';
 
 const SERVICE_TYPES = [
     { id: 'xe-ghep', name: 'Xe Tiện Chuyến', icon: Users, price: 400000, desc: 'Đi chung, tiết kiệm' },
-    { id: 'bao-xe', name: 'Bao Xe Trọn Gói', icon: Car, price: 1100000, desc: 'Riêng tư, đưa đón tận nơi' },
+    { id: 'bao-xe', name: 'Bao Xe Trọn Gói', icon: Car, price: 1300000, desc: 'Riêng tư, đưa đón tận nơi' },
+];
+
+const VEHICLE_TYPES = [
+    { id: '5-cho', name: 'Xe 5 chỗ', price: 1300000 },
+    { id: '7-cho', name: 'Xe 7 chỗ', price: 1500000 },
+    { id: 'ban-tai', name: 'Bán tải', price: 1300000 },
 ];
 
 export default function SearchForm() {
@@ -14,6 +20,7 @@ export default function SearchForm() {
     const [direction, setDirection] = useState<'hn-th' | 'th-hn'>('hn-th');
     const [date, setDate] = useState(new Date().toISOString().split('T')[0]);
     const [seatCount, setSeatCount] = useState(1);
+    const [vehicleType, setVehicleType] = useState('5-cho');
     const [estimatedPrice, setEstimatedPrice] = useState<number>(400000);
     const [isLoading, setIsLoading] = useState(false);
     const [isSuccess, setIsSuccess] = useState(false);
@@ -58,11 +65,14 @@ export default function SearchForm() {
         if (service) {
             if (service.id === 'xe-ghep') {
                 setEstimatedPrice(service.price * seatCount);
+            } else if (service.id === 'bao-xe') {
+                const vehicle = VEHICLE_TYPES.find(v => v.id === vehicleType);
+                setEstimatedPrice(vehicle?.price || service.price);
             } else {
                 setEstimatedPrice(service.price);
             }
         }
-    }, [serviceType, seatCount]);
+    }, [serviceType, seatCount, vehicleType]);
 
     const toggleDirection = () => {
         setDirection(prev => prev === 'hn-th' ? 'th-hn' : 'hn-th');
@@ -85,6 +95,7 @@ export default function SearchForm() {
                     date,
                     estimatedPrice,
                     seatCount: serviceType === 'xe-ghep' ? seatCount : 1,
+                    vehicleType: serviceType === 'bao-xe' ? vehicleType : null,
                 }),
             });
 
@@ -112,7 +123,7 @@ export default function SearchForm() {
 
     return (
         <div className="bg-white rounded-3xl shadow-2xl shadow-slate-200/50 p-6 lg:p-10 max-w-5xl mx-auto relative z-10 border border-slate-100">
-            <div className="absolute top-0 left-1/2 -translate-x-1/2 -mt-5 bg-amber-500 text-white px-6 py-2 rounded-full text-sm font-bold shadow-lg shadow-amber-500/30 uppercase tracking-wider flex items-center gap-2">
+            <div className="absolute top-0 left-1/2 -translate-x-1/2 -mt-5 bg-amber-500 text-white px-6 py-2 rounded-full text-sm font-bold shadow-lg shadow-amber-500/30 uppercase tracking-wider flex items-center gap-2 z-20">
                 <Clock className="w-4 h-4" />
                 Chạy liên tục 24/7
             </div>
@@ -237,6 +248,41 @@ export default function SearchForm() {
                             </div>
                         </div>
                     )}
+
+                    {/* Vehicle Type Selection (Only for Bao Xe) */}
+                    {serviceType === 'bao-xe' && (
+                        <div className="md:col-span-2">
+                            <label className="text-sm font-bold text-slate-700 mb-3 block">
+                                <Car className="w-4 h-4 inline mr-1" />
+                                Chọn loại xe
+                            </label>
+                            <div className="grid grid-cols-3 gap-3">
+                                {VEHICLE_TYPES.map((vehicle) => {
+                                    const isActive = vehicleType === vehicle.id;
+                                    return (
+                                        <button
+                                            key={vehicle.id}
+                                            type="button"
+                                            onClick={() => setVehicleType(vehicle.id)}
+                                            className={`p-4 rounded-xl border-2 transition-all duration-200 ${isActive
+                                                ? 'bg-amber-50 border-amber-500 shadow-md'
+                                                : 'bg-white border-slate-200 hover:border-amber-300'
+                                                }`}
+                                        >
+                                            <div className="text-center">
+                                                <p className={`font-bold text-sm mb-1 ${isActive ? 'text-slate-900' : 'text-slate-600'}`}>
+                                                    {vehicle.name}
+                                                </p>
+                                                <p className={`text-xs font-semibold ${isActive ? 'text-amber-600' : 'text-slate-400'}`}>
+                                                    {vehicle.price.toLocaleString('vi-VN')}đ
+                                                </p>
+                                            </div>
+                                        </button>
+                                    );
+                                })}
+                            </div>
+                        </div>
+                    )}
                 </div>
 
                 {/* Price Display */}
@@ -247,15 +293,11 @@ export default function SearchForm() {
                         </span>
                         <div className="text-right">
                             <span className="text-2xl font-bold text-emerald-600">
-                                {serviceType !== 'xe-ghep' && <span className="text-sm font-semibold text-slate-500 mr-1">Từ </span>}
                                 {estimatedPrice.toLocaleString('vi-VN')}đ
                             </span>
-                            {serviceType === 'bao-xe' && (
-                                <p className="text-xs text-slate-500 mt-1">Tùy loại xe 4-7 chỗ</p>
-                            )}
                         </div>
                     </div>
-                    {serviceType !== 'xe-ghep' && (
+                    {serviceType === 'bao-xe' && (
                         <div className="pt-2 border-t border-emerald-200 mt-2">
                             <p className="text-xs text-slate-600 flex items-start gap-1">
                                 <span>💬</span>
