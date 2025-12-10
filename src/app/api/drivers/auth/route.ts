@@ -50,7 +50,7 @@ export async function POST(request: Request) {
                         name: `Tài xế ${phone.slice(-4)}`, // Default name
                         car_type: 'Chưa cập nhật',
                         license_plate: 'Chưa cập nhật',
-                        wallet_balance: 500000, // BONUS 500k
+                        wallet_balance: 150000, // BONUS 150k
                         status: 'approved' // Auto approve for MVP
                     }
                 ])
@@ -68,7 +68,7 @@ export async function POST(request: Request) {
                 .insert([
                     {
                         driver_id: newDriver.id,
-                        amount: 500000,
+                        amount: 150000,
                         type: 'bonus',
                         description: 'Thưởng thành viên mới'
                     }
@@ -85,7 +85,7 @@ export async function POST(request: Request) {
                 success: true,
                 driver: newDriver,
                 isNew: true,
-                message: 'Đăng ký mới thành công! Bạn được tặng 500k vào ví.'
+                message: 'Đăng ký mới thành công! Bạn được tặng 150k vào ví.'
             });
         }
 

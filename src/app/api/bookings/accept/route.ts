@@ -40,7 +40,22 @@ export async function POST(request: Request) {
         }
 
         // Determine fee based on service type
-        const bookingFee = BOOKING_FEES[booking.service_type as keyof typeof BOOKING_FEES] || BOOKING_FEES['xe-ghep'];
+        let bookingFee = BOOKING_FEES[booking.service_type as keyof typeof BOOKING_FEES] || BOOKING_FEES['xe-ghep'];
+        let isFreeBooking = false;
+
+        // Check for "First Charter Trip Free" promotion
+        if (booking.service_type === 'bao-xe') {
+            const { count } = await supabase
+                .from('driver_transactions')
+                .select('*', { count: 'exact', head: true })
+                .eq('driver_id', driverId)
+                .ilike('description', '%Bao Xe%'); // Check if they ever paid for a Charter trip
+
+            if (count === 0) {
+                bookingFee = 0;
+                isFreeBooking = true;
+            }
+        }
 
         // 3. Fetch Driver & Check Balance
         const { data: driver, error: driverError } = await supabase
@@ -77,7 +92,7 @@ export async function POST(request: Request) {
                     driver_id: driverId,
                     amount: -bookingFee,
                     type: 'booking_fee',
-                    description: `Phí nhận chuyến ${serviceTypeName}: ${booking.pickup_address} -> ${booking.dropoff_address || '...'}`
+                    description: `Phí nhận chuyến ${serviceTypeName}: ${booking.pickup_address} -> ${booking.dropoff_address || '...'}${isFreeBooking ? ' (Miễn phí lần đầu)' : ''}`
                 }
             ]);
 
