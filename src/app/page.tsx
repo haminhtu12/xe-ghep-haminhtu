@@ -1,8 +1,9 @@
 'use client';
 
 import SearchForm from '@/components/SearchForm';
-import { Car, Shield, Clock, DollarSign } from 'lucide-react';
+import { Car, Shield, Clock, DollarSign, LayoutDashboard, LogOut } from 'lucide-react';
 import { useState, useEffect } from 'react';
+import Link from 'next/link';
 
 export default function Home() {
   const [isDriver, setIsDriver] = useState(false);
@@ -32,10 +33,7 @@ export default function Home() {
         </div>
 
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center z-10">
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-slate-800/50 border border-slate-700 backdrop-blur-sm mb-8 animate-fade-in">
-            <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
-            <span className="text-sm font-medium text-slate-300">Xe chạy liên tục 60 phút / chuyến</span>
-          </div>
+
 
           <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold tracking-tight mb-6 leading-tight">
             Chuyên Tuyến <br />
@@ -47,12 +45,31 @@ export default function Home() {
             Đón trả tận nơi - Không bắt khách dọc đường.
           </p>
 
-          <button
-            onClick={() => document.getElementById('booking-form')?.scrollIntoView({ behavior: 'smooth' })}
-            className="bg-gradient-to-r from-amber-500 to-orange-600 text-white px-8 py-4 rounded-full font-bold text-lg shadow-lg hover:shadow-amber-500/30 hover:scale-105 transition-all animate-bounce-slow"
-          >
-            Đặt xe ngay
-          </button>
+          {isDriver ? (
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <Link
+                href="/tai-xe/dashboard"
+                className="bg-amber-500 text-white px-8 py-4 rounded-full font-bold text-lg shadow-lg hover:bg-amber-600 hover:scale-105 transition-all flex items-center justify-center gap-2"
+              >
+                <LayoutDashboard className="w-6 h-6" />
+                Vào Trang Tài Xế
+              </Link>
+              <a
+                href="/api/drivers/logout"
+                className="bg-red-500/20 text-red-200 border border-red-500/50 px-8 py-4 rounded-full font-bold text-lg hover:bg-red-500 hover:text-white transition-all flex items-center justify-center gap-2 backdrop-blur-sm"
+              >
+                <LogOut className="w-6 h-6" />
+                Đăng xuất
+              </a>
+            </div>
+          ) : (
+            <button
+              onClick={() => document.getElementById('booking-form')?.scrollIntoView({ behavior: 'smooth' })}
+              className="bg-gradient-to-r from-amber-500 to-orange-600 text-white px-8 py-4 rounded-full font-bold text-lg shadow-lg hover:shadow-amber-500/30 hover:scale-105 transition-all animate-bounce-slow"
+            >
+              Đặt xe ngay
+            </button>
+          )}
         </div>
       </section>
 
