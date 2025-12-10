@@ -2,7 +2,11 @@ import { NextResponse } from 'next/server';
 import { supabase } from '@/lib/supabase';
 import { cookies } from 'next/headers';
 
-const BOOKING_FEE = 25000;
+// Fee structure based on service type
+const BOOKING_FEES = {
+    'bao-xe': 140000,  // Charter booking fee
+    'xe-ghep': 25000,  // Shared ride fee
+};
 
 export async function POST(request: Request) {
     try {
@@ -20,22 +24,7 @@ export async function POST(request: Request) {
             return NextResponse.json({ error: 'Missing booking ID' }, { status: 400 });
         }
 
-        // 2. Fetch Driver & Check Balance
-        const { data: driver, error: driverError } = await supabase
-            .from('drivers')
-            .select('*')
-            .eq('id', driverId)
-            .single();
-
-        if (driverError || !driver) {
-            return NextResponse.json({ error: 'Driver not found' }, { status: 404 });
-        }
-
-        if (driver.wallet_balance < BOOKING_FEE) {
-            return NextResponse.json({ error: 'Số dư không đủ. Vui lòng nạp thêm tiền.' }, { status: 400 });
-        }
-
-        // 3. Fetch Booking & Check Status
+        // 2. Fetch Booking & Check Status (moved up to get service_type)
         const { data: booking, error: bookingError } = await supabase
             .from('bookings')
             .select('*')
@@ -50,11 +39,29 @@ export async function POST(request: Request) {
             return NextResponse.json({ error: 'Chuyến đi này đã có người nhận!' }, { status: 409 });
         }
 
+        // Determine fee based on service type
+        const bookingFee = BOOKING_FEES[booking.service_type as keyof typeof BOOKING_FEES] || BOOKING_FEES['xe-ghep'];
+
+        // 3. Fetch Driver & Check Balance
+        const { data: driver, error: driverError } = await supabase
+            .from('drivers')
+            .select('*')
+            .eq('id', driverId)
+            .single();
+
+        if (driverError || !driver) {
+            return NextResponse.json({ error: 'Driver not found' }, { status: 404 });
+        }
+
+        if (driver.wallet_balance < bookingFee) {
+            return NextResponse.json({ error: 'Số dư không đủ. Vui lòng nạp thêm tiền.' }, { status: 400 });
+        }
+
         // 4. Perform Transaction (Sequential for MVP)
         // A. Deduct Wallet
         const { error: updateWalletError } = await supabase
             .from('drivers')
-            .update({ wallet_balance: driver.wallet_balance - BOOKING_FEE })
+            .update({ wallet_balance: driver.wallet_balance - bookingFee })
             .eq('id', driverId);
 
         if (updateWalletError) {
@@ -62,14 +69,15 @@ export async function POST(request: Request) {
         }
 
         // B. Record Transaction
+        const serviceTypeName = booking.service_type === 'bao-xe' ? 'Bao Xe' : 'Xe Ghép';
         await supabase
             .from('driver_transactions')
             .insert([
                 {
                     driver_id: driverId,
-                    amount: -BOOKING_FEE,
+                    amount: -bookingFee,
                     type: 'booking_fee',
-                    description: `Phí nhận chuyến: ${booking.pickup_address} -> ${booking.dropoff_address || '...'}`
+                    description: `Phí nhận chuyến ${serviceTypeName}: ${booking.pickup_address} -> ${booking.dropoff_address || '...'}`
                 }
             ]);
 

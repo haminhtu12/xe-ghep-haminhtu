@@ -61,8 +61,9 @@ export default function DriverDashboard() {
         }
     };
 
-    const handleAcceptBooking = async (bookingId: string) => {
-        if (!confirm('Bạn có chắc chắn muốn nhận chuyến này? Phí nhận chuyến là 25.000đ.')) return;
+    const handleAcceptBooking = async (bookingId: string, serviceType: string) => {
+        const fee = serviceType === 'bao-xe' ? '140.000đ' : '25.000đ';
+        if (!confirm(`Bạn có chắc chắn muốn nhận chuyến này? Phí nhận chuyến là ${fee}.`)) return;
 
         setProcessingId(bookingId);
         try {
@@ -280,7 +281,7 @@ export default function DriverDashboard() {
                                     </a>
                                 ) : (
                                     <button
-                                        onClick={() => handleAcceptBooking(booking.id)}
+                                        onClick={() => handleAcceptBooking(booking.id, booking.service_type)}
                                         disabled={processingId === booking.id}
                                         className="w-full bg-slate-900 text-white font-bold py-3 rounded-xl shadow-lg hover:bg-slate-800 active:scale-95 transition-all flex items-center justify-center gap-2 disabled:opacity-70"
                                     >
@@ -288,7 +289,7 @@ export default function DriverDashboard() {
                                             'Đang xử lý...'
                                         ) : (
                                             <>
-                                                Nhận Chuyến (Phí 25k) <CheckCircle className="w-4 h-4" />
+                                                Nhận Chuyến (Phí {booking.service_type === 'bao-xe' ? '140k' : '25k'}) <CheckCircle className="w-4 h-4" />
                                             </>
                                         )}
                                     </button>
