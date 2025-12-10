@@ -73,9 +73,9 @@ export default function Header() {
                         {pathname === '/' && (
                             <button
                                 onClick={() => document.getElementById('booking-form')?.scrollIntoView({ behavior: 'smooth' })}
-                                className={`font-bold px-5 py-2.5 rounded-full transition-all border ${scrolled
-                                    ? 'bg-slate-100 text-slate-800 border-slate-200 hover:bg-slate-200'
-                                    : 'bg-white/20 text-white border-white/30 hover:bg-white/30 backdrop-blur-md shadow-lg'
+                                className={`font-bold px-6 py-3 rounded-full transition-all border shadow-lg ${scrolled
+                                    ? 'bg-slate-900 text-white border-slate-900 hover:bg-slate-800'
+                                    : 'bg-white text-slate-900 border-white hover:bg-slate-100'
                                     }`}
                             >
                                 Đặt xe
@@ -86,15 +86,15 @@ export default function Header() {
                         {isDriver ? (
                             <Link
                                 href="/tai-xe/dashboard"
-                                className="px-5 py-2.5 rounded-full font-bold bg-amber-500 text-white shadow-lg hover:bg-amber-600 transition-all transform hover:scale-105 flex items-center gap-2 border border-amber-400"
+                                className="px-6 py-3 rounded-full font-bold bg-amber-500 text-white shadow-lg hover:bg-amber-600 transition-all transform hover:scale-105 flex items-center gap-2 border border-amber-400"
                             >
-                                <LayoutDashboard className="w-4 h-4" />
+                                <LayoutDashboard className="w-5 h-5" />
                                 Vào Dashboard
                             </Link>
                         ) : (
                             <Link
                                 href="/tai-xe"
-                                className={`px-5 py-2.5 rounded-full font-bold transition-all transform hover:scale-105 border ${pathname === '/tai-xe'
+                                className={`px-6 py-3 rounded-full font-bold transition-all transform hover:scale-105 border ${pathname === '/tai-xe'
                                     ? 'bg-amber-100 text-amber-700 border-amber-200'
                                     : 'bg-white text-slate-900 border-white shadow-lg hover:shadow-amber-500/20'
                                     }`}

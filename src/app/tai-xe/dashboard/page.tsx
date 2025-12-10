@@ -149,9 +149,10 @@ export default function DriverDashboard() {
                     <div className="mt-4">
                         <button
                             onClick={() => setShowTopUpModal(true)}
-                            className="w-full bg-white/20 hover:bg-white/30 py-2 rounded-lg text-sm font-bold backdrop-blur-sm transition-colors"
+                            className="w-full bg-white text-amber-700 hover:bg-amber-50 py-3 rounded-xl text-base font-bold shadow-md transition-all active:scale-95 flex items-center justify-center gap-2"
                         >
-                            Nạp tiền
+                            <PlusCircle className="w-5 h-5" />
+                            Nạp tiền vào ví
                         </button>
                     </div>
                 </div>
@@ -160,24 +161,24 @@ export default function DriverDashboard() {
             <div className="px-4 -mt-4 relative z-10 space-y-4">
 
                 {/* Location Toggle */}
-                <div className="bg-white p-4 rounded-2xl shadow-sm border border-slate-100">
-                    <p className="text-sm font-bold text-slate-500 uppercase mb-3 flex items-center gap-2">
-                        <MapPin className="w-4 h-4" />
+                <div className="bg-white p-5 rounded-2xl shadow-sm border border-slate-100">
+                    <p className="text-base font-bold text-slate-700 uppercase mb-4 flex items-center gap-2">
+                        <MapPin className="w-5 h-5 text-amber-500" />
                         Vị trí hiện tại của bạn
                     </p>
-                    <div className="flex bg-slate-100 p-1 rounded-xl relative">
+                    <div className="flex bg-slate-100 p-1.5 rounded-xl relative">
                         <div
-                            className={`absolute top-1 bottom-1 w-[calc(50%-4px)] bg-white rounded-lg shadow-sm transition-all duration-300 ${location === 'hanoi' ? 'left-1' : 'left-[calc(50%+4px)]'}`}
+                            className={`absolute top-1.5 bottom-1.5 w-[calc(50%-6px)] bg-white rounded-lg shadow-sm transition-all duration-300 ${location === 'hanoi' ? 'left-1.5' : 'left-[calc(50%+4.5px)]'}`}
                         ></div>
                         <button
                             onClick={() => setLocation('hanoi')}
-                            className={`flex-1 py-3 text-center font-bold text-sm relative z-10 transition-colors ${location === 'hanoi' ? 'text-slate-900' : 'text-slate-400'}`}
+                            className={`flex-1 py-4 text-center font-bold text-base relative z-10 transition-colors ${location === 'hanoi' ? 'text-slate-900' : 'text-slate-400'}`}
                         >
                             Hà Nội
                         </button>
                         <button
                             onClick={() => setLocation('thanhhoa')}
-                            className={`flex-1 py-3 text-center font-bold text-sm relative z-10 transition-colors ${location === 'thanhhoa' ? 'text-slate-900' : 'text-slate-400'}`}
+                            className={`flex-1 py-4 text-center font-bold text-base relative z-10 transition-colors ${location === 'thanhhoa' ? 'text-slate-900' : 'text-slate-400'}`}
                         >
                             Thanh Hóa
                         </button>
