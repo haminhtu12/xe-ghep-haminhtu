@@ -12,6 +12,7 @@ export default function DriverDashboard() {
     const [processingId, setProcessingId] = useState<string | null>(null);
     const [showTopUpModal, setShowTopUpModal] = useState(false);
     const [successBooking, setSuccessBooking] = useState<any>(null);
+    const [confirmBooking, setConfirmBooking] = useState<{ id: string, serviceType: string } | null>(null);
     const router = useRouter();
 
     // Initial load
@@ -86,9 +87,14 @@ export default function DriverDashboard() {
         }
     };
 
-    const handleAcceptBooking = async (bookingId: string, serviceType: string) => {
-        const fee = serviceType === 'bao-xe' ? '140.000đ' : '25.000đ';
-        if (!confirm(`Bạn có chắc chắn muốn nhận chuyến này? Phí nhận chuyến là ${fee}.`)) return;
+    const handleAcceptBooking = (bookingId: string, serviceType: string) => {
+        setConfirmBooking({ id: bookingId, serviceType });
+    };
+
+    const performAcceptBooking = async () => {
+        if (!confirmBooking) return;
+        const { id: bookingId } = confirmBooking;
+        setConfirmBooking(null); // Close confirm modal
 
         setProcessingId(bookingId);
         try {
@@ -101,7 +107,8 @@ export default function DriverDashboard() {
             const data = await res.json();
 
             if (res.ok) {
-                alert(`✅ Đã nhận chuyến thành công!\n\nSố điện thoại khách: ${data.booking.phone}\nĐịa chỉ đón: ${data.booking.pickup_address}`);
+                // Show success modal with booking details
+                setSuccessBooking(data.booking);
 
                 // Remove the accepted booking from the list immediately
                 setBookings(prev => prev.filter(b => b.id !== bookingId));
@@ -398,6 +405,37 @@ export default function DriverDashboard() {
                         >
                             Đóng lại
                         </button>
+                    </div>
+                </div>
+            )}
+
+            {/* Confirmation Modal */}
+            {confirmBooking && (
+                <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-in fade-in duration-200">
+                    <div className="bg-white rounded-3xl p-8 max-w-sm w-full shadow-2xl transform animate-in zoom-in duration-300">
+                        <div className="w-16 h-16 bg-amber-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                            <Clock className="w-8 h-8 text-amber-600" />
+                        </div>
+                        <h2 className="text-2xl font-bold text-center text-slate-800 mb-2">
+                            Xác nhận nhận chuyến?
+                        </h2>
+                        <p className="text-center text-slate-500 mb-8">
+                            Phí nhận chuyến là <span className="font-bold text-amber-600">{confirmBooking.serviceType === 'bao-xe' ? '140.000đ' : '25.000đ'}</span>. Bạn có chắc chắn muốn tiếp tục?
+                        </p>
+                        <div className="flex gap-3">
+                            <button
+                                onClick={() => setConfirmBooking(null)}
+                                className="flex-1 py-3 rounded-xl font-bold bg-slate-100 text-slate-600 hover:bg-slate-200 transition-all"
+                            >
+                                Hủy bỏ
+                            </button>
+                            <button
+                                onClick={performAcceptBooking}
+                                className="flex-1 py-3 rounded-xl font-bold bg-amber-500 text-white hover:bg-amber-600 transition-all shadow-lg shadow-amber-500/30"
+                            >
+                                Đồng ý
+                            </button>
+                        </div>
                     </div>
                 </div>
             )}
