@@ -55,25 +55,38 @@ export default function Header() {
                     </Link>
 
                     {/* Desktop Navigation */}
-                    <nav className="hidden md:flex items-center gap-8">
+                    <nav className="hidden md:flex items-center gap-6 lg:gap-8">
                         <Link
                             href="/"
-                            className={`font-medium hover:text-amber-500 transition-colors ${scrolled || pathname !== '/' ? 'text-slate-600' : 'text-slate-200'}`}
+                            className={`font-bold transition-colors ${scrolled || pathname !== '/' ? 'text-slate-600 hover:text-amber-600' : 'text-white hover:text-amber-200 drop-shadow-md'}`}
                         >
                             Trang chủ
                         </Link>
                         <Link
                             href="/ve-chung-toi"
-                            className={`font-medium hover:text-amber-500 transition-colors ${scrolled || pathname !== '/' ? 'text-slate-600' : 'text-slate-200'}`}
+                            className={`font-bold transition-colors ${scrolled || pathname !== '/' ? 'text-slate-600 hover:text-amber-600' : 'text-white hover:text-amber-200 drop-shadow-md'}`}
                         >
                             Về chúng tôi
                         </Link>
+
+                        {/* Book Now Button (Desktop) */}
+                        {pathname === '/' && (
+                            <button
+                                onClick={() => document.getElementById('booking-form')?.scrollIntoView({ behavior: 'smooth' })}
+                                className={`font-bold px-5 py-2.5 rounded-full transition-all border ${scrolled
+                                    ? 'bg-slate-100 text-slate-800 border-slate-200 hover:bg-slate-200'
+                                    : 'bg-white/20 text-white border-white/30 hover:bg-white/30 backdrop-blur-md shadow-lg'
+                                    }`}
+                            >
+                                Đặt xe
+                            </button>
+                        )}
 
                         {/* Driver CTA Button */}
                         {isDriver ? (
                             <Link
                                 href="/tai-xe/dashboard"
-                                className="px-5 py-2.5 rounded-full font-bold bg-amber-500 text-white shadow-lg hover:bg-amber-600 transition-all transform hover:scale-105 flex items-center gap-2"
+                                className="px-5 py-2.5 rounded-full font-bold bg-amber-500 text-white shadow-lg hover:bg-amber-600 transition-all transform hover:scale-105 flex items-center gap-2 border border-amber-400"
                             >
                                 <LayoutDashboard className="w-4 h-4" />
                                 Vào Dashboard
@@ -81,9 +94,9 @@ export default function Header() {
                         ) : (
                             <Link
                                 href="/tai-xe"
-                                className={`px-5 py-2.5 rounded-full font-bold transition-all transform hover:scale-105 ${pathname === '/tai-xe'
-                                    ? 'bg-amber-100 text-amber-700 border border-amber-200'
-                                    : 'bg-white text-slate-900 shadow-lg hover:shadow-amber-500/20'
+                                className={`px-5 py-2.5 rounded-full font-bold transition-all transform hover:scale-105 border ${pathname === '/tai-xe'
+                                    ? 'bg-amber-100 text-amber-700 border-amber-200'
+                                    : 'bg-white text-slate-900 border-white shadow-lg hover:shadow-amber-500/20'
                                     }`}
                             >
                                 Đăng ký Tài xế

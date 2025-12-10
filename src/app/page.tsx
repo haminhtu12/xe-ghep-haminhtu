@@ -46,11 +46,18 @@ export default function Home() {
             Dịch vụ xe ghép, xe tiện chuyến giá rẻ, uy tín. <br className="hidden md:block" />
             Đón trả tận nơi - Không bắt khách dọc đường.
           </p>
+
+          <button
+            onClick={() => document.getElementById('booking-form')?.scrollIntoView({ behavior: 'smooth' })}
+            className="bg-gradient-to-r from-amber-500 to-orange-600 text-white px-8 py-4 rounded-full font-bold text-lg shadow-lg hover:shadow-amber-500/30 hover:scale-105 transition-all animate-bounce-slow"
+          >
+            Đặt xe ngay
+          </button>
         </div>
       </section>
 
       {/* Search Form - Overlapping layout with reduced negative margin for balance */}
-      <div className="px-4 relative z-20 -mt-16">
+      <div id="booking-form" className="px-4 relative z-20 -mt-16">
         <SearchForm />
 
         {/* Subtle Driver CTA - Hide if Driver */}
