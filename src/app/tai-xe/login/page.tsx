@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { Car, Phone, Lock, ArrowRight, Gift, KeyRound } from 'lucide-react';
 
@@ -9,21 +9,53 @@ export default function DriverLogin() {
     const [phone, setPhone] = useState('');
     const [otp, setOtp] = useState('');
     const [loading, setLoading] = useState(false);
+    const [resendCountdown, setResendCountdown] = useState(0);
     const router = useRouter();
 
-    const handleSendOtp = (e: React.FormEvent) => {
+    // Countdown timer for resend OTP
+    useEffect(() => {
+        if (resendCountdown > 0) {
+            const timer = setTimeout(() => {
+                setResendCountdown(resendCountdown - 1);
+            }, 1000);
+            return () => clearTimeout(timer);
+        }
+    }, [resendCountdown]);
+
+    const handleSendOtp = async (e: React.FormEvent) => {
         e.preventDefault();
         if (phone.length < 10) {
             alert('Vui lòng nhập số điện thoại hợp lệ');
             return;
         }
         setLoading(true);
-        // Simulate sending OTP
-        setTimeout(() => {
+
+        try {
+            const res = await fetch('/api/drivers/send-otp', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ phone }),
+            });
+
+            const data = await res.json();
+
+            if (res.ok) {
+                setStep('otp');
+                setResendCountdown(60); // Start 60 second countdown
+                if (data.devMode && data.otp) {
+                    alert(`[DEV MODE] Mã OTP của bạn là: ${data.otp}\n\nMã này có hiệu lực trong 5 phút.`);
+                } else {
+                    alert('Mã OTP đã được gửi đến số điện thoại của bạn. Vui lòng kiểm tra tin nhắn.');
+                }
+            } else {
+                alert(data.error || 'Không thể gửi mã OTP. Vui lòng thử lại.');
+            }
+        } catch (error) {
+            console.error('Send OTP error:', error);
+            alert('Có lỗi xảy ra. Vui lòng kiểm tra kết nối và thử lại.');
+        } finally {
             setLoading(false);
-            setStep('otp');
-            alert('Mã xác thực của bạn là: 123456'); // Mock OTP
-        }, 1000);
+        }
     };
 
     const handleVerifyOtp = async (e: React.FormEvent) => {
@@ -31,7 +63,7 @@ export default function DriverLogin() {
         setLoading(true);
 
         try {
-            const res = await fetch('/api/drivers/auth', {
+            const res = await fetch('/api/drivers/verify-otp', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ phone, otp }),
@@ -41,13 +73,16 @@ export default function DriverLogin() {
 
             if (res.ok) {
                 if (data.isNew) {
-                    alert(`🎉 Chúc mừng! Bạn đã đăng ký thành công và nhận được 150.000đ vào ví!`);
+                    alert(`🎉 ${data.message}`);
+                } else {
+                    alert(data.message);
                 }
                 router.push('/tai-xe/dashboard');
             } else {
-                alert(data.error || 'Xác thực thất bại');
+                alert(data.error || 'Xác thực thất bại. Vui lòng thử lại.');
             }
         } catch (error) {
+            console.error('Verify OTP error:', error);
             alert('Có lỗi xảy ra. Vui lòng thử lại.');
         } finally {
             setLoading(false);
@@ -122,13 +157,26 @@ export default function DriverLogin() {
                             <div className="text-center mb-4">
                                 <p className="text-sm text-slate-500">Mã xác thực đã gửi đến</p>
                                 <p className="font-bold text-lg text-slate-800">{phone}</p>
-                                <button
-                                    type="button"
-                                    onClick={() => setStep('phone')}
-                                    className="text-xs text-amber-600 hover:underline mt-1"
-                                >
-                                    Đổi số điện thoại
-                                </button>
+                                <div className="flex items-center justify-center gap-2 mt-2">
+                                    <button
+                                        type="button"
+                                        onClick={() => setStep('phone')}
+                                        className="text-xs text-amber-600 hover:underline"
+                                    >
+                                        Đổi số điện thoại
+                                    </button>
+                                    <span className="text-slate-300">•</span>
+                                    <button
+                                        type="button"
+                                        onClick={handleSendOtp}
+                                        disabled={resendCountdown > 0 || loading}
+                                        className="text-xs text-amber-600 hover:underline disabled:text-slate-400 disabled:no-underline disabled:cursor-not-allowed"
+                                    >
+                                        {resendCountdown > 0
+                                            ? `Gửi lại sau ${resendCountdown}s`
+                                            : 'Gửi lại mã OTP'}
+                                    </button>
+                                </div>
                             </div>
 
                             <div>

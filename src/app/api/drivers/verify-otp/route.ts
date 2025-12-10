@@ -83,7 +83,9 @@ export async function POST(request: Request) {
                     phone: normalizedPhone,
                     name: `Tài xế ${normalizedPhone.slice(-4)}`,
                     wallet_balance: 150000,
-                    status: 'active',
+                    status: 'pending', // Will be approved by admin or auto-approved
+                    car_type: '4-seat', // Default car type
+                    license_plate: 'PENDING', // Placeholder, driver will update later
                 })
                 .select()
                 .single();
@@ -110,14 +112,9 @@ export async function POST(request: Request) {
             driver = existingDriver;
         }
 
-        // Create session token
-        const token = Buffer.from(JSON.stringify({
-            driverId: driver.id,
-            phone: driver.phone
-        })).toString('base64');
-
+        // Create session token (just store driver ID)
         const cookieStore = await cookies();
-        cookieStore.set('driver_token', token, {
+        cookieStore.set('driver_token', driver.id, {
             httpOnly: true,
             secure: process.env.NODE_ENV === 'production',
             sameSite: 'lax',

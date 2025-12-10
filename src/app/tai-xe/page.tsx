@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { Shield, Car, CheckCircle, DollarSign, Clock, Users, Phone, Gift, KeyRound, ArrowRight } from 'lucide-react';
 import Link from 'next/link';
@@ -10,7 +10,18 @@ export default function DriverRegistration() {
     const [phone, setPhone] = useState('');
     const [otp, setOtp] = useState('');
     const [loading, setLoading] = useState(false);
+    const [resendCountdown, setResendCountdown] = useState(0);
     const router = useRouter();
+
+    // Countdown timer for resend OTP
+    useEffect(() => {
+        if (resendCountdown > 0) {
+            const timer = setTimeout(() => {
+                setResendCountdown(resendCountdown - 1);
+            }, 1000);
+            return () => clearTimeout(timer);
+        }
+    }, [resendCountdown]);
 
     const handleSendOtp = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -31,6 +42,7 @@ export default function DriverRegistration() {
 
             if (res.ok) {
                 setStep('otp');
+                setResendCountdown(60); // Start 60 second countdown
                 if (data.devMode && data.otp) {
                     // Development mode: Show OTP in alert
                     alert(`[DEV MODE] Mã OTP của bạn là: ${data.otp}\n\nMã này có hiệu lực trong 5 phút.`);
@@ -230,13 +242,26 @@ export default function DriverRegistration() {
                                 <div className="text-center mb-4">
                                     <p className="text-sm text-slate-500">Mã xác thực đã gửi đến</p>
                                     <p className="font-bold text-lg text-slate-800">{phone}</p>
-                                    <button
-                                        type="button"
-                                        onClick={() => setStep('phone')}
-                                        className="text-xs text-amber-600 hover:underline mt-1"
-                                    >
-                                        Đổi số điện thoại
-                                    </button>
+                                    <div className="flex items-center justify-center gap-2 mt-2">
+                                        <button
+                                            type="button"
+                                            onClick={() => setStep('phone')}
+                                            className="text-xs text-amber-600 hover:underline"
+                                        >
+                                            Đổi số điện thoại
+                                        </button>
+                                        <span className="text-slate-300">•</span>
+                                        <button
+                                            type="button"
+                                            onClick={handleSendOtp}
+                                            disabled={resendCountdown > 0 || loading}
+                                            className="text-xs text-amber-600 hover:underline disabled:text-slate-400 disabled:no-underline disabled:cursor-not-allowed"
+                                        >
+                                            {resendCountdown > 0
+                                                ? `Gửi lại sau ${resendCountdown}s`
+                                                : 'Gửi lại mã OTP'}
+                                        </button>
+                                    </div>
                                 </div>
 
                                 <div>
