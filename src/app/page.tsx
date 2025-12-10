@@ -24,7 +24,7 @@ export default function Home() {
   return (
     <main className="min-h-screen pb-20">
       {/* Hero Section - Updated with Warm/Dark Styling */}
-      <section className="relative bg-slate-900 text-white pb-32 pt-20 overflow-hidden">
+      <section className="relative bg-slate-900 text-white pb-32 pt-32 overflow-hidden">
         {/* Abstract Background - Gold & Dark */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
           <div className="absolute -top-20 -right-20 w-[600px] h-[600px] bg-amber-500 rounded-full blur-[120px] opacity-20 animate-pulse"></div>

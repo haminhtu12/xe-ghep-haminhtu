@@ -137,10 +137,16 @@ export default function Header() {
                             Trang chủ
                         </Link>
                         {isDriver ? (
-                            <Link href="/tai-xe/dashboard" className="px-4 py-3 rounded-xl bg-amber-500 text-white font-bold flex items-center justify-between">
-                                Trang Tài Xế
-                                <LayoutDashboard className="w-5 h-5" />
-                            </Link>
+                            <>
+                                <Link href="/tai-xe/dashboard" className="px-4 py-3 rounded-xl bg-amber-500 text-white font-bold flex items-center justify-between">
+                                    Trang Tài Xế
+                                    <LayoutDashboard className="w-5 h-5" />
+                                </Link>
+                                <a href="/api/drivers/logout" className="px-4 py-3 rounded-xl bg-red-50 text-red-600 font-bold flex items-center justify-between">
+                                    Đăng xuất
+                                    <LogOut className="w-5 h-5" />
+                                </a>
+                            </>
                         ) : (
                             <Link href="/tai-xe" className="px-4 py-3 rounded-xl bg-amber-50 text-amber-700 font-bold flex items-center justify-between">
                                 Đăng ký Tài xế
