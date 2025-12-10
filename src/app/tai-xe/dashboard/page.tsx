@@ -314,7 +314,7 @@ export default function DriverDashboard() {
                 >
                     <div
                         onClick={(e) => e.stopPropagation()}
-                        className="bg-white rounded-3xl shadow-2xl w-full max-w-sm p-6 relative"
+                        className="bg-white rounded-3xl shadow-2xl w-full max-w-sm p-6 relative max-h-[90vh] overflow-y-auto"
                     >
                         <button
                             onClick={() => setShowTopUpModal(false)}
@@ -332,7 +332,7 @@ export default function DriverDashboard() {
                             <img
                                 src="/images/qr-payment.png"
                                 alt="QR Payment"
-                                className="w-full h-auto rounded-xl mix-blend-multiply"
+                                className="w-full h-auto max-h-64 object-contain mx-auto rounded-xl mix-blend-multiply"
                             />
                         </div>
 
