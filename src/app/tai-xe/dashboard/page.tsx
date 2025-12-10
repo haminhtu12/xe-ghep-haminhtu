@@ -13,6 +13,8 @@ export default function DriverDashboard() {
     const [showTopUpModal, setShowTopUpModal] = useState(false);
     const [successBooking, setSuccessBooking] = useState<any>(null);
     const [confirmBooking, setConfirmBooking] = useState<{ id: string, serviceType: string } | null>(null);
+    const [activeTab, setActiveTab] = useState<'find' | 'my-bookings'>('find');
+    const [myBookings, setMyBookings] = useState<any[]>([]);
     const router = useRouter();
 
     // Initial load
@@ -33,8 +35,23 @@ export default function DriverDashboard() {
     useEffect(() => {
         if (driver) {
             fetchBookings();
+            if (activeTab === 'my-bookings') {
+                fetchMyBookings();
+            }
         }
-    }, [driver, location]);
+    }, [driver, location, activeTab]);
+
+    const fetchMyBookings = async () => {
+        try {
+            const res = await fetch('/api/bookings/my-bookings');
+            if (res.ok) {
+                const data = await res.json();
+                setMyBookings(data.bookings || []);
+            }
+        } catch (error) {
+            console.error('Error fetching my bookings:', error);
+        }
+    };
 
     const fetchDriver = async () => {
         try {
@@ -118,6 +135,8 @@ export default function DriverDashboard() {
 
                 // Refresh bookings list to get latest data
                 fetchBookings();
+                // Refresh my bookings as well
+                fetchMyBookings();
             } else {
                 alert(data.error || 'Có lỗi xảy ra');
             }
@@ -204,144 +223,219 @@ export default function DriverDashboard() {
 
             <div className="px-4 -mt-4 relative z-10 space-y-4">
 
-                {/* Location Toggle */}
-                <div className="bg-white p-5 rounded-2xl shadow-sm border border-slate-100">
-                    <p className="text-base font-bold text-slate-700 uppercase mb-4 flex items-center gap-2">
-                        <MapPin className="w-5 h-5 text-amber-500" />
-                        Vị trí hiện tại của bạn
-                    </p>
-                    <div className="grid grid-cols-2 gap-3">
-                        <button
-                            onClick={() => handleLocationChange('hanoi')}
-                            className={`py-4 rounded-xl font-bold text-base transition-all flex items-center justify-center gap-2 ${location === 'hanoi'
-                                ? 'bg-amber-500 text-white shadow-lg shadow-amber-500/30 ring-2 ring-amber-500 ring-offset-2'
-                                : 'bg-slate-100 text-slate-500 hover:bg-slate-200'
-                                }`}
-                        >
-                            <MapPin className={`w-5 h-5 ${location === 'hanoi' ? 'text-white' : 'text-slate-400'}`} />
-                            Hà Nội
-                        </button>
-                        <button
-                            onClick={() => handleLocationChange('thanhhoa')}
-                            className={`py-4 rounded-xl font-bold text-base transition-all flex items-center justify-center gap-2 ${location === 'thanhhoa'
-                                ? 'bg-amber-500 text-white shadow-lg shadow-amber-500/30 ring-2 ring-amber-500 ring-offset-2'
-                                : 'bg-slate-100 text-slate-500 hover:bg-slate-200'
-                                }`}
-                        >
-                            <MapPin className={`w-5 h-5 ${location === 'thanhhoa' ? 'text-white' : 'text-slate-400'}`} />
-                            Thanh Hóa
-                        </button>
-                    </div>
-                </div>
-
-                {/* Main Actions */}
-                <div className="grid grid-cols-1 gap-4">
-                    <button className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex flex-col items-center gap-3 hover:border-amber-500 transition-colors group">
-                        <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform">
-                            <History className="w-6 h-6 text-blue-600" />
-                        </div>
-                        <span className="font-bold text-slate-800">Lịch Sử Chuyến Đi</span>
+                {/* Tab Switcher */}
+                <div className="bg-white p-1 rounded-xl border border-slate-200 flex mb-4 shadow-sm">
+                    <button
+                        onClick={() => setActiveTab('find')}
+                        className={`flex-1 py-3 rounded-lg font-bold text-sm transition-all flex items-center justify-center gap-2 ${activeTab === 'find' ? 'bg-amber-500 text-white shadow-md ring-2 ring-amber-200' : 'text-slate-500 hover:bg-slate-50'}`}
+                    >
+                        <MapPin className="w-4 h-4" />
+                        Tìm Khách
+                    </button>
+                    <button
+                        onClick={() => setActiveTab('my-bookings')}
+                        className={`flex-1 py-3 rounded-lg font-bold text-sm transition-all flex items-center justify-center gap-2 ${activeTab === 'my-bookings' ? 'bg-amber-500 text-white shadow-md ring-2 ring-amber-200' : 'text-slate-500 hover:bg-slate-50'}`}
+                    >
+                        <CheckCircle className="w-4 h-4" />
+                        Chuyến Của Tôi
                     </button>
                 </div>
 
-                {/* AVAILABLE BOOKINGS LIST */}
-                <div className="space-y-4">
-                    <div className="flex items-center justify-between px-2">
-                        <h3 className="font-bold text-slate-800 flex items-center gap-2">
-                            <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-                            Khách đang tìm xe ({bookings.length})
-                        </h3>
-                        <span className="text-xs text-slate-500">Tự động cập nhật</span>
-                    </div>
-
-                    {bookings.length === 0 ? (
-                        <div className="bg-white p-8 rounded-2xl text-center border border-slate-100 border-dashed">
-                            <div className="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-3">
-                                <Clock className="w-8 h-8 text-slate-300" />
+                {activeTab === 'find' ? (
+                    <>
+                        {/* Location Toggle */}
+                        <div className="bg-white p-5 rounded-2xl shadow-sm border border-slate-100">
+                            <p className="text-base font-bold text-slate-700 uppercase mb-4 flex items-center gap-2">
+                                <MapPin className="w-5 h-5 text-amber-500" />
+                                Vị trí hiện tại của bạn
+                            </p>
+                            <div className="grid grid-cols-2 gap-3">
+                                <button
+                                    onClick={() => handleLocationChange('hanoi')}
+                                    className={`py-4 rounded-xl font-bold text-base transition-all flex items-center justify-center gap-2 ${location === 'hanoi'
+                                        ? 'bg-amber-500 text-white shadow-lg shadow-amber-500/30 ring-2 ring-amber-500 ring-offset-2'
+                                        : 'bg-slate-100 text-slate-500 hover:bg-slate-200'
+                                        }`}
+                                >
+                                    <MapPin className={`w-5 h-5 ${location === 'hanoi' ? 'text-white' : 'text-slate-400'}`} />
+                                    Hà Nội
+                                </button>
+                                <button
+                                    onClick={() => handleLocationChange('thanhhoa')}
+                                    className={`py-4 rounded-xl font-bold text-base transition-all flex items-center justify-center gap-2 ${location === 'thanhhoa'
+                                        ? 'bg-amber-500 text-white shadow-lg shadow-amber-500/30 ring-2 ring-amber-500 ring-offset-2'
+                                        : 'bg-slate-100 text-slate-500 hover:bg-slate-200'
+                                        }`}
+                                >
+                                    <MapPin className={`w-5 h-5 ${location === 'thanhhoa' ? 'text-white' : 'text-slate-400'}`} />
+                                    Thanh Hóa
+                                </button>
                             </div>
-                            <p className="text-slate-500 font-medium">Chưa có khách nào ở khu vực này.</p>
-                            <p className="text-xs text-slate-400 mt-1">Hệ thống sẽ báo ngay khi có khách mới.</p>
                         </div>
-                    ) : (
-                        bookings.map((booking) => (
-                            <div key={booking.id} className={`bg-white p-5 rounded-2xl shadow-sm border transition-all relative overflow-hidden ${booking.is_accepted ? 'border-green-500 ring-2 ring-green-100' : 'border-slate-100 hover:border-amber-500'}`}>
-                                {booking.full_phone_hidden && (
-                                    <div className="absolute top-0 right-0 bg-amber-100 text-amber-700 text-[10px] font-bold px-2 py-1 rounded-bl-lg flex items-center gap-1">
+
+                        {/* AVAILABLE BOOKINGS LIST */}
+                        <div className="space-y-4">
+                            <div className="flex items-center justify-between px-2">
+                                <h3 className="font-bold text-slate-800 flex items-center gap-2">
+                                    <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                                    Khách đang tìm xe ({bookings.length})
+                                </h3>
+                                <span className="text-xs text-slate-500">Tự động cập nhật</span>
+                            </div>
+
+                            {bookings.length === 0 ? (
+                                <div className="bg-white p-8 rounded-2xl text-center border border-slate-100 border-dashed">
+                                    <div className="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-3">
+                                        <Clock className="w-8 h-8 text-slate-300" />
+                                    </div>
+                                    <p className="text-slate-500 font-medium">Chưa có khách nào ở khu vực này.</p>
+                                    <p className="text-xs text-slate-400 mt-1">Hệ thống sẽ báo ngay khi có khách mới.</p>
+                                </div>
+                            ) : (
+                                bookings.map((booking) => (
+                                    <div key={booking.id} className="bg-white p-5 rounded-2xl shadow-sm border border-slate-100 hover:border-amber-500 transition-all relative overflow-hidden">
+                                        <div className="flex justify-between items-start mb-3">
+                                            <div>
+                                                <h4 className="font-bold text-lg text-slate-800">{booking.name}</h4>
+                                                <div className="flex items-center gap-1 text-slate-500 text-sm mt-1">
+                                                    <Phone className="w-3 h-3" />
+                                                    <span className="font-mono bg-slate-100 px-1 rounded">
+                                                        {booking.phone}
+                                                    </span>
+                                                </div>
+                                            </div>
+                                            <div className="text-right">
+                                                <div className="font-bold text-amber-600 text-lg">
+                                                    {booking.estimated_price?.toLocaleString('vi-VN')}đ
+                                                </div>
+                                                <div className="text-xs text-slate-400">{booking.seat_count} ghế</div>
+                                            </div>
+                                        </div>
+
+                                        <div className="space-y-3 mb-4">
+                                            <div className="flex gap-3">
+                                                <div className="flex flex-col items-center mt-1">
+                                                    <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+                                                    <div className="w-0.5 h-full bg-slate-200 my-1"></div>
+                                                    <div className="w-2 h-2 bg-orange-500 rounded-full"></div>
+                                                </div>
+                                                <div className="flex-1 space-y-2">
+                                                    <div>
+                                                        <p className="text-xs text-slate-400">Điểm đón</p>
+                                                        <p className="text-sm font-medium text-slate-700 line-clamp-1">{booking.pickup_address}</p>
+                                                    </div>
+                                                    <div>
+                                                        <p className="text-xs text-slate-400">Điểm trả</p>
+                                                        <p className="text-sm font-medium text-slate-700 line-clamp-1">{booking.dropoff_address || 'Chưa xác định'}</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            {booking.note && (
+                                                <div className="bg-slate-50 p-2 rounded-lg text-xs text-slate-600 italic">
+                                                    "{booking.note}"
+                                                </div>
+                                            )}
+                                        </div>
+
+                                        <button
+                                            onClick={() => handleAcceptBooking(booking.id, booking.service_type)}
+                                            disabled={processingId === booking.id}
+                                            className="w-full bg-slate-900 text-white font-bold py-3 rounded-xl shadow-lg hover:bg-slate-800 active:scale-95 transition-all flex items-center justify-center gap-2 disabled:opacity-70"
+                                        >
+                                            {processingId === booking.id ? (
+                                                'Đang xử lý...'
+                                            ) : (
+                                                <>
+                                                    Nhận Chuyến (Phí {booking.service_type === 'bao-xe' ? '140k' : '25k'}) <CheckCircle className="w-4 h-4" />
+                                                </>
+                                            )}
+                                        </button>
+                                    </div>
+                                ))
+                            )}
+                        </div>
+                    </>
+                ) : (
+                    /* My Bookings List */
+                    <div className="space-y-4">
+                        <div className="flex items-center justify-between px-2">
+                            <h3 className="font-bold text-slate-800 flex items-center gap-2">
+                                <CheckCircle className="w-5 h-5 text-green-500" />
+                                Chuyến đã nhận ({myBookings.length})
+                            </h3>
+                        </div>
+
+                        {myBookings.length === 0 ? (
+                            <div className="bg-white p-12 rounded-2xl text-center border border-slate-100 border-dashed">
+                                <div className="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-4">
+                                    <Clock className="w-8 h-8 text-slate-300" />
+                                </div>
+                                <h3 className="text-slate-900 font-bold mb-1">Chưa có chuyến nào</h3>
+                                <p className="text-slate-500 text-sm">Hãy sang tab "Tìm Khách" để nhận chuyến mới nhé!</p>
+                            </div>
+                        ) : (
+                            myBookings.map((booking) => (
+                                <div key={booking.id} className="bg-white p-5 rounded-2xl shadow-sm border border-green-200 ring-2 ring-green-50 relative overflow-hidden">
+                                    <div className="absolute top-0 right-0 bg-green-100 text-green-700 text-[10px] font-bold px-2 py-1 rounded-bl-lg flex items-center gap-1">
                                         <Clock className="w-3 h-3" /> {getTimeAgo(booking.created_at)}
                                     </div>
-                                )}
 
-                                <div className="flex justify-between items-start mb-3">
-                                    <div>
-                                        <h4 className="font-bold text-lg text-slate-800">{booking.name}</h4>
-                                        <div className="flex items-center gap-1 text-slate-500 text-sm mt-1">
-                                            <Phone className="w-3 h-3" />
-                                            <span className={`font-mono px-1 rounded ${booking.is_accepted ? 'bg-green-100 text-green-700 font-bold' : 'bg-slate-100'}`}>
-                                                {booking.phone}
-                                            </span>
-                                        </div>
-                                    </div>
-                                    <div className="text-right">
-                                        <div className="font-bold text-amber-600 text-lg">
-                                            {booking.estimated_price?.toLocaleString('vi-VN')}đ
-                                        </div>
-                                        <div className="text-xs text-slate-400">{booking.seat_count} ghế</div>
-                                    </div>
-                                </div>
-
-                                <div className="space-y-3 mb-4">
-                                    <div className="flex gap-3">
-                                        <div className="flex flex-col items-center mt-1">
-                                            <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
-                                            <div className="w-0.5 h-full bg-slate-200 my-1"></div>
-                                            <div className="w-2 h-2 bg-orange-500 rounded-full"></div>
-                                        </div>
-                                        <div className="flex-1 space-y-2">
-                                            <div>
-                                                <p className="text-xs text-slate-400">Điểm đón</p>
-                                                <p className="text-sm font-medium text-slate-700 line-clamp-1">{booking.pickup_address}</p>
-                                            </div>
-                                            <div>
-                                                <p className="text-xs text-slate-400">Điểm trả</p>
-                                                <p className="text-sm font-medium text-slate-700 line-clamp-1">{booking.dropoff_address || 'Chưa xác định'}</p>
+                                    <div className="flex justify-between items-start mb-3">
+                                        <div>
+                                            <h4 className="font-bold text-lg text-slate-800">{booking.name}</h4>
+                                            <div className="flex items-center gap-1 text-slate-500 text-sm mt-1">
+                                                <Phone className="w-3 h-3" />
+                                                <span className="font-mono bg-green-100 text-green-700 px-1 rounded font-bold">
+                                                    {booking.phone}
+                                                </span>
                                             </div>
                                         </div>
+                                        <div className="text-right">
+                                            <div className="font-bold text-amber-600 text-lg">
+                                                {booking.estimated_price?.toLocaleString('vi-VN')}đ
+                                            </div>
+                                            <div className="text-xs text-slate-400">{booking.seat_count} ghế</div>
+                                        </div>
                                     </div>
 
-                                    {booking.note && (
-                                        <div className="bg-slate-50 p-2 rounded-lg text-xs text-slate-600 italic">
-                                            "{booking.note}"
+                                    <div className="space-y-3 mb-4">
+                                        <div className="flex gap-3">
+                                            <div className="flex flex-col items-center mt-1">
+                                                <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+                                                <div className="w-0.5 h-full bg-slate-200 my-1"></div>
+                                                <div className="w-2 h-2 bg-orange-500 rounded-full"></div>
+                                            </div>
+                                            <div className="flex-1 space-y-2">
+                                                <div>
+                                                    <p className="text-xs text-slate-400">Điểm đón</p>
+                                                    <p className="text-sm font-medium text-slate-700 line-clamp-1">{booking.pickup_address}</p>
+                                                </div>
+                                                <div>
+                                                    <p className="text-xs text-slate-400">Điểm trả</p>
+                                                    <p className="text-sm font-medium text-slate-700 line-clamp-1">{booking.dropoff_address || 'Chưa xác định'}</p>
+                                                </div>
+                                            </div>
                                         </div>
-                                    )}
-                                </div>
 
-                                {booking.is_accepted ? (
+                                        {booking.note && (
+                                            <div className="bg-slate-50 p-2 rounded-lg text-xs text-slate-600 italic">
+                                                "{booking.note}"
+                                            </div>
+                                        )}
+                                    </div>
+
                                     <a
                                         href={`tel:${booking.phone}`}
-                                        className="w-full bg-green-600 text-white font-bold py-3 rounded-xl shadow-lg hover:bg-green-700 active:scale-95 transition-all flex items-center justify-center gap-2 animate-bounce"
+                                        className="w-full bg-green-600 text-white font-bold py-3 rounded-xl shadow-lg hover:bg-green-700 active:scale-95 transition-all flex items-center justify-center gap-2 animate-bounce-slow"
                                     >
                                         <Phone className="w-5 h-5" /> GỌI KHÁCH NGAY
                                     </a>
-                                ) : (
-                                    <button
-                                        onClick={() => handleAcceptBooking(booking.id, booking.service_type)}
-                                        disabled={processingId === booking.id}
-                                        className="w-full bg-slate-900 text-white font-bold py-3 rounded-xl shadow-lg hover:bg-slate-800 active:scale-95 transition-all flex items-center justify-center gap-2 disabled:opacity-70"
-                                    >
-                                        {processingId === booking.id ? (
-                                            'Đang xử lý...'
-                                        ) : (
-                                            <>
-                                                Nhận Chuyến (Phí {booking.service_type === 'bao-xe' ? '140k' : '25k'}) <CheckCircle className="w-4 h-4" />
-                                            </>
-                                        )}
-                                    </button>
-                                )}
-                            </div>
-                        ))
-                    )}
-                </div>
-
+                                </div>
+                            ))
+                        )}
+                    </div>
+                )}
             </div>
 
             {/* Top Up Modal */}
