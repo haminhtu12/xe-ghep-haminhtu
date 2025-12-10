@@ -76,16 +76,17 @@ export async function POST(request: Request) {
         let isNew = false;
 
         if (!existingDriver) {
-            // Create new driver with 150k bonus
+            // Create new driver with 150k bonus (auto-approved)
             const { data: newDriver, error: createError } = await supabase
                 .from('drivers')
                 .insert({
                     phone: normalizedPhone,
                     name: `Tài xế ${normalizedPhone.slice(-4)}`,
                     wallet_balance: 150000,
-                    status: 'pending', // Will be approved by admin or auto-approved
+                    status: 'approved', // Auto-approve new drivers
                     car_type: '4-seat', // Default car type
                     license_plate: 'PENDING', // Placeholder, driver will update later
+                    current_location: 'hanoi', // Default location (driver can change later)
                 })
                 .select()
                 .single();

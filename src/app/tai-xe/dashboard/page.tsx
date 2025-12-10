@@ -11,13 +11,23 @@ export default function DriverDashboard() {
     const [location, setLocation] = useState<'hanoi' | 'thanhhoa'>('hanoi');
     const [processingId, setProcessingId] = useState<string | null>(null);
     const [showTopUpModal, setShowTopUpModal] = useState(false);
+    const [successBooking, setSuccessBooking] = useState<any>(null);
     const router = useRouter();
 
+    // Initial load
     useEffect(() => {
         fetchDriver();
-        const interval = setInterval(fetchBookings, 10000); // Poll every 10s
-        return () => clearInterval(interval);
     }, []);
+
+    // Poll bookings with current location
+    useEffect(() => {
+        const interval = setInterval(() => {
+            console.log(`[POLLING] Fetching for ${location}`);
+            fetchBookings();
+        }, 10000); // Poll every 10s
+
+        return () => clearInterval(interval);
+    }, [location]); // Re-create interval when location changes to capture new state
 
     useEffect(() => {
         if (driver) {
@@ -47,17 +57,32 @@ export default function DriverDashboard() {
             const res = await fetch(`/api/bookings/available?location=${location}`);
             if (res.ok) {
                 const data = await res.json();
-                // Merge new data with existing accepted bookings to keep them visible
-                setBookings(prev => {
-                    const acceptedBookings = prev.filter(b => b.is_accepted);
-                    const newBookings = data.bookings || [];
-                    // Filter out duplicates if any
-                    const uniqueNewBookings = newBookings.filter((nb: any) => !acceptedBookings.find(ab => ab.id === nb.id));
-                    return [...acceptedBookings, ...uniqueNewBookings];
-                });
+                // Only show pending bookings (not accepted by anyone yet)
+                setBookings(data.bookings || []);
             }
         } catch (error) {
             console.error('Error fetching bookings:', error);
+        }
+    };
+
+    const handleLocationChange = async (newLocation: 'hanoi' | 'thanhhoa') => {
+        try {
+            // Update database first to persist the change
+            const res = await fetch('/api/drivers/update-location', {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ current_location: newLocation }),
+            });
+
+            if (res.ok) {
+                // Then update local state
+                setLocation(newLocation);
+            } else {
+                alert('Không thể cập nhật vị trí. Vui lòng thử lại.');
+            }
+        } catch (error) {
+            console.error('Update location error:', error);
+            alert('Lỗi kết nối. Vui lòng thử lại.');
         }
     };
 
@@ -76,21 +101,16 @@ export default function DriverDashboard() {
             const data = await res.json();
 
             if (res.ok) {
-                // Update local state to show full phone and call button
-                setBookings(prev => prev.map(b => {
-                    if (b.id === bookingId) {
-                        return {
-                            ...b,
-                            phone: data.booking.phone,
-                            full_phone_hidden: false,
-                            is_accepted: true
-                        };
-                    }
-                    return b;
-                }));
+                alert(`✅ Đã nhận chuyến thành công!\n\nSố điện thoại khách: ${data.booking.phone}\nĐịa chỉ đón: ${data.booking.pickup_address}`);
+
+                // Remove the accepted booking from the list immediately
+                setBookings(prev => prev.filter(b => b.id !== bookingId));
 
                 // Refresh driver balance
                 fetchDriver();
+
+                // Refresh bookings list to get latest data
+                fetchBookings();
             } else {
                 alert(data.error || 'Có lỗi xảy ra');
             }
@@ -178,7 +198,7 @@ export default function DriverDashboard() {
                     </p>
                     <div className="grid grid-cols-2 gap-3">
                         <button
-                            onClick={() => setLocation('hanoi')}
+                            onClick={() => handleLocationChange('hanoi')}
                             className={`py-4 rounded-xl font-bold text-base transition-all flex items-center justify-center gap-2 ${location === 'hanoi'
                                 ? 'bg-amber-500 text-white shadow-lg shadow-amber-500/30 ring-2 ring-amber-500 ring-offset-2'
                                 : 'bg-slate-100 text-slate-500 hover:bg-slate-200'
@@ -188,7 +208,7 @@ export default function DriverDashboard() {
                             Hà Nội
                         </button>
                         <button
-                            onClick={() => setLocation('thanhhoa')}
+                            onClick={() => handleLocationChange('thanhhoa')}
                             className={`py-4 rounded-xl font-bold text-base transition-all flex items-center justify-center gap-2 ${location === 'thanhhoa'
                                 ? 'bg-amber-500 text-white shadow-lg shadow-amber-500/30 ring-2 ring-amber-500 ring-offset-2'
                                 : 'bg-slate-100 text-slate-500 hover:bg-slate-200'
@@ -381,6 +401,86 @@ export default function DriverDashboard() {
                     </div>
                 </div>
             )}
+
+            {/* Success Modal */}
+            {successBooking && (
+                <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-in fade-in duration-200">
+                    <div className="bg-white rounded-3xl p-8 max-w-md w-full shadow-2xl transform animate-in zoom-in duration-300">
+                        {/* Success Icon */}
+                        <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6 animate-bounce">
+                            <CheckCircle className="w-12 h-12 text-green-600" />
+                        </div>
+
+                        {/* Title */}
+                        <h2 className="text-2xl font-bold text-center text-slate-800 mb-2">
+                            Nhận chuyến thành công!
+                        </h2>
+                        <p className="text-center text-slate-500 mb-6">
+                            Hãy liên hệ với khách hàng để xác nhận thông tin
+                        </p>
+
+                        {/* Customer Info */}
+                        <div className="space-y-4 mb-6">
+                            {/* Phone */}
+                            <div className="bg-blue-50 rounded-xl p-4 border border-blue-100">
+                                <div className="flex items-center gap-3">
+                                    <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center shrink-0">
+                                        <Phone className="w-5 h-5 text-blue-600" />
+                                    </div>
+                                    <div className="flex-1">
+                                        <p className="text-xs text-slate-500 mb-1">Số điện thoại khách</p>
+                                        <p className="font-bold text-lg text-slate-800">{successBooking.phone}</p>
+                                    </div>
+                                    <a
+                                        href={`tel:${successBooking.phone}`}
+                                        className="bg-blue-600 text-white px-4 py-2 rounded-lg font-bold hover:bg-blue-700 transition-all flex items-center gap-2"
+                                    >
+                                        <Phone className="w-4 h-4" />
+                                        Gọi
+                                    </a>
+                                </div>
+                            </div>
+
+                            {/* Pickup Address */}
+                            <div className="bg-amber-50 rounded-xl p-4 border border-amber-100">
+                                <div className="flex items-start gap-3">
+                                    <div className="w-10 h-10 bg-amber-100 rounded-full flex items-center justify-center shrink-0">
+                                        <MapPin className="w-5 h-5 text-amber-600" />
+                                    </div>
+                                    <div>
+                                        <p className="text-xs text-slate-500 mb-1">Địa chỉ đón khách</p>
+                                        <p className="font-semibold text-slate-800">{successBooking.pickup_address}</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Dropoff Address */}
+                            {successBooking.dropoff_address && (
+                                <div className="bg-green-50 rounded-xl p-4 border border-green-100">
+                                    <div className="flex items-start gap-3">
+                                        <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center shrink-0">
+                                            <MapPin className="w-5 h-5 text-green-600" />
+                                        </div>
+                                        <div>
+                                            <p className="text-xs text-slate-500 mb-1">Điểm đến</p>
+                                            <p className="font-semibold text-slate-800">{successBooking.dropoff_address}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+
+                        {/* Close Button */}
+                        <button
+                            onClick={() => setSuccessBooking(null)}
+                            className="w-full bg-gradient-to-r from-amber-500 to-orange-600 text-white font-bold py-4 rounded-xl hover:from-amber-600 hover:to-orange-700 transition-all shadow-lg hover:shadow-xl"
+                        >
+                            Đóng lại
+                        </button>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }
+

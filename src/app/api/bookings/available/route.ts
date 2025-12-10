@@ -24,13 +24,25 @@ export async function GET(request: Request) {
             .order('created_at', { ascending: false });
 
         if (location) {
-            // If driver is in Hanoi, show bookings going TO Thanh Hoa (hn-th)
-            // If driver is in Thanh Hoa, show bookings going TO Hanoi (th-hn)
+            // Driver in Hanoi → Show bookings FROM Hanoi TO Thanh Hoa (hn-th)
+            // Driver in Thanh Hoa → Show bookings FROM Thanh Hoa TO Hanoi (th-hn)
             const direction = location === 'hanoi' ? 'hn-th' : 'th-hn';
+            console.log(`[DEBUG] Driver location: ${location}, filtering for direction: ${direction}`);
             query = query.eq('direction', direction);
+        } else {
+            console.log('[DEBUG] No location filter - showing all bookings');
         }
 
         const { data: bookings, error } = await query;
+
+        console.log(`[DEBUG] Query result: ${bookings?.length || 0} bookings found`);
+        if (bookings && bookings.length > 0) {
+            console.log('[DEBUG] Bookings:', bookings.map(b => ({
+                id: b.id.slice(0, 8),
+                direction: b.direction,
+                pickup: b.pickup_address.slice(0, 30)
+            })));
+        }
 
         if (error) {
             console.error('Fetch bookings error:', error);
