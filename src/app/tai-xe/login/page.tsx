@@ -208,18 +208,24 @@ export default function DriverLogin() {
                         </div>
                     </div>
 
-                    {/* Tab switcher for login method - Pill Style with Spacing */}
-                    {step === 'phone' && (
-                        <div className="flex gap-4 mb-8">
+                    {/* Tab switcher - Always visible unless in OTP verification or Create Password step */}
+                    {['phone', 'password'].includes(step) && (
+                        <div className="flex gap-6 mb-10">
                             <button
                                 type="button"
-                                onClick={() => setLoginMethod('otp')}
-                                className={`flex-1 py-3 px-4 rounded-xl text-sm font-bold transition-all duration-200 border-b-2 ${loginMethod === 'otp'
+                                onClick={() => {
+                                    setLoginMethod('otp');
+                                    setStep('phone');
+                                }}
+                                className={`flex-1 py-4 px-4 rounded-xl text-[15px] font-bold transition-all duration-200 border-b-2 text-center relative ${loginMethod === 'otp'
                                     ? 'bg-amber-50 text-amber-700 border-amber-500 shadow-sm'
-                                    : 'bg-slate-50 text-slate-500 border-transparent hover:bg-slate-100'
+                                    : 'bg-slate-50 text-slate-400 border-transparent hover:bg-slate-100 hover:text-slate-600'
                                     }`}
                             >
                                 Đăng nhập OTP
+                                {loginMethod === 'otp' && (
+                                    <div className="absolute -bottom-2.5 left-1/2 -translate-x-1/2 w-2 h-2 bg-amber-500 rotate-45 border-r border-b border-amber-50 hidden"></div>
+                                )}
                             </button>
                             <button
                                 type="button"
@@ -227,9 +233,9 @@ export default function DriverLogin() {
                                     setLoginMethod('password');
                                     setStep('password');
                                 }}
-                                className={`flex-1 py-3 px-4 rounded-xl text-sm font-bold transition-all duration-200 border-b-2 ${loginMethod === 'password'
+                                className={`flex-1 py-4 px-4 rounded-xl text-[15px] font-bold transition-all duration-200 border-b-2 text-center ${loginMethod === 'password'
                                     ? 'bg-amber-50 text-amber-700 border-amber-500 shadow-sm'
-                                    : 'bg-slate-50 text-slate-500 border-transparent hover:bg-slate-100'
+                                    : 'bg-slate-50 text-slate-400 border-transparent hover:bg-slate-100 hover:text-slate-600'
                                     }`}
                             >
                                 Mật khẩu
@@ -237,25 +243,25 @@ export default function DriverLogin() {
                         </div>
                     )}
 
-                    {step === 'phone' && loginMethod === 'otp' ? (
+                    {step === 'phone' ? (
                         <form className="space-y-8" onSubmit={handleSendOtp}>
                             <div>
                                 <label className="block text-sm font-bold text-slate-700 mb-2 ml-1">
                                     Số điện thoại
                                 </label>
                                 <div className="relative group">
-                                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none z-10">
-                                        <div className="w-9 h-9 bg-slate-100 rounded-full flex items-center justify-center text-slate-500">
-                                            <Phone className="h-5 w-5" />
-                                        </div>
+                                    {/* Icon Fixed Position - Centered vertically, proper left spacing */}
+                                    <div className="absolute top-[2px] bottom-[2px] left-[2px] w-[52px] flex items-center justify-center pointer-events-none z-10 bg-slate-100 rounded-l-[10px] rounded-r-md m-0.5">
+                                        <Phone className="h-5 w-5 text-slate-500" />
                                     </div>
                                     <input
                                         type="tel"
                                         required
                                         value={phone}
                                         onChange={(e) => setPhone(e.target.value)}
-                                        className="block w-full pl-14 pr-4 py-3.5 border border-slate-300 rounded-xl focus:ring-4 focus:ring-amber-500/10 focus:border-amber-500 transition-all font-bold text-slate-900 placeholder:font-normal placeholder:text-slate-400 text-lg shadow-sm"
+                                        className="block w-full pl-[68px] pr-4 py-4 border border-slate-300 rounded-xl focus:ring-4 focus:ring-amber-500/10 focus:border-amber-500 transition-all font-bold text-slate-900 placeholder:font-normal placeholder:text-slate-400 text-lg shadow-sm"
                                         placeholder="0912 xxx xxx"
+                                        style={{ lineHeight: '100%' }}
                                     />
                                 </div>
                             </div>
@@ -263,7 +269,7 @@ export default function DriverLogin() {
                             <button
                                 type="submit"
                                 disabled={loading}
-                                className="w-full flex justify-center items-center gap-3 py-4 px-4 border border-transparent rounded-xl shadow-xl shadow-amber-500/20 text-lg font-bold text-white bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 active:scale-[0.98] transition-all"
+                                className="w-full flex justify-center items-center gap-3 py-4 px-4 border border-transparent rounded-xl shadow-xl shadow-amber-500/20 text-lg font-bold text-white bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 active:scale-[0.98] transition-all h-[56px]"
                             >
                                 {loading ? 'Đang gửi...' : (
                                     <>
@@ -279,18 +285,17 @@ export default function DriverLogin() {
                                     Số điện thoại
                                 </label>
                                 <div className="relative group">
-                                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none z-10">
-                                        <div className="w-9 h-9 bg-slate-100 rounded-full flex items-center justify-center text-slate-500">
-                                            <Phone className="h-5 w-5" />
-                                        </div>
+                                    <div className="absolute top-[2px] bottom-[2px] left-[2px] w-[52px] flex items-center justify-center pointer-events-none z-10 bg-slate-100 rounded-l-[10px] rounded-r-md m-0.5">
+                                        <Phone className="h-5 w-5 text-slate-500" />
                                     </div>
                                     <input
                                         type="tel"
                                         required
                                         value={phone}
                                         onChange={(e) => setPhone(e.target.value)}
-                                        className="block w-full pl-14 pr-4 py-3.5 border border-slate-300 rounded-xl focus:ring-4 focus:ring-amber-500/10 focus:border-amber-500 transition-all font-bold text-slate-900 placeholder:font-normal placeholder:text-slate-400 text-lg shadow-sm"
+                                        className="block w-full pl-[68px] pr-4 py-4 border border-slate-300 rounded-xl focus:ring-4 focus:ring-amber-500/10 focus:border-amber-500 transition-all font-bold text-slate-900 placeholder:font-normal placeholder:text-slate-400 text-lg shadow-sm"
                                         placeholder="0912 xxx xxx"
+                                        style={{ lineHeight: '100%' }}
                                     />
                                 </div>
                             </div>
@@ -300,18 +305,17 @@ export default function DriverLogin() {
                                     Mật khẩu
                                 </label>
                                 <div className="relative group">
-                                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none z-10">
-                                        <div className="w-9 h-9 bg-slate-100 rounded-full flex items-center justify-center text-slate-500">
-                                            <Lock className="h-5 w-5" />
-                                        </div>
+                                    <div className="absolute top-[2px] bottom-[2px] left-[2px] w-[52px] flex items-center justify-center pointer-events-none z-10 bg-slate-100 rounded-l-[10px] rounded-r-md m-0.5">
+                                        <Lock className="h-5 w-5 text-slate-500" />
                                     </div>
                                     <input
                                         type="password"
                                         required
                                         value={password}
                                         onChange={(e) => setPassword(e.target.value)}
-                                        className="block w-full pl-14 pr-4 py-3.5 border border-slate-300 rounded-xl focus:ring-4 focus:ring-amber-500/10 focus:border-amber-500 transition-all font-bold text-slate-900 placeholder:font-normal placeholder:text-slate-400 text-lg shadow-sm"
+                                        className="block w-full pl-[68px] pr-4 py-4 border border-slate-300 rounded-xl focus:ring-4 focus:ring-amber-500/10 focus:border-amber-500 transition-all font-bold text-slate-900 placeholder:font-normal placeholder:text-slate-400 text-lg shadow-sm"
                                         placeholder="••••••••"
+                                        style={{ lineHeight: '100%' }}
                                     />
                                 </div>
                             </div>
@@ -339,11 +343,11 @@ export default function DriverLogin() {
                             <button
                                 type="submit"
                                 disabled={loading}
-                                className="w-full flex justify-center items-center gap-3 py-4 px-4 border border-transparent rounded-2xl shadow-xl shadow-amber-500/20 text-lg font-bold text-white bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 active:scale-[0.98] transition-all"
+                                className="w-full flex justify-center items-center gap-3 py-4 px-4 border border-transparent rounded-xl shadow-xl shadow-amber-500/20 text-lg font-bold text-white bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 active:scale-[0.98] transition-all h-[56px]"
                             >
                                 {loading ? 'Đang đăng nhập...' : (
                                     <>
-                                        Đăng Nhập <ArrowRight className="w-6 h-6" />
+                                        Đăng Nhập Ngay <ArrowRight className="w-6 h-6" />
                                     </>
                                 )}
                             </button>
@@ -361,19 +365,18 @@ export default function DriverLogin() {
                                     Tạo mật khẩu <span className="text-red-500">*</span>
                                 </label>
                                 <div className="relative group">
-                                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none z-10">
-                                        <div className="w-9 h-9 bg-slate-100 rounded-full flex items-center justify-center text-slate-500">
-                                            <Lock className="h-5 w-5" />
-                                        </div>
+                                    <div className="absolute top-[2px] bottom-[2px] left-[2px] w-[52px] flex items-center justify-center pointer-events-none z-10 bg-slate-100 rounded-l-[10px] rounded-r-md m-0.5">
+                                        <Lock className="h-5 w-5 text-slate-500" />
                                     </div>
                                     <input
                                         type="password"
                                         required
                                         value={password}
                                         onChange={(e) => setPassword(e.target.value)}
-                                        className="block w-full pl-14 pr-4 py-3.5 border border-slate-300 rounded-xl focus:ring-4 focus:ring-amber-500/10 focus:border-amber-500 transition-all font-bold text-slate-900 placeholder:font-normal placeholder:text-slate-400 text-lg shadow-sm"
+                                        className="block w-full pl-[68px] pr-4 py-4 border border-slate-300 rounded-xl focus:ring-4 focus:ring-amber-500/10 focus:border-amber-500 transition-all font-bold text-slate-900 placeholder:font-normal placeholder:text-slate-400 text-lg shadow-sm"
                                         placeholder="Ít nhất 6 ký tự"
                                         minLength={6}
+                                        style={{ lineHeight: '100%' }}
                                     />
                                 </div>
                             </div>
@@ -383,18 +386,17 @@ export default function DriverLogin() {
                                     Xác nhận mật khẩu <span className="text-red-500">*</span>
                                 </label>
                                 <div className="relative group">
-                                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none z-10">
-                                        <div className="w-9 h-9 bg-slate-100 rounded-full flex items-center justify-center text-slate-500">
-                                            <Lock className="h-5 w-5" />
-                                        </div>
+                                    <div className="absolute top-[2px] bottom-[2px] left-[2px] w-[52px] flex items-center justify-center pointer-events-none z-10 bg-slate-100 rounded-l-[10px] rounded-r-md m-0.5">
+                                        <Lock className="h-5 w-5 text-slate-500" />
                                     </div>
                                     <input
                                         type="password"
                                         required
                                         value={confirmPassword}
                                         onChange={(e) => setConfirmPassword(e.target.value)}
-                                        className="block w-full pl-14 pr-4 py-3.5 border border-slate-300 rounded-xl focus:ring-4 focus:ring-amber-500/10 focus:border-amber-500 transition-all font-bold text-slate-900 placeholder:font-normal placeholder:text-slate-400 text-lg shadow-sm"
+                                        className="block w-full pl-[68px] pr-4 py-4 border border-slate-300 rounded-xl focus:ring-4 focus:ring-amber-500/10 focus:border-amber-500 transition-all font-bold text-slate-900 placeholder:font-normal placeholder:text-slate-400 text-lg shadow-sm"
                                         placeholder="Nhập lại mật khẩu"
+                                        style={{ lineHeight: '100%' }}
                                     />
                                 </div>
                                 <p className="mt-2 text-xs text-slate-500 ml-1">
@@ -405,7 +407,7 @@ export default function DriverLogin() {
                             <button
                                 type="submit"
                                 disabled={loading}
-                                className="w-full flex justify-center items-center gap-2 py-4 px-4 border border-transparent rounded-xl shadow-lg text-lg font-bold text-white bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-amber-500 disabled:opacity-70 transition-all"
+                                className="w-full flex justify-center items-center gap-2 py-4 px-4 border border-transparent rounded-xl shadow-lg h-[56px] text-lg font-bold text-white bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-amber-500 disabled:opacity-70 transition-all"
                             >
                                 {loading ? 'Đang xử lý...' : (
                                     <>
@@ -415,41 +417,38 @@ export default function DriverLogin() {
                             </button>
                         </form>
                     ) : step === 'otp' ? (
-                        <form className="space-y-6" onSubmit={handleVerifyOtp}>
-                            <div className="text-center mb-4">
-                                <p className="text-sm text-slate-500">Mã xác thực đã gửi đến</p>
-                                <p className="font-bold text-2xl text-slate-900">{phone}</p>
-                                <div className="flex items-center justify-center gap-2 mt-2">
+                        <form className="space-y-8" onSubmit={handleVerifyOtp}>
+                            <div className="text-center mb-8">
+                                <p className="text-sm font-medium text-slate-500 mb-1">Mã xác thực đã gửi đến</p>
+                                <p className="font-black text-2xl text-slate-900 tracking-tight">{phone}</p>
+                                <div className="flex items-center justify-center gap-3 mt-4">
                                     <button
                                         type="button"
                                         onClick={() => setStep('phone')}
-                                        className="text-xs text-amber-600 hover:underline"
+                                        className="text-xs font-bold bg-slate-100 text-slate-600 px-4 py-2 rounded-lg hover:bg-slate-200 transition-colors"
                                     >
-                                        Đổi số điện thoại
+                                        Đổi SĐT
                                     </button>
-                                    <span className="text-slate-300">•</span>
                                     <button
                                         type="button"
                                         onClick={handleSendOtp}
                                         disabled={resendCountdown > 0 || loading}
-                                        className="text-xs text-amber-600 hover:underline disabled:text-slate-400 disabled:no-underline disabled:cursor-not-allowed"
+                                        className="text-xs font-bold bg-amber-50 text-amber-600 px-4 py-2 rounded-lg hover:bg-amber-100 transition-colors disabled:text-slate-400 disabled:bg-slate-50 disabled:cursor-not-allowed"
                                     >
                                         {resendCountdown > 0
                                             ? `Gửi lại sau ${resendCountdown}s`
-                                            : 'Gửi lại mã OTP'}
+                                            : 'Gửi lại mã'}
                                     </button>
                                 </div>
                             </div>
 
                             <div>
-                                <label className="block text-sm font-medium text-slate-700 mb-4 text-center">
+                                <label className="block text-sm font-bold text-slate-700 mb-3 text-center">
                                     Nhập mã OTP (6 số)
                                 </label>
                                 <div className="relative group max-w-[240px] mx-auto">
-                                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none z-10">
-                                        <div className="w-9 h-9 bg-slate-100 rounded-full flex items-center justify-center text-slate-500">
-                                            <KeyRound className="h-5 w-5" />
-                                        </div>
+                                    <div className="absolute top-[2px] bottom-[2px] left-[2px] w-[52px] flex items-center justify-center pointer-events-none z-10 bg-slate-100 rounded-l-[10px] rounded-r-md m-0.5">
+                                        <KeyRound className="h-5 w-5 text-slate-500" />
                                     </div>
                                     <input
                                         type="text"
@@ -457,8 +456,9 @@ export default function DriverLogin() {
                                         maxLength={6}
                                         value={otp}
                                         onChange={(e) => setOtp(e.target.value)}
-                                        className="block w-full pl-14 pr-4 py-3.5 border border-slate-300 rounded-xl focus:ring-4 focus:ring-amber-500/10 focus:border-amber-500 transition-all tracking-[0.5em] text-2xl font-black text-center text-slate-900 shadow-sm"
+                                        className="block w-full pl-[68px] pr-4 py-4 border border-slate-300 rounded-xl focus:ring-4 focus:ring-amber-500/10 focus:border-amber-500 transition-all tracking-[0.5em] text-2xl font-black text-center text-slate-900 shadow-sm"
                                         placeholder="••••••"
+                                        style={{ lineHeight: '100%' }}
                                     />
                                 </div>
                             </div>
@@ -466,7 +466,7 @@ export default function DriverLogin() {
                             <button
                                 type="submit"
                                 disabled={loading}
-                                className="w-full flex justify-center items-center gap-2 py-4 px-4 border border-transparent rounded-xl shadow-lg mt-6 text-lg font-bold text-white bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-amber-500 disabled:opacity-70 transition-all"
+                                className="w-full flex justify-center items-center gap-2 py-4 px-4 border border-transparent rounded-xl shadow-lg mt-8 h-[56px] text-lg font-bold text-white bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-amber-500 disabled:opacity-70 transition-all"
                             >
                                 {loading ? 'Đang kiểm tra...' : (
                                     <>
@@ -477,29 +477,17 @@ export default function DriverLogin() {
                         </form>
                     ) : null}
 
-                    <div className="mt-8">
-                        <div className="relative">
-                            <div className="absolute inset-0 flex items-center">
-                                <div className="w-full border-t border-slate-100" />
+                    {/* Hotline Section - Improve alignment and styling */}
+                    <div className="mt-8 pt-6 border-t border-slate-100 flex flex-col items-center justify-center text-center">
+                        <span className="text-slate-400 text-xs font-medium mb-2 uppercase tracking-wider">Hỗ trợ tài xế 24/7</span>
+                        <a href="tel:0334909668" className="group flex items-center gap-3 bg-slate-50 hover:bg-amber-50 px-5 py-3 rounded-xl transition-all border border-slate-100 hover:border-amber-200 shadow-sm hover:shadow-md">
+                            <div className="bg-amber-100 text-amber-600 p-2 rounded-full group-hover:bg-amber-500 group-hover:text-white transition-colors">
+                                <Phone className="w-5 h-5 fill-current" />
                             </div>
-                            <div className="relative flex justify-center text-sm">
-                                <span className="px-4 bg-white text-slate-400 font-medium">
-                                    Hỗ trợ tài xế
-                                </span>
-                            </div>
-                        </div>
-
-                        <div className="mt-6">
-                            <a
-                                href="tel:0912345678"
-                                className="w-full inline-flex justify-center items-center py-4 px-4 border-2 border-slate-100 rounded-2xl bg-slate-50 hover:bg-white hover:border-amber-200 hover:shadow-md transition-all group"
-                            >
-                                <div className="w-8 h-8 bg-amber-100 text-amber-600 rounded-full flex items-center justify-center mr-3 group-hover:scale-110 transition-transform">
-                                    <Phone className="w-4 h-4" strokeWidth={2.5} />
-                                </div>
-                                <span className="text-[15px] font-bold text-slate-700 group-hover:text-amber-700">Gọi Hotline: <span className="text-lg">0912.345.678</span></span>
-                            </a>
-                        </div>
+                            <span className="font-bold text-slate-700 text-lg group-hover:text-amber-700 transition-colors">
+                                0334.909.668
+                            </span>
+                        </a>
                     </div>
                 </div>
             </div>
