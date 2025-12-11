@@ -51,10 +51,10 @@ export default function RecentBookingNotification() {
         setData({ name, from, to, time });
         setVisible(true);
 
-        // Hide after 6 seconds
+        // Hide after 5 seconds
         setTimeout(() => {
             setVisible(false);
-        }, 6000);
+        }, 5000);
     };
 
     if (!visible || !data || pathname?.startsWith('/tai-xe')) return null;

@@ -46,15 +46,15 @@ export default function Header() {
     }
 
     return (
-        <header className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${scrolled ? 'bg-white/90 backdrop-blur-md shadow-md py-3' : 'bg-transparent py-5'}`}>
+        <header className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${scrolled || pathname !== '/' ? 'bg-white/90 backdrop-blur-md shadow-sm py-2' : 'bg-transparent py-3'}`}>
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="flex justify-between items-center">
                     {/* Logo */}
                     <Link href="/" className="flex items-center gap-2 group">
-                        <div className="w-10 h-10 bg-gradient-to-br from-amber-500 to-orange-600 rounded-xl flex items-center justify-center transform group-hover:rotate-12 transition-transform">
-                            <Car className="w-6 h-6 text-white" />
+                        <div className="w-8 h-8 md:w-10 md:h-10 bg-gradient-to-br from-amber-500 to-orange-600 rounded-xl flex items-center justify-center transform group-hover:rotate-12 transition-transform">
+                            <Car className="w-5 h-5 md:w-6 md:h-6 text-white" />
                         </div>
-                        <span className={`text-2xl font-bold ${scrolled || pathname !== '/' ? 'text-slate-800' : 'text-white'}`}>
+                        <span className={`text-lg md:text-2xl font-bold ${scrolled || pathname !== '/' ? 'text-slate-800' : 'text-white'}`}>
                             Xe<span className="text-amber-500">Ghép</span>
                         </span>
                     </Link>
