@@ -112,7 +112,7 @@ export default function Home() {
                 <Check className="w-4 h-4 text-blue-500 bg-blue-100 rounded-full p-0.5" />
               </h3>
               <p className="text-slate-500 text-sm leading-relaxed">
-                Đội xe 5-7 chỗ đời mới, nội thất sang trọng, luôn được vệ sinh sạch sẽ.
+                Đội xe 4-7 chỗ đời mới, nội thất sang trọng, luôn được vệ sinh sạch sẽ.
               </p>
             </div>
 

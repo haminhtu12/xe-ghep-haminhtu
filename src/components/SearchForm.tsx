@@ -10,9 +10,8 @@ const SERVICE_TYPES = [
 ];
 
 const VEHICLE_TYPES = [
-    { id: '5-cho', name: 'Xe 5 chỗ', price: 1300000 },
+    { id: '4-5-cho', name: 'Xe 4-5 chỗ', price: 1300000 },
     { id: '7-cho', name: 'Xe 7 chỗ', price: 1500000 },
-    { id: 'ban-tai', name: 'Bán tải', price: 1300000 },
 ];
 
 export default function SearchForm() {
@@ -23,7 +22,7 @@ export default function SearchForm() {
     const [date, setDate] = useState(new Date().toISOString().split('T')[0]);
     const [time, setTime] = useState('08:00'); // Default time
     const [seatCount, setSeatCount] = useState(1);
-    const [vehicleType, setVehicleType] = useState('5-cho');
+    const [vehicleType, setVehicleType] = useState('4-5-cho');
     const [estimatedPrice, setEstimatedPrice] = useState<number>(400000);
     const [isLoading, setIsLoading] = useState(false);
     const [isSuccess, setIsSuccess] = useState(false);
@@ -335,7 +334,7 @@ export default function SearchForm() {
                                 <Car className="w-4 h-4 inline mr-1" />
                                 Chọn loại xe
                             </label>
-                            <div className="grid grid-cols-3 gap-3">
+                            <div className="grid grid-cols-2 gap-3">
                                 {VEHICLE_TYPES.map((vehicle) => {
                                     const isActive = vehicleType === vehicle.id;
                                     return (
