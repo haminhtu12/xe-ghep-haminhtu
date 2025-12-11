@@ -1,8 +1,9 @@
 import { NextResponse } from 'next/server';
 import { supabase } from '@/lib/supabase';
+import { sendOTP } from '@/lib/esms';
 
-const SPEEDSMS_ACCESS_TOKEN = process.env.SPEEDSMS_ACCESS_TOKEN!;
-const SPEEDSMS_API_URL = 'https://api.speedsms.vn/index.php/sms/send';
+const ESMS_API_KEY = process.env.ESMS_API_KEY;
+const ESMS_SECRET_KEY = process.env.ESMS_SECRET_KEY;
 
 export async function POST(request: Request) {
     try {
@@ -17,7 +18,7 @@ export async function POST(request: Request) {
             );
         }
 
-        // Normalize phone (remove +84, add 0)
+        // Normalize phone (remove +84, add 0) for database check
         const normalizedPhone = phone.startsWith('+84')
             ? '0' + phone.slice(3)
             : phone;
@@ -62,84 +63,59 @@ export async function POST(request: Request) {
             );
         }
 
-        // Send SMS via SpeedSMS
-        const smsPayload = {
-            to: [normalizedPhone],
-            content: `Ma xac thuc XeGhep cua ban la: ${otp}. Ma co hieu luc trong 5 phut.`,
-            sms_type: 2, // Brandname SMS
-            sender: 'Notify', // Default sender name
-        };
+        // Development Fallback or Missing Config
+        // If config is missing, we use Dev Mode to print OTP to console
+        if (!VONAGE_API_KEY || !VONAGE_API_SECRET) {
+            console.log('='.repeat(50));
+            console.log('⚠️ VONAGE CONFIG MISSING - USING DEV MODE');
+            console.log(`Phone: ${normalizedPhone}`);
+            console.log(`OTP Code: ${otp}`);
+            console.log('='.repeat(50));
 
+            return NextResponse.json({
+                success: true,
+                message: '[DEV MODE] Chưa cấu hình Vonage. Mã OTP đã in ra console server.',
+                devMode: true,
+                otp: otp
+            });
+        }
+
+        // Send SMS via Vonage
         try {
-            const smsResponse = await fetch(SPEEDSMS_API_URL, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${SPEEDSMS_ACCESS_TOKEN}`,
-                },
-                body: JSON.stringify(smsPayload),
+            await sendOTP(normalizedPhone, otp);
+
+            console.log('OTP sent successfully via ESMS:', { phone: normalizedPhone });
+
+            return NextResponse.json({
+                success: true,
+                message: 'Mã OTP đã được gửi đến số điện thoại của bạn.',
             });
 
-            const smsResult = await smsResponse.json();
+        } catch (smsError: any) {
+            console.error('ESMS sending exception:', smsError);
 
-            if (!smsResponse.ok || smsResult.status !== 'success') {
-                console.error('SpeedSMS error:', smsResult);
-
-                // Development fallback: If SMS fails (e.g., no balance), log OTP to console
-                if (process.env.NODE_ENV === 'development') {
-                    console.log('='.repeat(50));
-                    console.log('📱 DEVELOPMENT MODE - OTP NOT SENT VIA SMS');
-                    console.log(`Phone: ${normalizedPhone}`);
-                    console.log(`OTP Code: ${otp}`);
-                    console.log(`Expires at: ${expiresAt.toLocaleString('vi-VN')}`);
-                    console.log('='.repeat(50));
-
-                    return NextResponse.json({
-                        success: true,
-                        message: '[DEV MODE] Mã OTP đã được tạo. Kiểm tra console server để lấy mã.',
-                        devMode: true,
-                        otp: otp, // Only in dev mode
-                    });
-                }
-
-                return NextResponse.json(
-                    { error: 'Không thể gửi SMS. Vui lòng thử lại sau hoặc liên hệ hỗ trợ.' },
-                    { status: 500 }
-                );
-            }
-
-            console.log('OTP sent successfully via SMS:', { phone: normalizedPhone });
-
-        } catch (smsError) {
-            console.error('SMS sending exception:', smsError);
-
-            // Development fallback
+            // Development fallback if ESMS fails
             if (process.env.NODE_ENV === 'development') {
                 console.log('='.repeat(50));
-                console.log('📱 DEVELOPMENT MODE - SMS FAILED, USING FALLBACK');
+                console.log('📱 DEVELOPMENT MODE - ESMS FAILED, USING FALLBACK');
+                console.log(`Error: ${smsError.message}`);
                 console.log(`Phone: ${normalizedPhone}`);
                 console.log(`OTP Code: ${otp}`);
-                console.log(`Expires at: ${expiresAt.toLocaleString('vi-VN')}`);
                 console.log('='.repeat(50));
 
                 return NextResponse.json({
                     success: true,
-                    message: '[DEV MODE] Mã OTP đã được tạo. Kiểm tra console server để lấy mã.',
+                    message: `[DEV MODE] Lỗi gửi ESMS. Mã OTP xem tại console.`,
                     devMode: true,
                     otp: otp,
                 });
             }
 
             return NextResponse.json(
-                { error: 'Không thể gửi SMS. Vui lòng thử lại sau.' },
+                { error: 'Không thể gửi SMS. Vui lòng kiểm tra lại số điện thoại.' },
                 { status: 500 }
             );
         }
-
-        return NextResponse.json({
-            success: true,
-            message: 'Mã OTP đã được gửi đến số điện thoại của bạn.',
-        });
 
     } catch (error) {
         console.error('Send OTP error:', error);

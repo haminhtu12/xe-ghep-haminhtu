@@ -207,19 +207,21 @@ export default function DriverRegistration() {
                         {step === 'phone' ? (
                             <form className="space-y-6" onSubmit={handleSendOtp}>
                                 <div>
-                                    <label className="block text-sm font-medium text-slate-700 mb-2">
+                                    <label className="block text-sm font-bold text-slate-700 mb-2 ml-1">
                                         Số điện thoại
                                     </label>
                                     <div className="relative">
                                         <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                            <Phone className="h-5 w-5 text-slate-400" />
+                                            <div className="w-10 h-10 bg-slate-50 rounded-xl flex items-center justify-center border border-slate-100">
+                                                <Phone className="h-5 w-5 text-slate-400" />
+                                            </div>
                                         </div>
                                         <input
                                             type="tel"
                                             required
                                             value={phone}
                                             onChange={(e) => setPhone(e.target.value)}
-                                            className="block w-full pl-10 pr-3 py-3 border border-slate-300 rounded-xl focus:ring-amber-500 focus:border-amber-500 transition-colors"
+                                            className="block w-full pl-[3.5rem] pr-4 py-4 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-amber-500/10 focus:border-amber-500 transition-all font-bold text-slate-900 placeholder:font-normal placeholder:text-slate-400 text-lg"
                                             placeholder="0912 xxx xxx"
                                         />
                                     </div>
@@ -228,49 +230,50 @@ export default function DriverRegistration() {
                                 <button
                                     type="submit"
                                     disabled={loading}
-                                    className="w-full flex justify-center items-center gap-2 py-4 px-4 border border-transparent rounded-xl shadow-lg text-lg font-bold text-white bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-amber-500 disabled:opacity-70 transition-all"
+                                    className="w-full flex justify-center items-center gap-3 py-4 px-4 border border-transparent rounded-2xl shadow-xl shadow-amber-500/20 text-lg font-bold text-white bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 active:scale-[0.98] transition-all"
                                 >
                                     {loading ? 'Đang gửi...' : (
                                         <>
-                                            Lấy Mã Xác Thực <ArrowRight className="w-5 h-5" />
+                                            Lấy Mã Xác Thực <ArrowRight className="w-6 h-6" />
                                         </>
                                     )}
                                 </button>
                             </form>
                         ) : (
-                            <form className="space-y-6" onSubmit={handleVerifyOtp}>
-                                <div className="text-center mb-4">
-                                    <p className="text-sm text-slate-500">Mã xác thực đã gửi đến</p>
-                                    <p className="font-bold text-lg text-slate-800">{phone}</p>
-                                    <div className="flex items-center justify-center gap-2 mt-2">
+                            <form className="space-y-8" onSubmit={handleVerifyOtp}>
+                                <div className="text-center mb-6">
+                                    <p className="text-sm font-medium text-slate-500 mb-1">Mã xác thực đã gửi đến</p>
+                                    <p className="font-black text-2xl text-slate-900 tracking-tight">{phone}</p>
+                                    <div className="flex items-center justify-center gap-3 mt-3">
                                         <button
                                             type="button"
                                             onClick={() => setStep('phone')}
-                                            className="text-xs text-amber-600 hover:underline"
+                                            className="text-xs font-bold bg-slate-100 text-slate-600 px-3 py-1.5 rounded-lg hover:bg-slate-200 transition-colors"
                                         >
-                                            Đổi số điện thoại
+                                            Đổi SĐT
                                         </button>
-                                        <span className="text-slate-300">•</span>
                                         <button
                                             type="button"
                                             onClick={handleSendOtp}
                                             disabled={resendCountdown > 0 || loading}
-                                            className="text-xs text-amber-600 hover:underline disabled:text-slate-400 disabled:no-underline disabled:cursor-not-allowed"
+                                            className="text-xs font-bold bg-amber-50 text-amber-600 px-3 py-1.5 rounded-lg hover:bg-amber-100 transition-colors disabled:text-slate-400 disabled:bg-slate-50 disabled:cursor-not-allowed"
                                         >
                                             {resendCountdown > 0
                                                 ? `Gửi lại sau ${resendCountdown}s`
-                                                : 'Gửi lại mã OTP'}
+                                                : 'Gửi lại mã'}
                                         </button>
                                     </div>
                                 </div>
 
                                 <div>
-                                    <label className="block text-sm font-medium text-slate-700 mb-2">
+                                    <label className="block text-sm font-bold text-slate-700 mb-2 text-center">
                                         Nhập mã OTP (6 số)
                                     </label>
                                     <div className="relative">
                                         <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                            <KeyRound className="h-5 w-5 text-slate-400" />
+                                            <div className="w-10 h-10 bg-slate-50 rounded-xl flex items-center justify-center border border-slate-100">
+                                                <KeyRound className="h-5 w-5 text-slate-400" />
+                                            </div>
                                         </div>
                                         <input
                                             type="text"
@@ -278,23 +281,21 @@ export default function DriverRegistration() {
                                             maxLength={6}
                                             value={otp}
                                             onChange={(e) => setOtp(e.target.value)}
-                                            className="block w-full pl-10 pr-3 py-3 border border-slate-300 rounded-xl focus:ring-amber-500 focus:border-amber-500 transition-colors tracking-widest text-lg font-bold text-center"
-                                            placeholder="123456"
+                                            className="block w-full pl-[3.5rem] pr-4 py-4 border border-slate-300 rounded-2xl focus:ring-4 focus:ring-amber-500/10 focus:border-amber-500 transition-all tracking-[0.5em] text-2xl font-black text-center text-slate-900"
+                                            placeholder="••••••"
                                         />
                                     </div>
-                                    <p className="mt-2 text-xs text-center text-slate-500">
-                                        Mã mặc định cho bản thử nghiệm: <span className="font-mono font-bold text-slate-800">123456</span>
-                                    </p>
+
                                 </div>
 
                                 <button
                                     type="submit"
                                     disabled={loading}
-                                    className="w-full flex justify-center items-center gap-2 py-4 px-4 border border-transparent rounded-xl shadow-lg text-lg font-bold text-white bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-amber-500 disabled:opacity-70 transition-all"
+                                    className="w-full flex justify-center items-center gap-3 py-4 px-4 border border-transparent rounded-2xl shadow-xl shadow-amber-500/20 text-lg font-bold text-white bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 active:scale-[0.98] transition-all"
                                 >
                                     {loading ? 'Đang kiểm tra...' : (
                                         <>
-                                            Đăng Nhập <ArrowRight className="w-5 h-5" />
+                                            Đăng Nhập <ArrowRight className="w-6 h-6" />
                                         </>
                                     )}
                                 </button>

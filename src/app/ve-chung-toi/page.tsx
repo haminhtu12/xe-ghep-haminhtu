@@ -133,7 +133,7 @@ export default function AboutPage() {
                     </p>
                     <div className="flex flex-col sm:flex-row justify-center gap-4">
                         <a href="tel:0912345678" className="bg-amber-500 text-white px-8 py-4 rounded-xl font-bold text-lg hover:bg-amber-600 transition-all shadow-lg hover:shadow-amber-500/20">
-                            Gọi Hotline: 0912.345.678
+                            Gọi Hotline: 0334.909.668
                         </a>
                         <a href="/" className="px-8 py-4 rounded-xl font-bold text-lg text-slate-600 border border-slate-200 hover:bg-slate-50 transition-all">
                             Về Trang Chủ

@@ -1,10 +1,11 @@
 import { NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
 import { supabase } from '@/lib/supabase';
+import bcrypt from 'bcryptjs';
 
 export async function POST(request: Request) {
     try {
-        const { phone, otp } = await request.json();
+        const { phone, otp, password } = await request.json();
 
         if (!phone || !otp) {
             return NextResponse.json(
@@ -59,11 +60,8 @@ export async function POST(request: Request) {
             );
         }
 
-        // Mark OTP as verified
-        await supabase
-            .from('otp_codes')
-            .update({ verified: true })
-            .eq('id', otpRecord.id);
+        // DON'T mark OTP as verified yet if no password (new user)
+        // Will mark as verified after password is set
 
         // Check if driver exists
         const { data: existingDriver } = await supabase
@@ -76,11 +74,35 @@ export async function POST(request: Request) {
         let isNew = false;
 
         if (!existingDriver) {
+            // For NEW driver: check if password is provided
+            if (!password) {
+                // First time OTP verification - return success but indicate new user
+                // Frontend will then prompt for password and call again
+                return NextResponse.json({
+                    success: true,
+                    isNew: true,
+                    needPassword: true,
+                    message: 'OTP xác thực thành công! Vui lòng tạo mật khẩu để hoàn tất đăng ký.',
+                });
+            }
+
+            // Validate password strength
+            if (password.length < 6) {
+                return NextResponse.json(
+                    { error: 'Mật khẩu phải có ít nhất 6 ký tự' },
+                    { status: 400 }
+                );
+            }
+
+            // Hash password
+            const hashedPassword = await bcrypt.hash(password, 10);
+
             // Create new driver with 150k bonus (auto-approved)
             const { data: newDriver, error: createError } = await supabase
                 .from('drivers')
                 .insert({
                     phone: normalizedPhone,
+                    password: hashedPassword,
                     name: `Tài xế ${normalizedPhone.slice(-4)}`,
                     wallet_balance: 150000,
                     status: 'approved', // Auto-approve new drivers
@@ -107,9 +129,21 @@ export async function POST(request: Request) {
                 description: 'Thưởng thành viên mới',
             });
 
+            // Mark OTP as verified after successful registration
+            await supabase
+                .from('otp_codes')
+                .update({ verified: true })
+                .eq('id', otpRecord.id);
+
             driver = newDriver;
             isNew = true;
         } else {
+            // Existing driver login - mark OTP as verified
+            await supabase
+                .from('otp_codes')
+                .update({ verified: true })
+                .eq('id', otpRecord.id);
+
             driver = existingDriver;
         }
 

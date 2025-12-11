@@ -156,7 +156,7 @@ export default function Header() {
                         <div className="border-t border-slate-100 pt-4 mt-2">
                             <a href="tel:0912345678" className="px-4 py-3 rounded-xl bg-green-50 text-green-700 font-bold flex items-center gap-3 justify-center">
                                 <Phone className="w-5 h-5" />
-                                Hotline: 0912.345.678
+                                Hotline: 0334.909.668
                             </a>
                         </div>
                     </nav>
