@@ -1,10 +1,9 @@
 import { NextResponse } from 'next/server';
 import { supabase } from '@/lib/supabase';
-import twilio from 'twilio';
+import { sendOTP } from '@/lib/vonage-sms';
 
-const TWILIO_ACCOUNT_SID = process.env.TWILIO_ACCOUNT_SID;
-const TWILIO_AUTH_TOKEN = process.env.TWILIO_AUTH_TOKEN;
-const TWILIO_PHONE_NUMBER = process.env.TWILIO_PHONE_NUMBER;
+const VONAGE_API_KEY = process.env.VONAGE_API_KEY;
+const VONAGE_API_SECRET = process.env.VONAGE_API_SECRET;
 
 export async function POST(request: Request) {
     try {
@@ -22,11 +21,6 @@ export async function POST(request: Request) {
         // Normalize phone (remove +84, add 0) for database check
         const normalizedPhone = phone.startsWith('+84')
             ? '0' + phone.slice(3)
-            : phone;
-
-        // Format phone for Twilio (must have +84)
-        const twilioPhone = phone.startsWith('0')
-            ? '+84' + phone.slice(1)
             : phone;
 
         // Check rate limiting: max 3 OTP requests per phone per 5 minutes
@@ -71,32 +65,26 @@ export async function POST(request: Request) {
 
         // Development Fallback or Missing Config
         // If config is missing, we use Dev Mode to print OTP to console
-        if (!TWILIO_ACCOUNT_SID || !TWILIO_AUTH_TOKEN || !TWILIO_PHONE_NUMBER) {
+        if (!VONAGE_API_KEY || !VONAGE_API_SECRET) {
             console.log('='.repeat(50));
-            console.log('⚠️ TWILIO CONFIG MISSING - USING DEV MODE');
+            console.log('⚠️ VONAGE CONFIG MISSING - USING DEV MODE');
             console.log(`Phone: ${normalizedPhone}`);
             console.log(`OTP Code: ${otp}`);
             console.log('='.repeat(50));
 
             return NextResponse.json({
                 success: true,
-                message: '[DEV MODE] Chưa cấu hình Twilio. Mã OTP đã in ra console server.',
+                message: '[DEV MODE] Chưa cấu hình Vonage. Mã OTP đã in ra console server.',
                 devMode: true,
                 otp: otp
             });
         }
 
-        // Send SMS via Twilio
+        // Send SMS via Vonage
         try {
-            const client = twilio(TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN);
+            await sendOTP(normalizedPhone, otp);
 
-            await client.messages.create({
-                body: `Ma xac thuc XeGhep cua ban la: ${otp}. Ma co hieu luc trong 5 phut.`,
-                from: TWILIO_PHONE_NUMBER,
-                to: twilioPhone
-            });
-
-            console.log('OTP sent successfully via Twilio:', { phone: twilioPhone });
+            console.log('OTP sent successfully via Vonage:', { phone: normalizedPhone });
 
             return NextResponse.json({
                 success: true,
@@ -104,12 +92,12 @@ export async function POST(request: Request) {
             });
 
         } catch (smsError: any) {
-            console.error('Twilio sending exception:', smsError);
+            console.error('Vonage sending exception:', smsError);
 
-            // Development fallback if Twilio fails (e.g. unverified number in trial)
+            // Development fallback if Vonage fails
             if (process.env.NODE_ENV === 'development') {
                 console.log('='.repeat(50));
-                console.log('📱 DEVELOPMENT MODE - TWILIO FAILED, USING FALLBACK');
+                console.log('📱 DEVELOPMENT MODE - VONAGE FAILED, USING FALLBACK');
                 console.log(`Error: ${smsError.message}`);
                 console.log(`Phone: ${normalizedPhone}`);
                 console.log(`OTP Code: ${otp}`);
@@ -117,7 +105,7 @@ export async function POST(request: Request) {
 
                 return NextResponse.json({
                     success: true,
-                    message: `[DEV MODE] Lỗi gửi Twilio (${smsError.code}). Mã OTP xem tại console.`,
+                    message: `[DEV MODE] Lỗi gửi Vonage. Mã OTP xem tại console.`,
                     devMode: true,
                     otp: otp,
                 });
