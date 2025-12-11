@@ -277,7 +277,7 @@ export default function DriverDashboard() {
                         <div className="space-y-6">
                             <div className="flex items-center justify-between px-2 pt-2">
                                 <h3 className="font-extrabold text-lg text-slate-800 flex items-center gap-3">
-                                    <div className="relative flex h-3 w-3">
+                                    <div className="relative flex h-3 w-3 mt-0.5">
                                         <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
                                         <span className="relative inline-flex rounded-full h-3 w-3 bg-green-500"></span>
                                     </div>
@@ -296,58 +296,59 @@ export default function DriverDashboard() {
                                 </div>
                             ) : (
                                 bookings.map((booking) => (
-                                    <div key={booking.id} className="bg-white p-6 rounded-[1.5rem] shadow-[0_4px_20px_-8px_rgba(0,0,0,0.1)] border border-slate-100/50 hover:border-amber-200 transition-all duration-300 group">
+                                    <div key={booking.id} className="bg-white p-4 rounded-2xl shadow-[0_2px_12px_-2px_rgba(0,0,0,0.08)] border border-slate-100 mb-4 transition-all duration-300 group">
 
-                                        {/* Name & Price Header - More Spacing */}
-                                        <div className="flex justify-between items-start mb-5 pb-5 border-b border-slate-50 pl-1.5">
-                                            <div className="flex-1 min-w-0 pr-4">
-                                                <h4 className="font-semibold text-[1.1rem] text-slate-900 truncate leading-tight">{booking.name}</h4>
-                                                <div className="flex flex-wrap items-center gap-3 mt-2">
-                                                    <span className="inline-flex items-center gap-1.5 bg-slate-100 text-slate-600 text-[11px] font-bold px-2.5 py-1 rounded-lg font-mono tracking-wide">
-                                                        <Phone size={12} /> {booking.phone}
+                                        {/* Name & Price Header - Balanced Padding */}
+                                        <div className="flex justify-between items-start mb-5 pb-4 border-b border-slate-50 px-1">
+                                            <div className="flex-1 min-w-0 pr-3">
+                                                <h4 className="font-bold text-[1.05rem] text-slate-900 truncate leading-snug">{booking.name}</h4>
+                                                <div className="flex flex-wrap items-center gap-3 mt-1.5">
+                                                    <span className="inline-flex items-center gap-1.5 text-slate-500 text-[11px] font-bold tracking-wide">
+                                                        <Phone size={12} className="text-slate-400" /> {booking.phone}
                                                     </span>
-                                                    <span className="inline-flex items-center gap-1.5 bg-blue-50 text-blue-700 text-[11px] font-bold px-2.5 py-1 rounded-lg">
-                                                        <User size={12} /> {booking.seat_count} ghế
+                                                    <span className="w-1 h-1 bg-slate-300 rounded-full"></span>
+                                                    <span className="inline-flex items-center gap-1.5 text-blue-600 text-[11px] font-bold">
+                                                        {booking.seat_count} ghế
                                                     </span>
                                                 </div>
                                             </div>
                                             <div className="text-right shrink-0">
-                                                <div className="font-black text-amber-600 text-xl leading-none tracking-tight">
+                                                <div className="font-black text-amber-600 text-[1.2rem] leading-none tracking-tight">
                                                     {booking.estimated_price?.toLocaleString('vi-VN')}
-                                                    <span className="text-xs align-top ml-0.5">đ</span>
+                                                    <span className="text-[10px] align-top ml-0.5 font-bold text-amber-600/70">đ</span>
                                                 </div>
-                                                <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wide mt-1 block">Giá dự kiến</span>
+                                                <span className="text-[9px] text-slate-400 font-bold uppercase tracking-wide mt-1 block">Giá dự kiến</span>
                                             </div>
                                         </div>
 
-                                        {/* Route Info - Clamp Lines */}
-                                        <div className="mb-6 relative pl-3">
+                                        {/* Route Info - Adjusted Spacing & Icons */}
+                                        <div className="mb-6 relative pl-2">
                                             {/* Connector Line */}
-                                            <div className="absolute left-[13px] top-2.5 bottom-4 w-0.5 bg-slate-100"></div>
+                                            <div className="absolute left-[10px] top-2.5 bottom-4 w-0.5 bg-slate-100"></div>
 
-                                            <div className="flex gap-4 mb-5 relative z-10 group/item">
+                                            <div className="flex gap-3.5 mb-5 relative z-10 group/item items-start">
                                                 <div className="mt-0.5 shrink-0">
-                                                    <div className="w-6 h-6 bg-blue-50/80 rounded-full flex items-center justify-center ring-4 ring-white shadow-sm group-hover/item:scale-110 transition-transform">
-                                                        <div className="w-2.5 h-2.5 bg-[#4A90E2] rounded-full"></div>
+                                                    <div className="w-[18px] h-[18px] bg-blue-50/80 rounded-full flex items-center justify-center ring-[3px] ring-white shadow-sm group-hover/item:scale-110 transition-transform">
+                                                        <div className="w-2 h-2 bg-[#4A90E2] rounded-full"></div>
                                                     </div>
                                                 </div>
-                                                <div className="flex-1 min-w-0">
-                                                    <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider mb-1">Điểm đón</p>
-                                                    <p className="text-[15px] font-medium text-slate-800 leading-snug line-clamp-2" title={booking.pickup_address}>
+                                                <div className="flex-1 min-w-0 -mt-0.5">
+                                                    <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider mb-0.5">Điểm đón</p>
+                                                    <p className="text-[14px] font-semibold text-slate-800 leading-snug line-clamp-2" title={booking.pickup_address}>
                                                         {booking.pickup_address}
                                                     </p>
                                                 </div>
                                             </div>
 
-                                            <div className="flex gap-4 relative z-10 group/item">
+                                            <div className="flex gap-3.5 relative z-10 group/item items-start">
                                                 <div className="mt-0.5 shrink-0">
-                                                    <div className="w-6 h-6 bg-orange-50/80 rounded-full flex items-center justify-center ring-4 ring-white shadow-sm group-hover/item:scale-110 transition-transform">
-                                                        <div className="w-2.5 h-2.5 bg-[#F89933] rounded-full"></div>
+                                                    <div className="w-[18px] h-[18px] bg-orange-50/80 rounded-full flex items-center justify-center ring-[3px] ring-white shadow-sm group-hover/item:scale-110 transition-transform">
+                                                        <div className="w-2 h-2 bg-[#F89933] rounded-full"></div>
                                                     </div>
                                                 </div>
-                                                <div className="flex-1 min-w-0">
-                                                    <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider mb-1">Điểm trả</p>
-                                                    <p className="text-[15px] font-medium text-slate-800 leading-snug line-clamp-2" title={booking.dropoff_address || 'Chưa xác định'}>
+                                                <div className="flex-1 min-w-0 -mt-0.5">
+                                                    <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider mb-0.5">Điểm trả</p>
+                                                    <p className="text-[14px] font-semibold text-slate-800 leading-snug line-clamp-2" title={booking.dropoff_address || 'Chưa xác định'}>
                                                         {booking.dropoff_address || 'Chưa xác định'}
                                                     </p>
                                                 </div>
@@ -355,31 +356,31 @@ export default function DriverDashboard() {
                                         </div>
 
                                         {booking.note && (
-                                            <div className="bg-amber-50/50 px-4 py-3 rounded-xl text-xs text-slate-600 italic mb-5 border border-amber-100/50 flex items-start gap-2">
-                                                <span className="font-bold text-amber-600 not-italic shrink-0">Ghi chú:</span>
+                                            <div className="bg-amber-50/50 px-3 py-2.5 rounded-lg text-xs text-slate-600 italic mb-5 border border-amber-100/50 flex items-start gap-2 mx-1">
+                                                <span className="font-bold text-amber-600 not-italic shrink-0">Lưu ý:</span>
                                                 <span className="line-clamp-2">{booking.note}</span>
                                             </div>
                                         )}
 
-                                        {/* Improved Button - Solid Block */}
+                                        {/* Button - Perfect Block & Radius */}
                                         <button
                                             onClick={() => handleAcceptBooking(booking.id, booking.service_type)}
                                             disabled={processingId === booking.id}
-                                            className="w-full bg-slate-900 text-white font-bold py-4 rounded-xl shadow-lg hover:shadow-xl hover:bg-slate-800 active:scale-[0.98] transition-all flex items-center justify-between px-6 disabled:opacity-70 disabled:cursor-not-allowed group-hover:shadow-amber-500/10"
+                                            className="w-full bg-slate-900 text-white font-bold h-12 rounded-2xl shadow-lg hover:shadow-xl hover:bg-slate-800 active:scale-[0.98] transition-all flex items-center justify-between pl-5 pr-2 disabled:opacity-70 disabled:cursor-not-allowed group-hover:shadow-amber-500/10 box-border"
                                         >
                                             {processingId === booking.id ? (
                                                 <div className="w-full flex justify-center items-center gap-2">
-                                                    <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
-                                                    <span>Đang xử lý...</span>
+                                                    <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                                                    <span className="text-sm">Đang xử lý...</span>
                                                 </div>
                                             ) : (
                                                 <>
-                                                    <span className="flex items-center gap-2 text-[15px]">
-                                                        Nhận Chuyến Ngay
+                                                    <span className="flex items-center gap-2 text-[14px] tracking-wide">
+                                                        Nhận Ngay <ChevronRight size={16} className="text-white/40" />
                                                     </span>
 
-                                                    <span className="bg-amber-400 text-slate-900 text-xs font-extrabold px-3 py-1.5 rounded-lg shadow-sm border border-amber-300 ml-auto">
-                                                        Phí {booking.service_type === 'bao-xe' ? '140k' : '25k'}
+                                                    <span className="bg-amber-400/90 backdrop-blur-sm text-slate-900 text-[11px] font-extrabold px-3 py-1.5 rounded-xl shadow-sm border border-amber-300 ml-auto flex items-center h-8">
+                                                        - {booking.service_type === 'bao-xe' ? '140k' : '25k'}
                                                     </span>
                                                 </>
                                             )}
