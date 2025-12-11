@@ -1,9 +1,9 @@
 import { NextResponse } from 'next/server';
 import { supabase } from '@/lib/supabase';
-import { sendOTP } from '@/lib/vonage-sms';
+import { sendOTP } from '@/lib/esms';
 
-const VONAGE_API_KEY = process.env.VONAGE_API_KEY;
-const VONAGE_API_SECRET = process.env.VONAGE_API_SECRET;
+const ESMS_API_KEY = process.env.ESMS_API_KEY;
+const ESMS_SECRET_KEY = process.env.ESMS_SECRET_KEY;
 
 export async function POST(request: Request) {
     try {
@@ -84,7 +84,7 @@ export async function POST(request: Request) {
         try {
             await sendOTP(normalizedPhone, otp);
 
-            console.log('OTP sent successfully via Vonage:', { phone: normalizedPhone });
+            console.log('OTP sent successfully via ESMS:', { phone: normalizedPhone });
 
             return NextResponse.json({
                 success: true,
@@ -92,12 +92,12 @@ export async function POST(request: Request) {
             });
 
         } catch (smsError: any) {
-            console.error('Vonage sending exception:', smsError);
+            console.error('ESMS sending exception:', smsError);
 
-            // Development fallback if Vonage fails
+            // Development fallback if ESMS fails
             if (process.env.NODE_ENV === 'development') {
                 console.log('='.repeat(50));
-                console.log('📱 DEVELOPMENT MODE - VONAGE FAILED, USING FALLBACK');
+                console.log('📱 DEVELOPMENT MODE - ESMS FAILED, USING FALLBACK');
                 console.log(`Error: ${smsError.message}`);
                 console.log(`Phone: ${normalizedPhone}`);
                 console.log(`OTP Code: ${otp}`);
@@ -105,7 +105,7 @@ export async function POST(request: Request) {
 
                 return NextResponse.json({
                     success: true,
-                    message: `[DEV MODE] Lỗi gửi Vonage. Mã OTP xem tại console.`,
+                    message: `[DEV MODE] Lỗi gửi ESMS. Mã OTP xem tại console.`,
                     devMode: true,
                     otp: otp,
                 });
