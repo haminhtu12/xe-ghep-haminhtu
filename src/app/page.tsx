@@ -82,56 +82,56 @@ export default function Home() {
       {/* Features Section - Clean & Trustworthy */}
       <section className="pt-20 pb-16 md:pt-32 md:pb-24 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-4">
+          <div className="text-center mb-16 md:mb-20">
+            <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-6">
               Tại sao chọn chúng tôi?
             </h2>
-            <p className="text-slate-500 max-w-xl mx-auto">
+            <p className="text-slate-500 max-w-2xl mx-auto text-lg leading-relaxed">
               Chúng tôi cam kết mang lại trải nghiệm di chuyển an toàn, tiết kiệm và thoải mái nhất cho bạn.
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 md:gap-10">
             {/* Feature 1 */}
-            <div className="p-6 md:p-8 rounded-2xl bg-slate-50 border border-slate-100 hover:border-amber-200 hover:shadow-xl hover:shadow-amber-100/20 transition-all duration-300 group">
-              <div className="w-14 h-14 bg-white rounded-xl flex items-center justify-center mb-6 shadow-sm border border-slate-100 group-hover:scale-110 transition-transform">
-                <Clock className="w-7 h-7 text-amber-500" />
+            <div className="p-8 rounded-3xl bg-slate-50 border border-slate-100 hover:border-amber-200 hover:shadow-xl hover:shadow-amber-100/20 transition-all duration-300 group flex flex-col items-center text-center">
+              <div className="w-16 h-16 bg-white rounded-2xl flex items-center justify-center mb-6 shadow-sm border border-slate-100 group-hover:scale-110 transition-transform">
+                <Clock className="w-8 h-8 text-amber-500" />
               </div>
-              <h3 className="text-xl font-bold mb-3 text-slate-900">Đặt Xe Nhanh</h3>
-              <p className="text-slate-500 leading-relaxed">
+              <h3 className="text-xl font-bold mb-4 text-slate-900">Đặt Xe Nhanh</h3>
+              <p className="text-slate-500 leading-loose text-[15px]">
                 Chỉ cần 30 giây để tìm được chuyến xe ưng ý. Tài xế sẽ liên hệ đón bạn ngay lập tức.
               </p>
             </div>
 
             {/* Feature 2 */}
-            <div className="p-6 md:p-8 rounded-2xl bg-slate-50 border border-slate-100 hover:border-amber-200 hover:shadow-xl hover:shadow-amber-100/20 transition-all duration-300 group">
-              <div className="w-14 h-14 bg-white rounded-xl flex items-center justify-center mb-6 shadow-sm border border-slate-100 group-hover:scale-110 transition-transform">
-                <DollarSign className="w-7 h-7 text-emerald-500" />
+            <div className="p-8 rounded-3xl bg-slate-50 border border-slate-100 hover:border-amber-200 hover:shadow-xl hover:shadow-amber-100/20 transition-all duration-300 group flex flex-col items-center text-center">
+              <div className="w-16 h-16 bg-white rounded-2xl flex items-center justify-center mb-6 shadow-sm border border-slate-100 group-hover:scale-110 transition-transform">
+                <DollarSign className="w-8 h-8 text-emerald-500" />
               </div>
-              <h3 className="text-xl font-bold mb-3 text-slate-900">Tiết Kiệm 40%</h3>
-              <p className="text-slate-500 leading-relaxed">
+              <h3 className="text-xl font-bold mb-4 text-slate-900">Tiết Kiệm 40%</h3>
+              <p className="text-slate-500 leading-loose text-[15px]">
                 Giá rẻ hơn taxi truyền thống đến 40%. Biết trước giá, không lo phát sinh chi phí.
               </p>
             </div>
 
             {/* Feature 3 */}
-            <div className="p-6 md:p-8 rounded-2xl bg-slate-50 border border-slate-100 hover:border-amber-200 hover:shadow-xl hover:shadow-amber-100/20 transition-all duration-300 group">
-              <div className="w-14 h-14 bg-white rounded-xl flex items-center justify-center mb-6 shadow-sm border border-slate-100 group-hover:scale-110 transition-transform">
-                <Shield className="w-7 h-7 text-blue-500" />
+            <div className="p-8 rounded-3xl bg-slate-50 border border-slate-100 hover:border-amber-200 hover:shadow-xl hover:shadow-amber-100/20 transition-all duration-300 group flex flex-col items-center text-center">
+              <div className="w-16 h-16 bg-white rounded-2xl flex items-center justify-center mb-6 shadow-sm border border-slate-100 group-hover:scale-110 transition-transform">
+                <Shield className="w-8 h-8 text-blue-500" />
               </div>
-              <h3 className="text-xl font-bold mb-3 text-slate-900">An Toàn Tuyệt Đối</h3>
-              <p className="text-slate-500 leading-relaxed">
+              <h3 className="text-xl font-bold mb-4 text-slate-900">An Toàn Tuyệt Đối</h3>
+              <p className="text-slate-500 leading-loose text-[15px]">
                 100% tài xế được xác thực danh tính. Xem đánh giá thực tế từ các hành khách trước.
               </p>
             </div>
 
             {/* Feature 4 */}
-            <div className="p-6 md:p-8 rounded-2xl bg-slate-50 border border-slate-100 hover:border-amber-200 hover:shadow-xl hover:shadow-amber-100/20 transition-all duration-300 group">
-              <div className="w-14 h-14 bg-white rounded-xl flex items-center justify-center mb-6 shadow-sm border border-slate-100 group-hover:scale-110 transition-transform">
-                <Car className="w-7 h-7 text-purple-500" />
+            <div className="p-8 rounded-3xl bg-slate-50 border border-slate-100 hover:border-amber-200 hover:shadow-xl hover:shadow-amber-100/20 transition-all duration-300 group flex flex-col items-center text-center">
+              <div className="w-16 h-16 bg-white rounded-2xl flex items-center justify-center mb-6 shadow-sm border border-slate-100 group-hover:scale-110 transition-transform">
+                <Car className="w-8 h-8 text-purple-500" />
               </div>
-              <h3 className="text-xl font-bold mb-3 text-slate-900">Đa Dạng Loại Xe</h3>
-              <p className="text-slate-500 leading-relaxed">
+              <h3 className="text-xl font-bold mb-4 text-slate-900">Đa Dạng Loại Xe</h3>
+              <p className="text-slate-500 leading-loose text-[15px]">
                 Từ xe 4 chỗ, 7 chỗ đến xe sang Limousine. Phù hợp mọi nhu cầu di chuyển của bạn.
               </p>
             </div>

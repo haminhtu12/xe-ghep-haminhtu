@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { MapPin, Calendar, ArrowRight, ArrowLeftRight, Car, Users, Clock, User, Phone, FileText, Loader2, ChevronRight, ChevronLeft, Check, X } from 'lucide-react';
+import { MapPin, Calendar, ArrowRight, ArrowLeftRight, Car, Users, Clock, User, Phone, FileText, Loader2, ChevronRight, ChevronLeft, Check, X, Search } from 'lucide-react';
 import { generateDrivers } from '@/data/mockDrivers';
 
 const SERVICE_TYPES = [
@@ -38,6 +38,38 @@ export default function SearchForm() {
 
     // State for random drivers
     const [activeDrivers, setActiveDrivers] = useState<any[]>([]);
+
+    // Address Autocomplete State
+    const [suggestions, setSuggestions] = useState<any[]>([]);
+    const [showSuggestions, setShowSuggestions] = useState(false);
+    const [isSearchingAddress, setIsSearchingAddress] = useState(false);
+
+    const handleAddressSearch = async (query: string) => {
+        setFormData({ ...formData, pickupAddress: query });
+        if (query.length < 3) {
+            setSuggestions([]);
+            setShowSuggestions(false);
+            return;
+        }
+
+        setIsSearchingAddress(true);
+        try {
+            const response = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&countrycodes=vn&limit=5`);
+            const data = await response.json();
+            setSuggestions(data);
+            setShowSuggestions(true);
+        } catch (error) {
+            console.error('Error fetching address:', error);
+        } finally {
+            setIsSearchingAddress(false);
+        }
+    };
+
+    const selectAddress = (address: any) => {
+        setFormData({ ...formData, pickupAddress: address.display_name });
+        setSuggestions([]);
+        setShowSuggestions(false);
+    };
 
     useEffect(() => {
         // Generate pool
@@ -208,9 +240,9 @@ export default function SearchForm() {
                             <button
                                 type="button"
                                 onClick={toggleDirection}
-                                className="w-11 h-11 md:w-12 md:h-12 bg-white rounded-full border border-slate-200 shadow-md flex items-center justify-center text-amber-500 hover:scale-110 hover:shadow-lg hover:border-amber-200 transition-all rotate-90 md:rotate-0"
+                                className="w-12 h-12 md:w-14 md:h-14 bg-white rounded-full border border-slate-200 shadow-md flex items-center justify-center text-amber-500 hover:scale-110 hover:shadow-lg hover:border-amber-200 transition-all rotate-90 md:rotate-0"
                             >
-                                <ArrowLeftRight className="w-5 h-5" />
+                                <ArrowLeftRight className="w-6 h-6" />
                             </button>
 
                             {/* TO */}
@@ -256,18 +288,18 @@ export default function SearchForm() {
                                         <span className="text-lg font-bold text-slate-800">{seatCount} Hành khách</span>
                                     </div>
                                 </div>
-                                <div className="flex items-center gap-2">
+                                <div className="flex items-center gap-3">
                                     <button
                                         type="button"
                                         onClick={() => setSeatCount(Math.max(1, seatCount - 1))}
-                                        className="w-10 h-10 rounded-full bg-white border border-slate-200 flex items-center justify-center text-slate-500 hover:bg-amber-50 hover:text-amber-600 hover:border-amber-200 transition-all active:scale-95"
+                                        className="w-12 h-12 rounded-full bg-white border border-slate-200 flex items-center justify-center text-slate-500 hover:bg-amber-50 hover:text-amber-600 hover:border-amber-200 transition-all active:scale-95"
                                     >
                                         -
                                     </button>
                                     <button
                                         type="button"
                                         onClick={() => setSeatCount(Math.min(7, seatCount + 1))}
-                                        className="w-10 h-10 rounded-full bg-white border border-slate-200 flex items-center justify-center text-slate-500 hover:bg-amber-50 hover:text-amber-600 hover:border-amber-200 transition-all active:scale-95"
+                                        className="w-12 h-12 rounded-full bg-white border border-slate-200 flex items-center justify-center text-slate-500 hover:bg-amber-50 hover:text-amber-600 hover:border-amber-200 transition-all active:scale-95"
                                     >
                                         +
                                     </button>
@@ -417,19 +449,46 @@ export default function SearchForm() {
                                                     />
                                                 </div>
 
-                                                {/* Pickup Address */}
-                                                <div>
+                                                {/* Pickup Address with Autocomplete */}
+                                                <div className="relative">
                                                     <label className="block text-sm font-bold text-slate-700 mb-2">
                                                         Điểm đón <span className="text-red-500">*</span>
                                                     </label>
-                                                    <input
-                                                        type="text"
-                                                        required
-                                                        placeholder="Ví dụ: 123 Trần Phú, Ba Đình, Hà Nội"
-                                                        className="w-full px-4 py-3 border-2 border-slate-200 rounded-xl focus:border-amber-400 focus:ring-4 focus:ring-amber-500/10 outline-none transition-all placeholder:text-slate-500"
-                                                        value={formData.pickupAddress}
-                                                        onChange={(e) => setFormData({ ...formData, pickupAddress: e.target.value })}
-                                                    />
+                                                    <div className="relative">
+                                                        <input
+                                                            type="text"
+                                                            required
+                                                            placeholder="Nhập địa chỉ đón..."
+                                                            className="w-full px-4 py-3 pl-10 border-2 border-slate-200 rounded-xl focus:border-amber-400 focus:ring-4 focus:ring-amber-500/10 outline-none transition-all placeholder:text-slate-500"
+                                                            value={formData.pickupAddress}
+                                                            onChange={(e) => handleAddressSearch(e.target.value)}
+                                                            onFocus={() => formData.pickupAddress && setShowSuggestions(true)}
+                                                        />
+                                                        <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
+                                                        {isSearchingAddress && (
+                                                            <Loader2 className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 animate-spin text-amber-500" />
+                                                        )}
+                                                    </div>
+
+                                                    {/* Suggestions Dropdown */}
+                                                    {showSuggestions && suggestions.length > 0 && (
+                                                        <ul className="absolute z-50 w-full bg-white border border-slate-200 rounded-xl mt-1 shadow-xl max-h-60 overflow-y-auto">
+                                                            {suggestions.map((item: any, index: number) => (
+                                                                <li
+                                                                    key={index}
+                                                                    onClick={() => selectAddress(item)}
+                                                                    className="px-4 py-3 hover:bg-amber-50 cursor-pointer border-b border-slate-100 last:border-0 text-sm text-slate-700 flex items-start gap-2"
+                                                                >
+                                                                    <MapPin className="w-4 h-4 text-amber-500 mt-0.5 shrink-0" />
+                                                                    <span>{item.display_name}</span>
+                                                                </li>
+                                                            ))}
+                                                        </ul>
+                                                    )}
+                                                    {/* Click outside to close - simple implementation */}
+                                                    {showSuggestions && (
+                                                        <div className="fixed inset-0 z-40" onClick={() => setShowSuggestions(false)}></div>
+                                                    )}
                                                 </div>
 
                                                 {/* Dropoff Address */}
@@ -465,47 +524,65 @@ export default function SearchForm() {
                                         {/* STEP 3: CONFIRMATION */}
                                         {step === 3 && (
                                             <div className="space-y-4 animate-in fade-in slide-in-from-right-4 duration-300">
-                                                <div className="bg-slate-50 rounded-2xl p-4 border border-slate-200 space-y-3">
-                                                    <div className="flex justify-between border-b border-slate-200 pb-2">
-                                                        <span className="text-slate-500 text-sm">Loại dịch vụ</span>
-                                                        <span className="font-bold text-slate-800">{SERVICE_TYPES.find(s => s.id === serviceType)?.name}</span>
-                                                    </div>
-                                                    <div className="flex justify-between border-b border-slate-200 pb-2">
-                                                        <span className="text-slate-500 text-sm">Hành trình</span>
-                                                        <span className="font-bold text-slate-800">{direction === 'hn-th' ? 'Hà Nội ➝ Thanh Hóa' : 'Thanh Hóa ➝ Hà Nội'}</span>
-                                                    </div>
-                                                    <div className="flex justify-between border-b border-slate-200 pb-2">
-                                                        <span className="text-slate-500 text-sm">Ngày đi</span>
-                                                        <span className="font-bold text-slate-800">{new Date(date).toLocaleDateString('vi-VN')}</span>
-                                                    </div>
-                                                    {serviceType === 'xe-ghep' && (
-                                                        <div className="flex justify-between border-b border-slate-200 pb-2">
-                                                            <span className="text-slate-500 text-sm">Số ghế</span>
-                                                            <span className="font-bold text-slate-800">{seatCount} ghế</span>
+                                                <div className="bg-slate-50 rounded-2xl p-5 border border-slate-200 space-y-4">
+                                                    {/* Trip Details Card */}
+                                                    <div className="bg-white p-4 rounded-xl border border-slate-100 shadow-sm">
+                                                        <h4 className="text-xs font-bold text-slate-400 uppercase mb-3 tracking-wider">Chi tiết chuyến đi</h4>
+                                                        <div className="grid grid-cols-2 gap-4">
+                                                            <div>
+                                                                <span className="text-slate-500 text-xs block mb-1">Loại dịch vụ</span>
+                                                                <span className="font-bold text-slate-800 text-sm">{SERVICE_TYPES.find(s => s.id === serviceType)?.name}</span>
+                                                            </div>
+                                                            <div>
+                                                                <span className="text-slate-500 text-xs block mb-1">Ngày đi</span>
+                                                                <span className="font-bold text-slate-800 text-sm">{new Date(date).toLocaleDateString('vi-VN')}</span>
+                                                            </div>
+                                                            <div className="col-span-2">
+                                                                <span className="text-slate-500 text-xs block mb-1">Hành trình</span>
+                                                                <div className="flex items-center gap-2 font-bold text-slate-800 text-sm">
+                                                                    <span className="text-blue-600">{direction === 'hn-th' ? 'Hà Nội' : 'Thanh Hóa'}</span>
+                                                                    <ArrowRight className="w-4 h-4 text-slate-400" />
+                                                                    <span className="text-orange-600">{direction === 'hn-th' ? 'Thanh Hóa' : 'Hà Nội'}</span>
+                                                                </div>
+                                                            </div>
                                                         </div>
-                                                    )}
-                                                    <div className="flex justify-between pt-2">
-                                                        <span className="text-slate-500 text-sm font-bold">Tổng tiền ước tính</span>
-                                                        <span className="font-bold text-xl text-emerald-600">{estimatedPrice.toLocaleString('vi-VN')}đ</span>
                                                     </div>
-                                                </div>
 
-                                                <div className="bg-slate-50 rounded-2xl p-4 border border-slate-200 space-y-3">
-                                                    <div className="flex flex-col gap-1">
-                                                        <span className="text-slate-500 text-xs uppercase font-bold">Khách hàng</span>
-                                                        <span className="font-bold text-slate-800">{formData.name}</span>
-                                                        <span className="text-slate-600 text-sm">{formData.phone}</span>
-                                                    </div>
-                                                    <div className="flex flex-col gap-1">
-                                                        <span className="text-slate-500 text-xs uppercase font-bold">Điểm đón</span>
-                                                        <span className="font-bold text-slate-800">{formData.pickupAddress}</span>
-                                                    </div>
-                                                    {formData.dropoffAddress && (
-                                                        <div className="flex flex-col gap-1">
-                                                            <span className="text-slate-500 text-xs uppercase font-bold">Điểm trả</span>
-                                                            <span className="font-bold text-slate-800">{formData.dropoffAddress}</span>
+                                                    {/* Customer Details Card */}
+                                                    <div className="bg-white p-4 rounded-xl border border-slate-100 shadow-sm">
+                                                        <h4 className="text-xs font-bold text-slate-400 uppercase mb-3 tracking-wider">Thông tin khách hàng</h4>
+                                                        <div className="space-y-3">
+                                                            <div className="flex items-start gap-3">
+                                                                <User className="w-4 h-4 text-slate-400 mt-0.5" />
+                                                                <div>
+                                                                    <span className="font-bold text-slate-800 text-sm block">{formData.name}</span>
+                                                                    <span className="text-slate-500 text-xs">{formData.phone}</span>
+                                                                </div>
+                                                            </div>
+                                                            <div className="flex items-start gap-3">
+                                                                <MapPin className="w-4 h-4 text-blue-500 mt-0.5" />
+                                                                <div>
+                                                                    <span className="text-slate-500 text-xs block">Điểm đón</span>
+                                                                    <span className="font-bold text-slate-800 text-sm">{formData.pickupAddress}</span>
+                                                                </div>
+                                                            </div>
+                                                            {formData.dropoffAddress && (
+                                                                <div className="flex items-start gap-3">
+                                                                    <MapPin className="w-4 h-4 text-orange-500 mt-0.5" />
+                                                                    <div>
+                                                                        <span className="text-slate-500 text-xs block">Điểm trả</span>
+                                                                        <span className="font-bold text-slate-800 text-sm">{formData.dropoffAddress}</span>
+                                                                    </div>
+                                                                </div>
+                                                            )}
                                                         </div>
-                                                    )}
+                                                    </div>
+
+                                                    {/* Total Price */}
+                                                    <div className="flex items-center justify-between pt-2 px-2">
+                                                        <span className="text-slate-600 font-bold">Tổng thanh toán</span>
+                                                        <span className="font-extrabold text-3xl text-emerald-600">{estimatedPrice.toLocaleString('vi-VN')}đ</span>
+                                                    </div>
                                                 </div>
 
                                                 {/* Live Driver Feed - Social Proof (Only show in Step 3) */}
