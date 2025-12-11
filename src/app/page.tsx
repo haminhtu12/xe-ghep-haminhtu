@@ -1,7 +1,7 @@
 'use client';
 
 import SearchForm from '@/components/SearchForm';
-import { Car, Shield, Clock, DollarSign, LayoutDashboard, LogOut, Users } from 'lucide-react';
+import { Car, Shield, Clock, DollarSign, LayoutDashboard, LogOut, Users, Check } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 
@@ -93,7 +93,10 @@ export default function Home() {
               <div className="w-14 h-14 bg-amber-100 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
                 <Clock className="w-7 h-7 text-amber-600" />
               </div>
-              <h3 className="text-lg font-bold text-slate-900 mb-2">Đặt xe nhanh chóng</h3>
+              <h3 className="text-lg font-bold text-slate-900 mb-2 flex items-center justify-center gap-2">
+                Đặt xe nhanh chóng
+                <Check className="w-4 h-4 text-amber-500 bg-amber-100 rounded-full p-0.5" />
+              </h3>
               <p className="text-slate-500 text-sm leading-relaxed">
                 Chỉ 2 phút để đặt xe. Tài xế đón trả tận nơi, đúng giờ, không chờ đợi.
               </p>
@@ -104,7 +107,10 @@ export default function Home() {
               <div className="w-14 h-14 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
                 <Car className="w-7 h-7 text-blue-600" />
               </div>
-              <h3 className="text-lg font-bold text-slate-900 mb-2">Xe đời mới, sạch sẽ</h3>
+              <h3 className="text-lg font-bold text-slate-900 mb-2 flex items-center justify-center gap-2">
+                Xe đời mới, sạch sẽ
+                <Check className="w-4 h-4 text-blue-500 bg-blue-100 rounded-full p-0.5" />
+              </h3>
               <p className="text-slate-500 text-sm leading-relaxed">
                 Đội xe 5-7 chỗ đời mới, nội thất sang trọng, luôn được vệ sinh sạch sẽ.
               </p>
@@ -115,7 +121,10 @@ export default function Home() {
               <div className="w-14 h-14 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
                 <Users className="w-7 h-7 text-green-600" />
               </div>
-              <h3 className="text-lg font-bold text-slate-900 mb-2">Tài xế chuyên nghiệp</h3>
+              <h3 className="text-lg font-bold text-slate-900 mb-2 flex items-center justify-center gap-2">
+                Tài xế chuyên nghiệp
+                <Check className="w-4 h-4 text-green-500 bg-green-100 rounded-full p-0.5" />
+              </h3>
               <p className="text-slate-500 text-sm leading-relaxed">
                 Lái xe an toàn, thân thiện, rành đường. Phục vụ chu đáo, tận tâm.
               </p>

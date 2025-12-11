@@ -212,7 +212,7 @@ export default function SearchForm() {
                                         <Icon className="w-5 h-5" />
                                     </div>
                                     <span className={`font-bold text-sm ${isActive ? 'text-slate-900' : 'text-slate-500'}`}>{service.name}</span>
-                                    <span className={`text-[10px] mt-0.5 ${isActive ? 'text-amber-600 font-medium' : 'text-slate-400'}`}>{service.desc}</span>
+                                    <span className={`text-[10px] mt-1 ${isActive ? 'text-amber-600 font-medium' : 'text-slate-400'}`}>{service.desc}</span>
 
                                     {isActive && (
                                         <div className="absolute top-3 right-3 w-2 h-2 bg-amber-500 rounded-full" />
@@ -307,19 +307,19 @@ export default function SearchForm() {
                                     <Users className="w-5 h-5 text-slate-400" />
                                     <span className="text-sm font-bold text-slate-700">Số ghế</span>
                                 </div>
-                                <div className="flex items-center gap-3 bg-white rounded-full px-2 py-1 border border-slate-100 shadow-sm">
+                                <div className="flex items-center gap-4 bg-white rounded-full px-3 py-1.5 border border-slate-100 shadow-sm">
                                     <button
                                         type="button"
                                         onClick={() => setSeatCount(Math.max(1, seatCount - 1))}
-                                        className="w-8 h-8 flex items-center justify-center text-slate-400 hover:text-amber-600 font-bold text-lg active:scale-90 transition-transform rounded-full hover:bg-slate-50"
+                                        className="w-9 h-9 flex items-center justify-center text-slate-400 hover:text-amber-600 font-bold text-lg active:scale-90 transition-transform rounded-full hover:bg-slate-50"
                                     >
                                         -
                                     </button>
-                                    <span className="text-base font-bold text-slate-900 w-4 text-center">{seatCount}</span>
+                                    <span className="text-base font-bold text-slate-900 w-5 text-center">{seatCount}</span>
                                     <button
                                         type="button"
                                         onClick={() => setSeatCount(Math.min(7, seatCount + 1))}
-                                        className="w-8 h-8 flex items-center justify-center text-slate-400 hover:text-amber-600 font-bold text-lg active:scale-90 transition-transform rounded-full hover:bg-slate-50"
+                                        className="w-9 h-9 flex items-center justify-center text-slate-400 hover:text-amber-600 font-bold text-lg active:scale-90 transition-transform rounded-full hover:bg-slate-50"
                                     >
                                         +
                                     </button>
