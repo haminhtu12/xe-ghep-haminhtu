@@ -282,7 +282,7 @@ export default function SearchForm() {
 
                         {/* Time Picker (5 cols) */}
                         <div className="col-span-5 bg-slate-50 p-2.5 rounded-2xl border border-slate-200 flex items-center gap-2 cursor-pointer hover:border-amber-200 transition-colors">
-                            <Clock className="w-6 h-6 text-slate-400 shrink-0" />
+                            <Clock className="w-7 h-7 text-amber-500 shrink-0" />
                             <div className="flex-1 min-w-0">
                                 <label className="text-[10px] font-bold text-slate-400 uppercase block mb-0.5">Giờ đón</label>
                                 <select
@@ -307,11 +307,11 @@ export default function SearchForm() {
                                     <Users className="w-5 h-5 text-slate-400" />
                                     <span className="text-sm font-bold text-slate-700">Số ghế</span>
                                 </div>
-                                <div className="flex items-center gap-3 bg-white rounded-xl px-2 py-1 border border-slate-100 shadow-sm">
+                                <div className="flex items-center gap-3 bg-white rounded-full px-2 py-1 border border-slate-100 shadow-sm">
                                     <button
                                         type="button"
                                         onClick={() => setSeatCount(Math.max(1, seatCount - 1))}
-                                        className="w-8 h-8 flex items-center justify-center text-slate-400 hover:text-amber-600 font-bold text-lg active:scale-90 transition-transform"
+                                        className="w-8 h-8 flex items-center justify-center text-slate-400 hover:text-amber-600 font-bold text-lg active:scale-90 transition-transform rounded-full hover:bg-slate-50"
                                     >
                                         -
                                     </button>
@@ -319,7 +319,7 @@ export default function SearchForm() {
                                     <button
                                         type="button"
                                         onClick={() => setSeatCount(Math.min(7, seatCount + 1))}
-                                        className="w-8 h-8 flex items-center justify-center text-slate-400 hover:text-amber-600 font-bold text-lg active:scale-90 transition-transform"
+                                        className="w-8 h-8 flex items-center justify-center text-slate-400 hover:text-amber-600 font-bold text-lg active:scale-90 transition-transform rounded-full hover:bg-slate-50"
                                     >
                                         +
                                     </button>

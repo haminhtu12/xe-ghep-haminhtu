@@ -51,8 +51,8 @@ export default function Header() {
                 <div className="flex justify-between items-center">
                     {/* Logo */}
                     <Link href="/" className="flex items-center gap-2 group">
-                        <div className="w-8 h-8 md:w-10 md:h-10 bg-gradient-to-br from-amber-500 to-orange-600 rounded-xl flex items-center justify-center transform group-hover:rotate-12 transition-transform">
-                            <Car className="w-5 h-5 md:w-6 md:h-6 text-white" />
+                        <div className="w-7 h-7 md:w-9 md:h-9 bg-gradient-to-br from-amber-500 to-orange-600 rounded-xl flex items-center justify-center transform group-hover:rotate-12 transition-transform">
+                            <Car className="w-4 h-4 md:w-5 md:h-5 text-white" />
                         </div>
                         <span className={`text-lg md:text-2xl font-bold ${scrolled || pathname !== '/' ? 'text-slate-800' : 'text-white'}`}>
                             Xe<span className="text-amber-500">Ghép</span>

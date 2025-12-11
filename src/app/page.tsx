@@ -25,7 +25,7 @@ export default function Home() {
   return (
     <main className="min-h-screen pb-20">
       {/* Hero Section - Updated with Premium/Clean Styling */}
-      <section className="relative bg-slate-900 text-white pb-8 pt-10 md:pb-12 md:pt-14 overflow-hidden">
+      <section className="relative bg-slate-900 text-white pb-8 pt-20 md:pb-12 md:pt-28 overflow-hidden">
         {/* Abstract Background - Reduced Yellow, More Blue/Dark */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
           <div className="absolute -top-20 -right-20 w-[400px] h-[400px] bg-blue-900/20 rounded-full blur-[80px]"></div>
@@ -78,7 +78,7 @@ export default function Home() {
       </div>
 
       {/* Why Choose Us - Compact & Premium */}
-      <section className="py-12 bg-white">
+      <section className="py-16 md:py-20 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-8 md:mb-10">
             <h2 className="text-2xl md:text-3xl font-bold text-slate-900 mb-2">Tại sao chọn chúng tôi?</h2>
