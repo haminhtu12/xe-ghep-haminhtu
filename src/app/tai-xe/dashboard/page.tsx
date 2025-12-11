@@ -299,10 +299,10 @@ export default function DriverDashboard() {
                                     <div key={booking.id} className="bg-white p-6 rounded-[1.5rem] shadow-[0_4px_20px_-8px_rgba(0,0,0,0.1)] border border-slate-100/50 hover:border-amber-200 transition-all duration-300 group">
 
                                         {/* Name & Price Header - More Spacing */}
-                                        <div className="flex justify-between items-start mb-5 pb-5 border-b border-slate-50">
+                                        <div className="flex justify-between items-start mb-5 pb-5 border-b border-slate-50 pl-1.5">
                                             <div className="flex-1 min-w-0 pr-4">
-                                                <h4 className="font-extrabold text-[1.1rem] text-slate-900 truncate leading-tight">{booking.name}</h4>
-                                                <div className="flex flex-wrap items-center gap-2 mt-2">
+                                                <h4 className="font-semibold text-[1.1rem] text-slate-900 truncate leading-tight">{booking.name}</h4>
+                                                <div className="flex flex-wrap items-center gap-3 mt-2">
                                                     <span className="inline-flex items-center gap-1.5 bg-slate-100 text-slate-600 text-[11px] font-bold px-2.5 py-1 rounded-lg font-mono tracking-wide">
                                                         <Phone size={12} /> {booking.phone}
                                                     </span>
@@ -312,7 +312,7 @@ export default function DriverDashboard() {
                                                 </div>
                                             </div>
                                             <div className="text-right shrink-0">
-                                                <div className="font-black text-amber-600 textxl leading-none tracking-tight">
+                                                <div className="font-black text-amber-600 text-xl leading-none tracking-tight">
                                                     {booking.estimated_price?.toLocaleString('vi-VN')}
                                                     <span className="text-xs align-top ml-0.5">đ</span>
                                                 </div>
@@ -327,8 +327,8 @@ export default function DriverDashboard() {
 
                                             <div className="flex gap-4 mb-5 relative z-10 group/item">
                                                 <div className="mt-0.5 shrink-0">
-                                                    <div className="w-6 h-6 bg-blue-100 rounded-full flex items-center justify-center ring-4 ring-white shadow-sm group-hover/item:scale-110 transition-transform">
-                                                        <div className="w-2.5 h-2.5 bg-blue-600 rounded-full"></div>
+                                                    <div className="w-6 h-6 bg-blue-50/80 rounded-full flex items-center justify-center ring-4 ring-white shadow-sm group-hover/item:scale-110 transition-transform">
+                                                        <div className="w-2.5 h-2.5 bg-[#4A90E2] rounded-full"></div>
                                                     </div>
                                                 </div>
                                                 <div className="flex-1 min-w-0">
@@ -341,8 +341,8 @@ export default function DriverDashboard() {
 
                                             <div className="flex gap-4 relative z-10 group/item">
                                                 <div className="mt-0.5 shrink-0">
-                                                    <div className="w-6 h-6 bg-orange-100 rounded-full flex items-center justify-center ring-4 ring-white shadow-sm group-hover/item:scale-110 transition-transform">
-                                                        <div className="w-2.5 h-2.5 bg-orange-600 rounded-full"></div>
+                                                    <div className="w-6 h-6 bg-orange-50/80 rounded-full flex items-center justify-center ring-4 ring-white shadow-sm group-hover/item:scale-110 transition-transform">
+                                                        <div className="w-2.5 h-2.5 bg-[#F89933] rounded-full"></div>
                                                     </div>
                                                 </div>
                                                 <div className="flex-1 min-w-0">
@@ -361,11 +361,11 @@ export default function DriverDashboard() {
                                             </div>
                                         )}
 
-                                        {/* Improved Button */}
+                                        {/* Improved Button - Solid Block */}
                                         <button
                                             onClick={() => handleAcceptBooking(booking.id, booking.service_type)}
                                             disabled={processingId === booking.id}
-                                            className="w-full bg-gradient-to-r from-slate-900 to-slate-800 text-white font-bold py-4 rounded-xl shadow-lg hover:shadow-xl hover:to-slate-700 active:scale-[0.98] transition-all flex items-center justify-between px-6 disabled:opacity-70 disabled:cursor-not-allowed group-hover:shadow-amber-500/10 relative overflow-hidden"
+                                            className="w-full bg-slate-900 text-white font-bold py-4 rounded-xl shadow-lg hover:shadow-xl hover:bg-slate-800 active:scale-[0.98] transition-all flex items-center justify-between px-6 disabled:opacity-70 disabled:cursor-not-allowed group-hover:shadow-amber-500/10"
                                         >
                                             {processingId === booking.id ? (
                                                 <div className="w-full flex justify-center items-center gap-2">
@@ -376,10 +376,9 @@ export default function DriverDashboard() {
                                                 <>
                                                     <span className="flex items-center gap-2 text-[15px]">
                                                         Nhận Chuyến Ngay
-                                                        <ChevronRight className="w-4 h-4 text-white/50" />
                                                     </span>
 
-                                                    <span className="bg-amber-400 text-slate-900 text-xs font-extra-bold px-3 py-1.5 rounded-lg shadow-sm border border-amber-300">
+                                                    <span className="bg-amber-400 text-slate-900 text-xs font-extrabold px-3 py-1.5 rounded-lg shadow-sm border border-amber-300 ml-auto">
                                                         Phí {booking.service_type === 'bao-xe' ? '140k' : '25k'}
                                                     </span>
                                                 </>
