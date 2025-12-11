@@ -249,20 +249,21 @@ export default function DriverLogin() {
                                 <label className="block text-sm font-bold text-slate-700 mb-2 ml-1">
                                     Số điện thoại
                                 </label>
-                                <div className="relative group">
-                                    {/* Icon Fixed Position - Centered vertically, proper left spacing */}
-                                    <div className="absolute top-[2px] bottom-[2px] left-[2px] w-[52px] flex items-center justify-center pointer-events-none z-10 bg-slate-100 rounded-l-[10px] rounded-r-md m-0.5">
-                                        <Phone className="h-5 w-5 text-slate-500" />
+                                <div className="relative">
+                                    <div className="flex items-center gap-0 border border-slate-300 rounded-xl shadow-sm overflow-hidden focus-within:ring-4 focus-within:ring-amber-500/10 focus-within:border-amber-500 transition-all">
+                                        <div className="flex-shrink-0 w-14 h-14 bg-slate-100 flex items-center justify-center">
+                                            <Phone className="h-5 w-5 text-slate-500" />
+                                        </div>
+                                        <input
+                                            type="tel"
+                                            required
+                                            value={phone}
+                                            onChange={(e) => setPhone(e.target.value)}
+                                            className="flex-1 px-4 py-4 border-0 focus:ring-0 focus:outline-none font-bold text-slate-900 placeholder:font-normal placeholder:text-slate-400 text-lg bg-transparent"
+                                            placeholder="0912 xxx xxx"
+                                            style={{ lineHeight: '100%' }}
+                                        />
                                     </div>
-                                    <input
-                                        type="tel"
-                                        required
-                                        value={phone}
-                                        onChange={(e) => setPhone(e.target.value)}
-                                        className="block w-full pl-[68px] pr-4 py-4 border border-slate-300 rounded-xl focus:ring-4 focus:ring-amber-500/10 focus:border-amber-500 transition-all font-bold text-slate-900 placeholder:font-normal placeholder:text-slate-400 text-lg shadow-sm"
-                                        placeholder="0912 xxx xxx"
-                                        style={{ lineHeight: '100%' }}
-                                    />
                                 </div>
                             </div>
 
@@ -284,19 +285,21 @@ export default function DriverLogin() {
                                 <label className="block text-sm font-bold text-slate-700 mb-2 ml-1">
                                     Số điện thoại
                                 </label>
-                                <div className="relative group">
-                                    <div className="absolute top-[2px] bottom-[2px] left-[2px] w-[52px] flex items-center justify-center pointer-events-none z-10 bg-slate-100 rounded-l-[10px] rounded-r-md m-0.5">
-                                        <Phone className="h-5 w-5 text-slate-500" />
+                                <div className="relative">
+                                    <div className="flex items-center gap-0 border border-slate-300 rounded-xl shadow-sm overflow-hidden focus-within:ring-4 focus-within:ring-amber-500/10 focus-within:border-amber-500 transition-all">
+                                        <div className="flex-shrink-0 w-14 h-14 bg-slate-100 flex items-center justify-center">
+                                            <Phone className="h-5 w-5 text-slate-500" />
+                                        </div>
+                                        <input
+                                            type="tel"
+                                            required
+                                            value={phone}
+                                            onChange={(e) => setPhone(e.target.value)}
+                                            className="flex-1 px-4 py-4 border-0 focus:ring-0 focus:outline-none font-bold text-slate-900 placeholder:font-normal placeholder:text-slate-400 text-lg bg-transparent"
+                                            placeholder="0912 xxx xxx"
+                                            style={{ lineHeight: '100%' }}
+                                        />
                                     </div>
-                                    <input
-                                        type="tel"
-                                        required
-                                        value={phone}
-                                        onChange={(e) => setPhone(e.target.value)}
-                                        className="block w-full pl-[68px] pr-4 py-4 border border-slate-300 rounded-xl focus:ring-4 focus:ring-amber-500/10 focus:border-amber-500 transition-all font-bold text-slate-900 placeholder:font-normal placeholder:text-slate-400 text-lg shadow-sm"
-                                        placeholder="0912 xxx xxx"
-                                        style={{ lineHeight: '100%' }}
-                                    />
                                 </div>
                             </div>
 
@@ -304,19 +307,21 @@ export default function DriverLogin() {
                                 <label className="block text-sm font-bold text-slate-700 mb-2 ml-1">
                                     Mật khẩu
                                 </label>
-                                <div className="relative group">
-                                    <div className="absolute top-[2px] bottom-[2px] left-[2px] w-[52px] flex items-center justify-center pointer-events-none z-10 bg-slate-100 rounded-l-[10px] rounded-r-md m-0.5">
-                                        <Lock className="h-5 w-5 text-slate-500" />
+                                <div className="relative">
+                                    <div className="flex items-center gap-0 border border-slate-300 rounded-xl shadow-sm overflow-hidden focus-within:ring-4 focus-within:ring-amber-500/10 focus-within:border-amber-500 transition-all">
+                                        <div className="flex-shrink-0 w-14 h-14 bg-slate-100 flex items-center justify-center">
+                                            <Lock className="h-5 w-5 text-slate-500" />
+                                        </div>
+                                        <input
+                                            type="password"
+                                            required
+                                            value={password}
+                                            onChange={(e) => setPassword(e.target.value)}
+                                            className="flex-1 px-4 py-4 border-0 focus:ring-0 focus:outline-none font-bold text-slate-900 placeholder:font-normal placeholder:text-slate-400 text-lg bg-transparent"
+                                            placeholder="••••••••"
+                                            style={{ lineHeight: '100%' }}
+                                        />
                                     </div>
-                                    <input
-                                        type="password"
-                                        required
-                                        value={password}
-                                        onChange={(e) => setPassword(e.target.value)}
-                                        className="block w-full pl-[68px] pr-4 py-4 border border-slate-300 rounded-xl focus:ring-4 focus:ring-amber-500/10 focus:border-amber-500 transition-all font-bold text-slate-900 placeholder:font-normal placeholder:text-slate-400 text-lg shadow-sm"
-                                        placeholder="••••••••"
-                                        style={{ lineHeight: '100%' }}
-                                    />
                                 </div>
                             </div>
 
@@ -364,20 +369,22 @@ export default function DriverLogin() {
                                 <label className="block text-sm font-bold text-slate-700 mb-2 ml-1">
                                     Tạo mật khẩu <span className="text-red-500">*</span>
                                 </label>
-                                <div className="relative group">
-                                    <div className="absolute top-[2px] bottom-[2px] left-[2px] w-[52px] flex items-center justify-center pointer-events-none z-10 bg-slate-100 rounded-l-[10px] rounded-r-md m-0.5">
-                                        <Lock className="h-5 w-5 text-slate-500" />
+                                <div className="relative">
+                                    <div className="flex items-center gap-0 border border-slate-300 rounded-xl shadow-sm overflow-hidden focus-within:ring-4 focus-within:ring-amber-500/10 focus-within:border-amber-500 transition-all">
+                                        <div className="flex-shrink-0 w-14 h-14 bg-slate-100 flex items-center justify-center">
+                                            <Lock className="h-5 w-5 text-slate-500" />
+                                        </div>
+                                        <input
+                                            type="password"
+                                            required
+                                            value={password}
+                                            onChange={(e) => setPassword(e.target.value)}
+                                            className="flex-1 px-4 py-4 border-0 focus:ring-0 focus:outline-none font-bold text-slate-900 placeholder:font-normal placeholder:text-slate-400 text-lg bg-transparent"
+                                            placeholder="Ít nhất 6 ký tự"
+                                            minLength={6}
+                                            style={{ lineHeight: '100%' }}
+                                        />
                                     </div>
-                                    <input
-                                        type="password"
-                                        required
-                                        value={password}
-                                        onChange={(e) => setPassword(e.target.value)}
-                                        className="block w-full pl-[68px] pr-4 py-4 border border-slate-300 rounded-xl focus:ring-4 focus:ring-amber-500/10 focus:border-amber-500 transition-all font-bold text-slate-900 placeholder:font-normal placeholder:text-slate-400 text-lg shadow-sm"
-                                        placeholder="Ít nhất 6 ký tự"
-                                        minLength={6}
-                                        style={{ lineHeight: '100%' }}
-                                    />
                                 </div>
                             </div>
 
@@ -385,19 +392,21 @@ export default function DriverLogin() {
                                 <label className="block text-sm font-bold text-slate-700 mb-2 ml-1">
                                     Xác nhận mật khẩu <span className="text-red-500">*</span>
                                 </label>
-                                <div className="relative group">
-                                    <div className="absolute top-[2px] bottom-[2px] left-[2px] w-[52px] flex items-center justify-center pointer-events-none z-10 bg-slate-100 rounded-l-[10px] rounded-r-md m-0.5">
-                                        <Lock className="h-5 w-5 text-slate-500" />
+                                <div className="relative">
+                                    <div className="flex items-center gap-0 border border-slate-300 rounded-xl shadow-sm overflow-hidden focus-within:ring-4 focus-within:ring-amber-500/10 focus-within:border-amber-500 transition-all">
+                                        <div className="flex-shrink-0 w-14 h-14 bg-slate-100 flex items-center justify-center">
+                                            <Lock className="h-5 w-5 text-slate-500" />
+                                        </div>
+                                        <input
+                                            type="password"
+                                            required
+                                            value={confirmPassword}
+                                            onChange={(e) => setConfirmPassword(e.target.value)}
+                                            className="flex-1 px-4 py-4 border-0 focus:ring-0 focus:outline-none font-bold text-slate-900 placeholder:font-normal placeholder:text-slate-400 text-lg bg-transparent"
+                                            placeholder="Nhập lại mật khẩu"
+                                            style={{ lineHeight: '100%' }}
+                                        />
                                     </div>
-                                    <input
-                                        type="password"
-                                        required
-                                        value={confirmPassword}
-                                        onChange={(e) => setConfirmPassword(e.target.value)}
-                                        className="block w-full pl-[68px] pr-4 py-4 border border-slate-300 rounded-xl focus:ring-4 focus:ring-amber-500/10 focus:border-amber-500 transition-all font-bold text-slate-900 placeholder:font-normal placeholder:text-slate-400 text-lg shadow-sm"
-                                        placeholder="Nhập lại mật khẩu"
-                                        style={{ lineHeight: '100%' }}
-                                    />
                                 </div>
                                 <p className="mt-2 text-xs text-slate-500 ml-1">
                                     Mật khẩu phải có ít nhất 6 ký tự
@@ -446,20 +455,22 @@ export default function DriverLogin() {
                                 <label className="block text-sm font-bold text-slate-700 mb-3 text-center">
                                     Nhập mã OTP (6 số)
                                 </label>
-                                <div className="relative group max-w-[240px] mx-auto">
-                                    <div className="absolute top-[2px] bottom-[2px] left-[2px] w-[52px] flex items-center justify-center pointer-events-none z-10 bg-slate-100 rounded-l-[10px] rounded-r-md m-0.5">
-                                        <KeyRound className="h-5 w-5 text-slate-500" />
+                                <div className="max-w-[280px] mx-auto">
+                                    <div className="flex items-center gap-0 border border-slate-300 rounded-xl shadow-sm overflow-hidden focus-within:ring-4 focus-within:ring-amber-500/10 focus-within:border-amber-500 transition-all">
+                                        <div className="flex-shrink-0 w-14 h-14 bg-slate-100 flex items-center justify-center">
+                                            <KeyRound className="h-5 w-5 text-slate-500" />
+                                        </div>
+                                        <input
+                                            type="text"
+                                            required
+                                            maxLength={6}
+                                            value={otp}
+                                            onChange={(e) => setOtp(e.target.value)}
+                                            className="flex-1 px-4 py-4 border-0 focus:ring-0 focus:outline-none tracking-[0.5em] text-2xl font-black text-center text-slate-900 bg-transparent"
+                                            placeholder="••••••"
+                                            style={{ lineHeight: '100%' }}
+                                        />
                                     </div>
-                                    <input
-                                        type="text"
-                                        required
-                                        maxLength={6}
-                                        value={otp}
-                                        onChange={(e) => setOtp(e.target.value)}
-                                        className="block w-full pl-[68px] pr-4 py-4 border border-slate-300 rounded-xl focus:ring-4 focus:ring-amber-500/10 focus:border-amber-500 transition-all tracking-[0.5em] text-2xl font-black text-center text-slate-900 shadow-sm"
-                                        placeholder="••••••"
-                                        style={{ lineHeight: '100%' }}
-                                    />
                                 </div>
                             </div>
 
