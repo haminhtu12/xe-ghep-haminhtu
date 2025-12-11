@@ -66,8 +66,7 @@ export async function POST(request: Request) {
         const smsPayload = {
             to: [normalizedPhone],
             content: `Ma xac thuc XeGhep cua ban la: ${otp}. Ma co hieu luc trong 5 phut.`,
-            sms_type: 2, // Brandname SMS
-            sender: 'Notify', // Default sender name
+            sms_type: 5, // CSKH SMS (no brandname registration needed)
         };
 
         try {
