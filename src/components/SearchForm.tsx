@@ -21,6 +21,7 @@ export default function SearchForm() {
     const [serviceType, setServiceType] = useState('xe-ghep');
     const [direction, setDirection] = useState<'hn-th' | 'th-hn'>('hn-th');
     const [date, setDate] = useState(new Date().toISOString().split('T')[0]);
+    const [time, setTime] = useState('08:00'); // Default time
     const [seatCount, setSeatCount] = useState(1);
     const [vehicleType, setVehicleType] = useState('5-cho');
     const [estimatedPrice, setEstimatedPrice] = useState<number>(400000);
@@ -155,6 +156,7 @@ export default function SearchForm() {
                     serviceType,
                     direction,
                     date,
+                    time,
                     estimatedPrice,
                     seatCount: serviceType === 'xe-ghep' ? seatCount : 1,
                     vehicleType: serviceType === 'bao-xe' ? vehicleType : null,
@@ -188,9 +190,9 @@ export default function SearchForm() {
     return (
         <>
             {/* INLINE FORM - STEP 1 ONLY */}
-            <div className="bg-white rounded-3xl shadow-xl shadow-slate-200/40 p-4 md:p-8 max-w-5xl mx-auto relative z-10 border border-slate-100">
+            <div className="bg-white rounded-3xl shadow-xl shadow-slate-200/40 p-4 md:p-6 max-w-5xl mx-auto relative z-10 border border-slate-100">
 
-                <div className="space-y-4">
+                <div className="space-y-3 md:space-y-4">
                     {/* Service Type Selection */}
                     <div className="grid grid-cols-2 md:grid-cols-2 gap-3 md:gap-4">
                         {SERVICE_TYPES.map((service) => {
@@ -201,16 +203,16 @@ export default function SearchForm() {
                                     key={service.id}
                                     type="button"
                                     onClick={() => setServiceType(service.id)}
-                                    className={`flex flex-col items-center p-4 rounded-2xl border transition-all duration-200 relative overflow-hidden ${isActive
+                                    className={`flex flex-col items-center p-3 rounded-xl border transition-all duration-200 relative overflow-hidden ${isActive
                                         ? 'bg-white border-amber-500 shadow-sm ring-1 ring-amber-500'
                                         : 'bg-white border-slate-200 hover:border-amber-300 hover:bg-slate-50'
                                         }`}
                                 >
-                                    <div className={`p-2.5 rounded-full mb-3 ${isActive ? 'bg-amber-50 text-amber-600' : 'bg-slate-100 text-slate-400'}`}>
-                                        <Icon className="w-6 h-6" />
+                                    <div className={`p-2 rounded-full mb-2 ${isActive ? 'bg-amber-50 text-amber-600' : 'bg-slate-100 text-slate-400'}`}>
+                                        <Icon className="w-5 h-5" />
                                     </div>
-                                    <span className={`font-bold text-base ${isActive ? 'text-slate-900' : 'text-slate-500'}`}>{service.name}</span>
-                                    <span className={`text-xs mt-1 ${isActive ? 'text-amber-600 font-medium' : 'text-slate-400'}`}>{service.desc}</span>
+                                    <span className={`font-bold text-sm ${isActive ? 'text-slate-900' : 'text-slate-500'}`}>{service.name}</span>
+                                    <span className={`text-[10px] mt-0.5 ${isActive ? 'text-amber-600 font-medium' : 'text-slate-400'}`}>{service.desc}</span>
 
                                     {isActive && (
                                         <div className="absolute top-3 right-3 w-2 h-2 bg-amber-500 rounded-full" />
@@ -262,100 +264,118 @@ export default function SearchForm() {
                         <div className="hidden md:block absolute top-1/2 left-10 right-10 h-0.5 bg-slate-200 border-t border-dashed border-slate-300 -z-0"></div>
                     </div>
 
-                    {/* Date & Seat Count */}
-                    <div className="grid grid-cols-2 md:grid-cols-2 gap-4 md:gap-6">
-                        {/* Date Picker */}
-                        <div className="bg-slate-50 p-3 md:p-4 rounded-2xl border border-slate-200 flex items-center gap-2 md:gap-4 cursor-pointer hover:border-amber-200 transition-colors">
-                            <Calendar className="w-6 h-6 text-slate-400" />
-                            <div className="flex-1">
-                                <label className="text-xs font-bold text-slate-400 uppercase block mb-1">Ngày đi</label>
+                    {/* Date & Time & Seat Count */}
+                    <div className="grid grid-cols-12 gap-3">
+                        {/* Date Picker (5 cols) */}
+                        <div className="col-span-7 bg-slate-50 p-2.5 rounded-2xl border border-slate-200 flex items-center gap-2 cursor-pointer hover:border-amber-200 transition-colors">
+                            <Calendar className="w-8 h-8 text-amber-500 shrink-0" />
+                            <div className="flex-1 min-w-0">
+                                <label className="text-[10px] font-bold text-slate-400 uppercase block mb-0.5">Ngày đi</label>
                                 <input
                                     type="date"
                                     value={date}
                                     onChange={(e) => setDate(e.target.value)}
-                                    className="bg-transparent w-full text-lg font-bold text-slate-800 outline-none cursor-pointer"
+                                    className="bg-transparent w-full text-sm md:text-base font-bold text-slate-800 outline-none cursor-pointer p-0"
                                 />
                             </div>
                         </div>
 
-                        {/* Seat Selection (Only for Xe Ghep) */}
+                        {/* Time Picker (5 cols) */}
+                        <div className="col-span-5 bg-slate-50 p-2.5 rounded-2xl border border-slate-200 flex items-center gap-2 cursor-pointer hover:border-amber-200 transition-colors">
+                            <Clock className="w-6 h-6 text-slate-400 shrink-0" />
+                            <div className="flex-1 min-w-0">
+                                <label className="text-[10px] font-bold text-slate-400 uppercase block mb-0.5">Giờ đón</label>
+                                <select
+                                    value={time}
+                                    onChange={(e) => setTime(e.target.value)}
+                                    className="bg-transparent w-full text-sm md:text-base font-bold text-slate-800 outline-none cursor-pointer p-0 appearance-none"
+                                >
+                                    {Array.from({ length: 24 }).map((_, i) => {
+                                        const h = i.toString().padStart(2, '0');
+                                        return (
+                                            <option key={h} value={`${h}:00`}>{`${h}:00`}</option>
+                                        );
+                                    })}
+                                </select>
+                            </div>
+                        </div>
+
+                        {/* Seat Selection (Full width on mobile, or integrated) */}
                         {serviceType === 'xe-ghep' && (
-                            <div className="bg-slate-50 p-3 md:p-4 rounded-2xl border border-slate-200 flex items-center justify-between gap-2 md:gap-4">
-                                <div className="flex items-center gap-3">
-                                    <Users className="w-6 h-6 text-slate-400" />
-                                    <div>
-                                        <label className="text-xs font-bold text-slate-400 uppercase block mb-1">Số ghế</label>
-                                        <span className="text-lg font-bold text-slate-800">{seatCount} Hành khách</span>
-                                    </div>
+                            <div className="col-span-12 bg-slate-50 p-2.5 rounded-2xl border border-slate-200 flex items-center justify-between">
+                                <div className="flex items-center gap-2">
+                                    <Users className="w-5 h-5 text-slate-400" />
+                                    <span className="text-sm font-bold text-slate-700">Số ghế</span>
                                 </div>
-                                <div className="flex items-center gap-3">
+                                <div className="flex items-center gap-3 bg-white rounded-xl px-2 py-1 border border-slate-100 shadow-sm">
                                     <button
                                         type="button"
                                         onClick={() => setSeatCount(Math.max(1, seatCount - 1))}
-                                        className="w-12 h-12 rounded-full bg-white border border-slate-200 flex items-center justify-center text-slate-500 hover:bg-amber-50 hover:text-amber-600 hover:border-amber-200 transition-all active:scale-95"
+                                        className="w-8 h-8 flex items-center justify-center text-slate-400 hover:text-amber-600 font-bold text-lg active:scale-90 transition-transform"
                                     >
                                         -
                                     </button>
+                                    <span className="text-base font-bold text-slate-900 w-4 text-center">{seatCount}</span>
                                     <button
                                         type="button"
                                         onClick={() => setSeatCount(Math.min(7, seatCount + 1))}
-                                        className="w-12 h-12 rounded-full bg-white border border-slate-200 flex items-center justify-center text-slate-500 hover:bg-amber-50 hover:text-amber-600 hover:border-amber-200 transition-all active:scale-95"
+                                        className="w-8 h-8 flex items-center justify-center text-slate-400 hover:text-amber-600 font-bold text-lg active:scale-90 transition-transform"
                                     >
                                         +
                                     </button>
                                 </div>
                             </div>
                         )}
-
-                        {/* Vehicle Type Selection (Only for Bao Xe) */}
-                        {serviceType === 'bao-xe' && (
-                            <div className="col-span-2">
-                                <label className="text-sm font-bold text-slate-700 mb-3 block">
-                                    <Car className="w-4 h-4 inline mr-1" />
-                                    Chọn loại xe
-                                </label>
-                                <div className="grid grid-cols-3 gap-3">
-                                    {VEHICLE_TYPES.map((vehicle) => {
-                                        const isActive = vehicleType === vehicle.id;
-                                        return (
-                                            <button
-                                                key={vehicle.id}
-                                                type="button"
-                                                onClick={() => setVehicleType(vehicle.id)}
-                                                className={`p-4 rounded-xl border-2 transition-all duration-200 ${isActive
-                                                    ? 'bg-white border-amber-400 shadow-md'
-                                                    : 'bg-white border-slate-200 hover:border-amber-200'
-                                                    }`}
-                                            >
-                                                <div className="text-center">
-                                                    <p className={`font-bold text-sm mb-1 ${isActive ? 'text-slate-900' : 'text-slate-600'}`}>
-                                                        {vehicle.name}
-                                                    </p>
-                                                    <p className={`text-xs font-semibold ${isActive ? 'text-amber-600' : 'text-slate-400'}`}>
-                                                        {vehicle.price.toLocaleString('vi-VN')}đ
-                                                    </p>
-                                                </div>
-                                            </button>
-                                        );
-                                    })}
-                                </div>
-                            </div>
-                        )}
                     </div>
 
-                    {/* Continue Button (Triggers Modal) */}
-                    <div className="pt-2 md:pt-4">
-                        <button
-                            type="button"
-                            onClick={handleNextStep}
-                            className="w-full bg-amber-500 text-white py-4 md:py-5 rounded-xl md:rounded-2xl font-bold text-lg md:text-xl hover:bg-amber-600 transition-all shadow-lg shadow-amber-500/30 hover:shadow-xl hover:shadow-amber-500/40 hover:-translate-y-0.5 flex items-center justify-center gap-3 group"
-                        >
-                            <span className="uppercase tracking-wide">Tiếp tục đặt xe</span>
-                            <div className="bg-white/20 p-1 rounded-full group-hover:bg-white/30 transition-colors">
-                                <ArrowRight className="w-5 h-5 md:w-6 md:h-6" />
+                    {/* Vehicle Type Selection (Only for Bao Xe) */}
+                    {serviceType === 'bao-xe' && (
+                        <div className="col-span-2">
+                            <label className="text-sm font-bold text-slate-700 mb-3 block">
+                                <Car className="w-4 h-4 inline mr-1" />
+                                Chọn loại xe
+                            </label>
+                            <div className="grid grid-cols-3 gap-3">
+                                {VEHICLE_TYPES.map((vehicle) => {
+                                    const isActive = vehicleType === vehicle.id;
+                                    return (
+                                        <button
+                                            key={vehicle.id}
+                                            type="button"
+                                            onClick={() => setVehicleType(vehicle.id)}
+                                            className={`p-4 rounded-xl border-2 transition-all duration-200 ${isActive
+                                                ? 'bg-white border-amber-400 shadow-md'
+                                                : 'bg-white border-slate-200 hover:border-amber-200'
+                                                }`}
+                                        >
+                                            <div className="text-center">
+                                                <p className={`font-bold text-sm mb-1 ${isActive ? 'text-slate-900' : 'text-slate-600'}`}>
+                                                    {vehicle.name}
+                                                </p>
+                                                <p className={`text-xs font-semibold ${isActive ? 'text-amber-600' : 'text-slate-400'}`}>
+                                                    {vehicle.price.toLocaleString('vi-VN')}đ
+                                                </p>
+                                            </div>
+                                        </button>
+                                    );
+                                })}
                             </div>
-                        </button>
-                    </div>
+                        </div>
+                    )}
+                </div>
+
+                {/* Continue Button (Triggers Modal) */}
+                <div className="pt-2 md:pt-4">
+                    <button
+                        type="button"
+                        onClick={handleNextStep}
+                        className="w-full bg-amber-500 text-white py-4 md:py-5 rounded-xl md:rounded-2xl font-bold text-lg md:text-xl hover:bg-amber-600 transition-all shadow-lg shadow-amber-500/30 hover:shadow-xl hover:shadow-amber-500/40 hover:-translate-y-0.5 flex items-center justify-center gap-3 group"
+                    >
+                        <span className="uppercase tracking-wide">Tiếp tục đặt xe</span>
+                        <div className="bg-white/20 p-1 rounded-full group-hover:bg-white/30 transition-colors">
+                            <ArrowRight className="w-5 h-5 md:w-6 md:h-6" />
+                        </div>
+                    </button>
                 </div>
             </div>
 
@@ -414,7 +434,7 @@ export default function SearchForm() {
                                                     <div>
                                                         <p className="font-bold text-slate-800 text-sm">Chuyến đi của bạn</p>
                                                         <p className="text-slate-600 text-xs mt-0.5">
-                                                            {direction === 'hn-th' ? 'Hà Nội ➝ Thanh Hóa' : 'Thanh Hóa ➝ Hà Nội'} • {new Date(date).toLocaleDateString('vi-VN')}
+                                                            {direction === 'hn-th' ? 'Hà Nội ➝ Thanh Hóa' : 'Thanh Hóa ➝ Hà Nội'} • {new Date(date).toLocaleDateString('vi-VN')} • {time}
                                                         </p>
                                                     </div>
                                                 </div>
@@ -579,9 +599,9 @@ export default function SearchForm() {
                                                     </div>
 
                                                     {/* Total Price */}
-                                                    <div className="flex items-center justify-between pt-2 px-2">
-                                                        <span className="text-slate-600 font-bold">Tổng thanh toán</span>
-                                                        <span className="font-extrabold text-3xl text-emerald-600">{estimatedPrice.toLocaleString('vi-VN')}đ</span>
+                                                    <div className="flex justify-between border-b border-slate-200 pb-2">
+                                                        <span className="text-slate-500 text-sm">Ngày đi</span>
+                                                        <span className="font-bold text-slate-800">{new Date(date).toLocaleDateString('vi-VN')} - {time}</span>
                                                     </div>
                                                 </div>
 
@@ -696,4 +716,3 @@ export default function SearchForm() {
         </>
     );
 }
-
