@@ -113,7 +113,7 @@ export default function DriverRegistration() {
 
                     <p className="text-lg text-slate-300 max-w-2xl mx-auto mb-8">
                         Hệ thống tự động gửi thông báo khi có khách tiện chuyến. <br />
-                        Bạn chỉ việc nhận cuốc và chạy. Không cắt phế, không ràng buộc.
+                        Bạn chỉ việc nhận cuốc và chạy, không ràng buộc.
                     </p>
 
                     {/* FOMO / Incentive Banner */}

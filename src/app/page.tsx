@@ -1,7 +1,7 @@
 'use client';
 
 import SearchForm from '@/components/SearchForm';
-import { Car, Shield, Clock, DollarSign, LayoutDashboard, LogOut } from 'lucide-react';
+import { Car, Shield, Clock, DollarSign, LayoutDashboard, LogOut, Users, Check } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 
@@ -24,25 +24,23 @@ export default function Home() {
 
   return (
     <main className="min-h-screen pb-20">
-      {/* Hero Section - Updated with Warm/Dark Styling */}
-      <section className="relative bg-slate-900 text-white pb-32 pt-32 overflow-hidden">
-        {/* Abstract Background - Gold & Dark */}
+      {/* Hero Section - Updated with Premium/Clean Styling */}
+      <section className="relative bg-slate-900 text-white pb-8 pt-20 md:pb-12 md:pt-28 overflow-hidden">
+        {/* Abstract Background - Reduced Yellow, More Blue/Dark */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          <div className="absolute -top-20 -right-20 w-[600px] h-[600px] bg-amber-500 rounded-full blur-[120px] opacity-20 animate-pulse"></div>
-          <div className="absolute top-40 -left-20 w-[400px] h-[400px] bg-blue-600 rounded-full blur-[100px] opacity-10"></div>
+          <div className="absolute -top-20 -right-20 w-[400px] h-[400px] bg-blue-900/20 rounded-full blur-[80px]"></div>
+          <div className="absolute top-20 -left-20 w-[300px] h-[300px] bg-amber-500/5 rounded-full blur-[60px]"></div>
         </div>
 
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center z-10">
 
 
-          <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold tracking-tight mb-6 leading-tight">
-            Chuyên Tuyến <br />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-orange-500">Hà Nội ⇄ Thanh Hóa</span>
+          <h1 className="text-2xl md:text-4xl lg:text-5xl font-bold tracking-tight mb-2 md:mb-3 leading-tight">
+            Chuyên Tuyến <span className="text-transparent bg-clip-text bg-gradient-to-r from-white to-amber-200">Hà Nội ⇄ Thanh Hóa</span>
           </h1>
 
-          <p className="text-lg md:text-xl text-slate-400 max-w-2xl mx-auto mb-10 leading-relaxed">
-            Dịch vụ xe ghép, xe tiện chuyến giá rẻ, uy tín. <br className="hidden md:block" />
-            Đón trả tận nơi - Không bắt khách dọc đường.
+          <p className="text-sm md:text-lg text-slate-300 max-w-2xl mx-auto mb-4 md:mb-6 leading-relaxed font-normal opacity-90">
+            Xe ghép, xe tiện chuyến giá rẻ, uy tín. Đón trả tận nơi.
           </p>
 
           {isDriver ? (
@@ -65,8 +63,9 @@ export default function Home() {
           ) : (
             <button
               onClick={() => document.getElementById('booking-form')?.scrollIntoView({ behavior: 'smooth' })}
-              className="bg-gradient-to-r from-amber-500 to-orange-600 text-white px-8 py-4 rounded-full font-bold text-lg shadow-lg hover:shadow-amber-500/30 hover:scale-105 transition-all animate-bounce-slow"
+              className="bg-amber-500 text-white px-8 py-3 md:px-10 md:py-3.5 rounded-full font-bold text-sm md:text-base shadow-lg shadow-amber-500/20 hover:shadow-amber-500/30 hover:scale-105 transition-all flex items-center gap-2 mx-auto"
             >
+              <Car className="w-4 h-4" />
               Đặt xe ngay
             </button>
           )}
@@ -76,72 +75,58 @@ export default function Home() {
       {/* Search Form - Overlapping layout with reduced negative margin for balance */}
       <div id="booking-form" className="px-4 relative z-20 -mt-16">
         <SearchForm />
-
-        {/* Subtle Driver CTA - Hide if Driver */}
-        {!isDriver && (
-          <div className="text-center mt-6">
-            <a href="/tai-xe" className="inline-flex items-center gap-2 text-slate-500 hover:text-amber-600 transition-colors font-medium bg-white/80 backdrop-blur px-4 py-2 rounded-full border border-slate-200 shadow-sm hover:shadow-md">
-              <span>🚗 Bạn là tài xế tiện chuyến?</span>
-              <span className="underline decoration-amber-500 underline-offset-2 font-bold text-amber-600">Đăng ký nhận khách ngay</span>
-            </a>
-          </div>
-        )}
       </div>
 
-      {/* Features Section - Clean & Trustworthy */}
-      <section className="pt-32 pb-24 bg-white">
+      {/* Why Choose Us - Compact & Premium */}
+      <section className="py-16 md:py-20 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-4">
-              Tại sao chọn chúng tôi?
-            </h2>
-            <p className="text-slate-500 max-w-xl mx-auto">
-              Chúng tôi cam kết mang lại trải nghiệm di chuyển an toàn, tiết kiệm và thoải mái nhất cho bạn.
+          <div className="text-center mb-8 md:mb-10">
+            <h2 className="text-2xl md:text-3xl font-bold text-slate-900 mb-2">Tại sao chọn chúng tôi?</h2>
+            <p className="text-slate-500 text-sm md:text-base max-w-2xl mx-auto">
+              Dịch vụ vận tải hành khách hàng đầu tuyến Hà Nội ⇄ Thanh Hóa.
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
             {/* Feature 1 */}
-            <div className="p-8 rounded-2xl bg-slate-50 border border-slate-100 hover:border-amber-200 hover:shadow-xl hover:shadow-amber-100/20 transition-all duration-300 group">
-              <div className="w-14 h-14 bg-white rounded-xl flex items-center justify-center mb-6 shadow-sm border border-slate-100 group-hover:scale-110 transition-transform">
-                <Clock className="w-7 h-7 text-amber-500" />
+            <div className="bg-slate-50 p-6 rounded-2xl border border-slate-100 hover:shadow-lg transition-all hover:-translate-y-1 group text-center">
+              <div className="w-14 h-14 bg-amber-100 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
+                <Clock className="w-7 h-7 text-amber-600" />
               </div>
-              <h3 className="text-xl font-bold mb-3 text-slate-900">Đặt Xe Nhanh</h3>
-              <p className="text-slate-500 leading-relaxed">
-                Chỉ cần 30 giây để tìm được chuyến xe ưng ý. Tài xế sẽ liên hệ đón bạn ngay lập tức.
+              <h3 className="text-lg font-bold text-slate-900 mb-2 flex items-center justify-center gap-2">
+                Đặt xe nhanh chóng
+                <Check className="w-4 h-4 text-amber-500 bg-amber-100 rounded-full p-0.5" />
+              </h3>
+              <p className="text-slate-500 text-sm leading-relaxed">
+                Chỉ 2 phút để đặt xe. Tài xế đón trả tận nơi, đúng giờ, không chờ đợi.
               </p>
             </div>
 
             {/* Feature 2 */}
-            <div className="p-8 rounded-2xl bg-slate-50 border border-slate-100 hover:border-amber-200 hover:shadow-xl hover:shadow-amber-100/20 transition-all duration-300 group">
-              <div className="w-14 h-14 bg-white rounded-xl flex items-center justify-center mb-6 shadow-sm border border-slate-100 group-hover:scale-110 transition-transform">
-                <DollarSign className="w-7 h-7 text-emerald-500" />
+            <div className="bg-slate-50 p-6 rounded-2xl border border-slate-100 hover:shadow-lg transition-all hover:-translate-y-1 group text-center">
+              <div className="w-14 h-14 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
+                <Car className="w-7 h-7 text-blue-600" />
               </div>
-              <h3 className="text-xl font-bold mb-3 text-slate-900">Tiết Kiệm 40%</h3>
-              <p className="text-slate-500 leading-relaxed">
-                Giá rẻ hơn taxi truyền thống đến 40%. Biết trước giá, không lo phát sinh chi phí.
+              <h3 className="text-lg font-bold text-slate-900 mb-2 flex items-center justify-center gap-2">
+                Xe đời mới, sạch sẽ
+                <Check className="w-4 h-4 text-blue-500 bg-blue-100 rounded-full p-0.5" />
+              </h3>
+              <p className="text-slate-500 text-sm leading-relaxed">
+                Đội xe 5-7 chỗ đời mới, nội thất sang trọng, luôn được vệ sinh sạch sẽ.
               </p>
             </div>
 
             {/* Feature 3 */}
-            <div className="p-8 rounded-2xl bg-slate-50 border border-slate-100 hover:border-amber-200 hover:shadow-xl hover:shadow-amber-100/20 transition-all duration-300 group">
-              <div className="w-14 h-14 bg-white rounded-xl flex items-center justify-center mb-6 shadow-sm border border-slate-100 group-hover:scale-110 transition-transform">
-                <Shield className="w-7 h-7 text-blue-500" />
+            <div className="bg-slate-50 p-6 rounded-2xl border border-slate-100 hover:shadow-lg transition-all hover:-translate-y-1 group text-center">
+              <div className="w-14 h-14 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
+                <Users className="w-7 h-7 text-green-600" />
               </div>
-              <h3 className="text-xl font-bold mb-3 text-slate-900">An Toàn Tuyệt Đối</h3>
-              <p className="text-slate-500 leading-relaxed">
-                100% tài xế được xác thực danh tính. Xem đánh giá thực tế từ các hành khách trước.
-              </p>
-            </div>
-
-            {/* Feature 4 */}
-            <div className="p-8 rounded-2xl bg-slate-50 border border-slate-100 hover:border-amber-200 hover:shadow-xl hover:shadow-amber-100/20 transition-all duration-300 group">
-              <div className="w-14 h-14 bg-white rounded-xl flex items-center justify-center mb-6 shadow-sm border border-slate-100 group-hover:scale-110 transition-transform">
-                <Car className="w-7 h-7 text-purple-500" />
-              </div>
-              <h3 className="text-xl font-bold mb-3 text-slate-900">Đa Dạng Loại Xe</h3>
-              <p className="text-slate-500 leading-relaxed">
-                Từ xe 4 chỗ, 7 chỗ đến xe sang Limousine. Phù hợp mọi nhu cầu di chuyển của bạn.
+              <h3 className="text-lg font-bold text-slate-900 mb-2 flex items-center justify-center gap-2">
+                Tài xế chuyên nghiệp
+                <Check className="w-4 h-4 text-green-500 bg-green-100 rounded-full p-0.5" />
+              </h3>
+              <p className="text-slate-500 text-sm leading-relaxed">
+                Lái xe an toàn, thân thiện, rành đường. Phục vụ chu đáo, tận tâm.
               </p>
             </div>
           </div>
@@ -149,51 +134,65 @@ export default function Home() {
       </section>
 
       {/* Driver CTA Section - Hide if Driver */}
-      {!isDriver && (
-        <section className="py-20 bg-slate-900 relative overflow-hidden">
-          <div className="absolute right-0 top-0 w-1/2 h-full bg-slate-800/30 skew-x-12 transform origin-top"></div>
+      {
+        !isDriver && (
+          <section className="py-20 bg-slate-900 relative overflow-hidden">
+            <div className="absolute right-0 top-0 w-1/2 h-full bg-slate-800/30 skew-x-12 transform origin-top"></div>
 
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 flex flex-col md:flex-row items-center justify-between gap-12">
-            <div className="text-left max-w-2xl">
-              <span className="text-amber-500 font-bold tracking-wider uppercase mb-2 block">Cơ hội cho tài xế</span>
-              <h2 className="text-3xl md:text-5xl font-bold mb-6 text-white leading-tight">
-                Có xe nhàn rỗi? <br /> Kiếm thêm <span className="text-amber-500">15 - 20 triệu/tháng</span>
-              </h2>
-              <div className="space-y-4 mb-8">
-                <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 rounded-full bg-green-500/20 flex items-center justify-center">
-                    <span className="text-green-500 font-bold">✓</span>
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 flex flex-col md:flex-row items-center justify-between gap-12">
+              <div className="text-left max-w-2xl">
+                <span className="text-amber-500 font-bold tracking-wider uppercase mb-2 block">Cơ hội cho tài xế</span>
+                <h2 className="text-3xl md:text-5xl font-bold mb-6 text-white leading-tight">
+                  Có xe nhàn rỗi? <br /> Kiếm thêm <span className="text-amber-500">15 - 20 triệu/tháng</span>
+                </h2>
+                <div className="space-y-4 mb-8">
+                  <div className="flex items-center gap-3">
+                    <div className="w-8 h-8 rounded-full bg-green-500/20 flex items-center justify-center">
+                      <span className="text-green-500 font-bold">✓</span>
+                    </div>
+                    <p className="text-xl text-slate-300">Kết hợp chở khách tiện chuyến - <span className="text-white font-bold">Không áp doanh số</span></p>
                   </div>
-                  <p className="text-xl text-slate-300">Kết hợp chở khách tiện chuyến - <span className="text-white font-bold">Không áp doanh số</span></p>
+                  <div className="flex items-center gap-3">
+                    <div className="w-8 h-8 rounded-full bg-green-500/20 flex items-center justify-center">
+                      <span className="text-green-500 font-bold">✓</span>
+                    </div>
+                    <p className="text-xl text-slate-300">Hệ thống tự động bắn khách</p>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <div className="w-8 h-8 rounded-full bg-green-500/20 flex items-center justify-center">
+                      <span className="text-green-500 font-bold">✓</span>
+                    </div>
+                    <p className="text-xl text-slate-300">Nhận tiền mặt ngay sau chuyến đi</p>
+                  </div>
                 </div>
-                <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 rounded-full bg-green-500/20 flex items-center justify-center">
-                    <span className="text-green-500 font-bold">✓</span>
-                  </div>
-                  <p className="text-xl text-slate-300">Hệ thống tự động bắn khách - <span className="text-white font-bold">Không cắt phế</span></p>
-                </div>
-                <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 rounded-full bg-green-500/20 flex items-center justify-center">
-                    <span className="text-green-500 font-bold">✓</span>
-                  </div>
-                  <p className="text-xl text-slate-300">Nhận tiền mặt ngay sau chuyến đi</p>
+                <div className="flex gap-4">
+                  <a href="/tai-xe" className="bg-amber-500 text-white px-8 py-4 rounded-xl font-bold text-lg hover:bg-amber-600 transition-all shadow-lg hover:shadow-amber-500/20">
+                    Đăng ký ngay
+                  </a>
+                  <a href="/tai-xe" className="px-8 py-4 rounded-xl font-bold text-lg text-slate-300 border border-slate-700 hover:bg-slate-800 transition-all">
+                    Tìm hiểu thêm
+                  </a>
                 </div>
               </div>
-              <div className="flex gap-4">
-                <a href="/tai-xe" className="bg-amber-500 text-white px-8 py-4 rounded-xl font-bold text-lg hover:bg-amber-600 transition-all shadow-lg hover:shadow-amber-500/20">
-                  Đăng ký ngay
-                </a>
-                <a href="/tai-xe" className="px-8 py-4 rounded-xl font-bold text-lg text-slate-300 border border-slate-700 hover:bg-slate-800 transition-all">
-                  Tìm hiểu thêm
-                </a>
-              </div>
+
+              {/* Abstract Graphic Element placeholder */}
+              <div className="w-full md:w-1/3 aspect-square bg-gradient-to-tr from-amber-500 to-orange-600 rounded-3xl opacity-20 rotate-12 transform translate-x-10"></div>
             </div>
+          </section>
+        )
+      }
 
-            {/* Abstract Graphic Element placeholder */}
-            <div className="w-full md:w-1/3 aspect-square bg-gradient-to-tr from-amber-500 to-orange-600 rounded-3xl opacity-20 rotate-12 transform translate-x-10"></div>
+      {/* Subtle Driver CTA - Footer Position */}
+      {
+        !isDriver && (
+          <div className="text-center py-8 bg-slate-900 border-t border-slate-800">
+            <a href="/tai-xe" className="inline-flex items-center gap-2 text-xs md:text-sm text-slate-500 hover:text-amber-500 transition-colors font-medium">
+              <span>🚗 Bạn là tài xế tiện chuyến?</span>
+              <span className="underline decoration-amber-500/50 underline-offset-2">Đăng ký nhận khách ngay</span>
+            </a>
           </div>
-        </section>
-      )}
-    </main>
+        )
+      }
+    </main >
   );
 }
