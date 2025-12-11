@@ -405,7 +405,7 @@ export default function DriverDashboard() {
                                     <Car className="w-10 h-10 text-slate-400" />
                                 </div>
                                 <h3 className="text-slate-900 font-bold mb-2 text-lg">Bạn chưa có chuyến nào</h3>
-                                <p className="text-slate-500 text-sm max-w-[200px] mx-auto">Hãy chuyển sang tab "Tìm Khách" và nhận chuyến đầu tiên ngay!</p>
+                                <p className="text-slate-500 text-sm px-6 mx-auto">Hãy chuyển sang tab "Tìm Khách" và nhận chuyến đầu tiên ngay!</p>
                             </div>
                         ) : (
                             myBookings.map((booking) => (
