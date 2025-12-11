@@ -1,8 +1,10 @@
 import { NextResponse } from 'next/server';
 import { supabase } from '@/lib/supabase';
+import twilio from 'twilio';
 
-const SPEEDSMS_ACCESS_TOKEN = process.env.SPEEDSMS_ACCESS_TOKEN!;
-const SPEEDSMS_API_URL = 'https://api.speedsms.vn/index.php/sms/send';
+const TWILIO_ACCOUNT_SID = process.env.TWILIO_ACCOUNT_SID;
+const TWILIO_AUTH_TOKEN = process.env.TWILIO_AUTH_TOKEN;
+const TWILIO_PHONE_NUMBER = process.env.TWILIO_PHONE_NUMBER;
 
 export async function POST(request: Request) {
     try {
@@ -17,9 +19,14 @@ export async function POST(request: Request) {
             );
         }
 
-        // Normalize phone (remove +84, add 0)
+        // Normalize phone (remove +84, add 0) for database check
         const normalizedPhone = phone.startsWith('+84')
             ? '0' + phone.slice(3)
+            : phone;
+
+        // Format phone for Twilio (must have +84)
+        const twilioPhone = phone.startsWith('0')
+            ? '+84' + phone.slice(1)
             : phone;
 
         // Check rate limiting: max 3 OTP requests per phone per 5 minutes
@@ -62,83 +69,65 @@ export async function POST(request: Request) {
             );
         }
 
-        // Send SMS via SpeedSMS
-        const smsPayload = {
-            to: [normalizedPhone],
-            content: `Ma xac thuc XeGhep cua ban la: ${otp}. Ma co hieu luc trong 5 phut.`,
-            sms_type: 5, // CSKH SMS (no brandname registration needed)
-        };
+        // Development Fallback or Missing Config
+        // If config is missing, we use Dev Mode to print OTP to console
+        if (!TWILIO_ACCOUNT_SID || !TWILIO_AUTH_TOKEN || !TWILIO_PHONE_NUMBER) {
+            console.log('='.repeat(50));
+            console.log('⚠️ TWILIO CONFIG MISSING - USING DEV MODE');
+            console.log(`Phone: ${normalizedPhone}`);
+            console.log(`OTP Code: ${otp}`);
+            console.log('='.repeat(50));
 
+            return NextResponse.json({
+                success: true,
+                message: '[DEV MODE] Chưa cấu hình Twilio. Mã OTP đã in ra console server.',
+                devMode: true,
+                otp: otp
+            });
+        }
+
+        // Send SMS via Twilio
         try {
-            const smsResponse = await fetch(SPEEDSMS_API_URL, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${SPEEDSMS_ACCESS_TOKEN}`,
-                },
-                body: JSON.stringify(smsPayload),
+            const client = twilio(TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN);
+
+            await client.messages.create({
+                body: `Ma xac thuc XeGhep cua ban la: ${otp}. Ma co hieu luc trong 5 phut.`,
+                from: TWILIO_PHONE_NUMBER,
+                to: twilioPhone
             });
 
-            const smsResult = await smsResponse.json();
+            console.log('OTP sent successfully via Twilio:', { phone: twilioPhone });
 
-            if (!smsResponse.ok || smsResult.status !== 'success') {
-                console.error('SpeedSMS error:', smsResult);
+            return NextResponse.json({
+                success: true,
+                message: 'Mã OTP đã được gửi đến số điện thoại của bạn.',
+            });
 
-                // Development fallback: If SMS fails (e.g., no balance), log OTP to console
-                if (process.env.NODE_ENV === 'development') {
-                    console.log('='.repeat(50));
-                    console.log('📱 DEVELOPMENT MODE - OTP NOT SENT VIA SMS');
-                    console.log(`Phone: ${normalizedPhone}`);
-                    console.log(`OTP Code: ${otp}`);
-                    console.log(`Expires at: ${expiresAt.toLocaleString('vi-VN')}`);
-                    console.log('='.repeat(50));
+        } catch (smsError: any) {
+            console.error('Twilio sending exception:', smsError);
 
-                    return NextResponse.json({
-                        success: true,
-                        message: '[DEV MODE] Mã OTP đã được tạo. Kiểm tra console server để lấy mã.',
-                        devMode: true,
-                        otp: otp, // Only in dev mode
-                    });
-                }
-
-                return NextResponse.json(
-                    { error: 'Không thể gửi SMS. Vui lòng thử lại sau hoặc liên hệ hỗ trợ.' },
-                    { status: 500 }
-                );
-            }
-
-            console.log('OTP sent successfully via SMS:', { phone: normalizedPhone });
-
-        } catch (smsError) {
-            console.error('SMS sending exception:', smsError);
-
-            // Development fallback
+            // Development fallback if Twilio fails (e.g. unverified number in trial)
             if (process.env.NODE_ENV === 'development') {
                 console.log('='.repeat(50));
-                console.log('📱 DEVELOPMENT MODE - SMS FAILED, USING FALLBACK');
+                console.log('📱 DEVELOPMENT MODE - TWILIO FAILED, USING FALLBACK');
+                console.log(`Error: ${smsError.message}`);
                 console.log(`Phone: ${normalizedPhone}`);
                 console.log(`OTP Code: ${otp}`);
-                console.log(`Expires at: ${expiresAt.toLocaleString('vi-VN')}`);
                 console.log('='.repeat(50));
 
                 return NextResponse.json({
                     success: true,
-                    message: '[DEV MODE] Mã OTP đã được tạo. Kiểm tra console server để lấy mã.',
+                    message: `[DEV MODE] Lỗi gửi Twilio (${smsError.code}). Mã OTP xem tại console.`,
                     devMode: true,
                     otp: otp,
                 });
             }
 
             return NextResponse.json(
-                { error: 'Không thể gửi SMS. Vui lòng thử lại sau.' },
+                { error: 'Không thể gửi SMS. Vui lòng kiểm tra lại số điện thoại.' },
                 { status: 500 }
             );
         }
-
-        return NextResponse.json({
-            success: true,
-            message: 'Mã OTP đã được gửi đến số điện thoại của bạn.',
-        });
 
     } catch (error) {
         console.error('Send OTP error:', error);

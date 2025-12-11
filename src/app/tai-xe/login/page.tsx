@@ -214,11 +214,10 @@ export default function DriverLogin() {
                             <button
                                 type="button"
                                 onClick={() => setLoginMethod('otp')}
-                                className={`flex-1 py-2 px-4 rounded-lg text-sm font-medium transition-colors ${
-                                    loginMethod === 'otp'
+                                className={`flex-1 py-2 px-4 rounded-lg text-sm font-medium transition-colors ${loginMethod === 'otp'
                                         ? 'bg-white text-slate-900 shadow-sm'
                                         : 'text-slate-600 hover:text-slate-900'
-                                }`}
+                                    }`}
                             >
                                 Đăng nhập bằng OTP
                             </button>
@@ -228,11 +227,10 @@ export default function DriverLogin() {
                                     setLoginMethod('password');
                                     setStep('password');
                                 }}
-                                className={`flex-1 py-2 px-4 rounded-lg text-sm font-medium transition-colors ${
-                                    loginMethod === 'password'
+                                className={`flex-1 py-2 px-4 rounded-lg text-sm font-medium transition-colors ${loginMethod === 'password'
                                         ? 'bg-white text-slate-900 shadow-sm'
                                         : 'text-slate-600 hover:text-slate-900'
-                                }`}
+                                    }`}
                             >
                                 Đăng nhập bằng Mật khẩu
                             </button>
@@ -451,9 +449,7 @@ export default function DriverLogin() {
                                         placeholder="123456"
                                     />
                                 </div>
-                                <p className="mt-2 text-xs text-center text-slate-500">
-                                    Mã mặc định cho bản thử nghiệm: <span className="font-mono font-bold text-slate-800">123456</span>
-                                </p>
+
                             </div>
 
                             <button

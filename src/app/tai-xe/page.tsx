@@ -282,9 +282,7 @@ export default function DriverRegistration() {
                                             placeholder="123456"
                                         />
                                     </div>
-                                    <p className="mt-2 text-xs text-center text-slate-500">
-                                        Mã mặc định cho bản thử nghiệm: <span className="font-mono font-bold text-slate-800">123456</span>
-                                    </p>
+
                                 </div>
 
                                 <button
