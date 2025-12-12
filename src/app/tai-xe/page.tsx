@@ -266,26 +266,33 @@ export default function DriverRegistration() {
                                 </div>
 
                                 <div>
-                                    <label className="block text-sm font-bold text-slate-700 mb-2 text-center">
+                                    <label className="block text-sm font-bold text-slate-700 mb-3 text-center">
                                         Nhập mã OTP (6 số)
                                     </label>
-                                    <div className="relative">
-                                        <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                            <div className="w-10 h-10 bg-slate-50 rounded-xl flex items-center justify-center border border-slate-100">
+                                    <div className="max-w-[280px] mx-auto">
+                                        <div className="flex items-center gap-0 border border-slate-300 rounded-xl shadow-sm overflow-hidden focus-within:ring-4 focus-within:ring-amber-500/10 focus-within:border-amber-500 transition-all bg-white relative">
+                                            <div className="flex-shrink-0 w-14 h-14 bg-slate-50 flex items-center justify-center border-r border-slate-100">
                                                 <KeyRound className="h-5 w-5 text-slate-400" />
                                             </div>
+                                            <input
+                                                type="tel"
+                                                pattern="[0-9]*"
+                                                inputMode="numeric"
+                                                autoComplete="one-time-code"
+                                                required
+                                                maxLength={6}
+                                                value={otp}
+                                                onChange={(e) => {
+                                                    // Only allow numbers
+                                                    const val = e.target.value.replace(/\D/g, '');
+                                                    if (val.length <= 6) setOtp(val);
+                                                }}
+                                                className="flex-1 px-2 h-14 border-0 focus:ring-0 focus:outline-none text-[22px] font-bold text-center text-slate-800 bg-transparent tracking-[0.5em] placeholder:tracking-normal w-full"
+                                                placeholder="------"
+                                            />
                                         </div>
-                                        <input
-                                            type="text"
-                                            required
-                                            maxLength={6}
-                                            value={otp}
-                                            onChange={(e) => setOtp(e.target.value)}
-                                            className="block w-full pl-[3.5rem] pr-4 py-4 border border-slate-300 rounded-2xl focus:ring-4 focus:ring-amber-500/10 focus:border-amber-500 transition-all tracking-[0.5em] text-2xl font-black text-center text-slate-900"
-                                            placeholder="••••••"
-                                        />
+                                        <p className="text-center text-xs text-slate-400 mt-2 font-medium">Nhập 6 số trong tin nhắn SMS</p>
                                     </div>
-
                                 </div>
 
                                 <button
