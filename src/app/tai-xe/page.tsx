@@ -17,6 +17,11 @@ interface NotificationState {
     type: 'success' | 'error' | 'warning';
     title?: string;
     message: string;
+    actions?: Array<{
+        label: string;
+        onClick: () => void;
+        variant?: 'primary' | 'secondary' | 'text';
+    }>;
 }
 
 export default function DriverRegistration() {
@@ -109,15 +114,33 @@ export default function DriverRegistration() {
 
             if (exists) {
                 setLoading(false);
-                showNotification(
-                    'warning',
-                    'Số điện thoại này đã đăng ký.\n\n' +
-                    '🔑 Vui lòng đăng nhập bằng mật khẩu\n' +
-                    '❓ Hoặc click "Quên mật khẩu?" để lấy lại OTP',
-                    'Tài khoản đã tồn tại'
-                );
+                setNotification({
+                    isOpen: true,
+                    type: 'warning',
+                    title: 'Tài khoản đã tồn tại',
+                    message: 'Số điện thoại này đã đăng ký.',
+                    actions: [
+                        {
+                            label: '🔑 Đăng nhập bằng mật khẩu',
+                            onClick: () => {
+                                setLoginMethod('password');
+                                setStep('password');
+                            },
+                            variant: 'primary'
+                        },
+                        {
+                            label: 'Quên mật khẩu?',
+                            onClick: () => {
+                                // Allow OTP for password reset - just close modal
+                                // User can try again and we won't block
+                            },
+                            variant: 'text'
+                        }
+                    ]
+                });
                 return;
             }
+
 
             // Import Firebase
             const { auth, signInWithPhoneNumber } = await import('@/lib/firebase');
@@ -292,6 +315,7 @@ export default function DriverRegistration() {
                 type={notification.type}
                 title={notification.title}
                 message={notification.message}
+                actions={notification.actions}
             />
             {/* Hero Section with Launch Promotion */}
             <div className="bg-slate-900 text-white relative overflow-hidden py-20 px-4">

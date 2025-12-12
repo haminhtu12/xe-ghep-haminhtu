@@ -11,6 +11,11 @@ interface NotificationModalProps {
     title?: string;
     message: string;
     actionLabel?: string;
+    actions?: Array<{
+        label: string;
+        onClick: () => void;
+        variant?: 'primary' | 'secondary' | 'text';
+    }>;
 }
 
 export default function NotificationModal({
@@ -19,7 +24,8 @@ export default function NotificationModal({
     type,
     title,
     message,
-    actionLabel = 'Đóng'
+    actionLabel = 'Đóng',
+    actions
 }: NotificationModalProps) {
     const [mounted, setMounted] = useState(false);
     const [isVisible, setIsVisible] = useState(false);
@@ -86,14 +92,43 @@ export default function NotificationModal({
                         </p>
                     </div>
                 </div>
-                <div className="bg-slate-50 px-4 py-4 sm:px-6 flex justify-center border-t border-slate-100">
-                    <button
-                        type="button"
-                        className={`w-full inline-flex justify-center rounded-xl border border-transparent shadow-sm px-4 py-3 text-base font-bold text-white focus:outline-none focus:ring-2 focus:ring-offset-2 sm:text-sm ${colors.btn} transition-all active:scale-[0.98]`}
-                        onClick={onClose}
-                    >
-                        {actionLabel}
-                    </button>
+                <div className="bg-slate-50 px-4 py-4 sm:px-6 border-t border-slate-100">
+                    {actions && actions.length > 0 ? (
+                        <div className="flex flex-col gap-2">
+                            {actions.map((action, index) => {
+                                const isPrimary = action.variant === 'primary' || (!action.variant && index === 0);
+                                const isSecondary = action.variant === 'secondary';
+                                const isText = action.variant === 'text';
+
+                                return (
+                                    <button
+                                        key={index}
+                                        type="button"
+                                        className={`w-full inline-flex justify-center rounded-xl px-4 py-3 text-base font-bold focus:outline-none focus:ring-2 focus:ring-offset-2 sm:text-sm transition-all active:scale-[0.98] ${isPrimary
+                                                ? `border border-transparent shadow-sm text-white ${colors.btn}`
+                                                : isSecondary
+                                                    ? 'border-2 border-slate-300 bg-white text-slate-700 hover:bg-slate-50 focus:ring-slate-500'
+                                                    : 'border-0 bg-transparent text-amber-600 hover:text-amber-700 underline'
+                                            }`}
+                                        onClick={() => {
+                                            action.onClick();
+                                            onClose();
+                                        }}
+                                    >
+                                        {action.label}
+                                    </button>
+                                );
+                            })}
+                        </div>
+                    ) : (
+                        <button
+                            type="button"
+                            className={`w-full inline-flex justify-center rounded-xl border border-transparent shadow-sm px-4 py-3 text-base font-bold text-white focus:outline-none focus:ring-2 focus:ring-offset-2 sm:text-sm ${colors.btn} transition-all active:scale-[0.98]`}
+                            onClick={onClose}
+                        >
+                            {actionLabel}
+                        </button>
+                    )}
                 </div>
             </div>
         </div>

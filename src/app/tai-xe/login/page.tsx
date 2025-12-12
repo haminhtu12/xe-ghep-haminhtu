@@ -16,6 +16,11 @@ interface NotificationState {
     type: 'success' | 'error' | 'warning';
     title?: string;
     message: string;
+    actions?: Array<{
+        label: string;
+        onClick: () => void;
+        variant?: 'primary' | 'secondary' | 'text';
+    }>;
 }
 
 export default function DriverLogin() {
@@ -109,13 +114,29 @@ export default function DriverLogin() {
 
             if (exists) {
                 setLoading(false);
-                showNotification(
-                    'warning',
-                    'Số điện thoại này đã đăng ký.\n\n' +
-                    '🔑 Vui lòng đăng nhập bằng mật khẩu\n' +
-                    '❓ Hoặc click "Quên mật khẩu?" để lấy lại OTP',
-                    'Tài khoản đã tồn tại'
-                );
+                setNotification({
+                    isOpen: true,
+                    type: 'warning',
+                    title: 'Tài khoản đã tồn tại',
+                    message: 'Số điện thoại này đã đăng ký.',
+                    actions: [
+                        {
+                            label: '🔑 Đăng nhập bằng mật khẩu',
+                            onClick: () => {
+                                setLoginMethod('password');
+                                setStep('password');
+                            },
+                            variant: 'primary'
+                        },
+                        {
+                            label: 'Quên mật khẩu?',
+                            onClick: () => {
+                                // Allow OTP for password reset
+                            },
+                            variant: 'text'
+                        }
+                    ]
+                });
                 return;
             }
 
@@ -344,6 +365,7 @@ export default function DriverLogin() {
                 type={notification.type}
                 title={notification.title}
                 message={notification.message}
+                actions={notification.actions}
             />
 
             <div className="sm:mx-auto sm:w-full sm:max-w-md">
