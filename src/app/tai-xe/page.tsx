@@ -103,6 +103,18 @@ export default function DriverRegistration() {
             // Check if test phone number (for development)
             const TEST_PHONES = ['+84912345678', '+84987654321'];
             if (TEST_PHONES.includes(formattedPhone)) {
+                // Create a mock confirmation result for test phones
+                const mockConfirmationResult = {
+                    confirm: async (code: string) => {
+                        if (code === '123456') {
+                            return { user: { phoneNumber: formattedPhone } };
+                        } else {
+                            throw new Error('Invalid OTP');
+                        }
+                    }
+                };
+
+                setConfirmationResult(mockConfirmationResult);
                 showNotification(
                     'success',
                     'Đây là số điện thoại test.\n\nSử dụng mã OTP: 123456',
@@ -396,31 +408,31 @@ export default function DriverRegistration() {
                                 </div>
 
                                 <div className="w-full">
-                                        <label className="block text-sm font-bold text-slate-700 mb-3 text-center">
-                                            Nhập mã OTP (6 số)
-                                        </label>
-                                        <div className="flex items-center gap-0 border border-slate-300 rounded-2xl shadow-sm overflow-hidden focus-within:ring-4 focus-within:ring-amber-500/10 focus-within:border-amber-500 transition-all bg-white">
-                                            <div className="flex-shrink-0 w-16 h-16 bg-slate-50 flex items-center justify-center border-r-2 border-slate-200">
-                                                <KeyRound className="h-6 w-6 text-slate-400" />
-                                            </div>
-                                            <input
-                                                type="tel"
-                                                pattern="[0-9]*"
-                                                inputMode="numeric"
-                                                autoComplete="one-time-code"
-                                                required
-                                                maxLength={6}
-                                                value={otp}
-                                                onChange={(e) => {
-                                                    // Only allow numbers
-                                                    const val = e.target.value.replace(/\D/g, '');
-                                                    if (val.length <= 6) setOtp(val);
-                                                }}
-                                                className="flex-1 px-4 h-16 border-0 focus:ring-0 focus:outline-none text-2xl font-black text-center text-slate-800 bg-transparent tracking-[0.5em] placeholder:tracking-normal w-full"
-                                                placeholder="------"
-                                            />
+                                    <label className="block text-sm font-bold text-slate-700 mb-3 text-center">
+                                        Nhập mã OTP (6 số)
+                                    </label>
+                                    <div className="flex items-center gap-0 border border-slate-300 rounded-2xl shadow-sm overflow-hidden focus-within:ring-4 focus-within:ring-amber-500/10 focus-within:border-amber-500 transition-all bg-white">
+                                        <div className="flex-shrink-0 w-16 h-16 bg-slate-50 flex items-center justify-center border-r-2 border-slate-200">
+                                            <KeyRound className="h-6 w-6 text-slate-400" />
                                         </div>
-                                        <p className="text-center text-xs text-slate-400 mt-2 font-medium">Nhập 6 số trong tin nhắn SMS</p>
+                                        <input
+                                            type="tel"
+                                            pattern="[0-9]*"
+                                            inputMode="numeric"
+                                            autoComplete="one-time-code"
+                                            required
+                                            maxLength={6}
+                                            value={otp}
+                                            onChange={(e) => {
+                                                // Only allow numbers
+                                                const val = e.target.value.replace(/\D/g, '');
+                                                if (val.length <= 6) setOtp(val);
+                                            }}
+                                            className="flex-1 px-4 h-16 border-0 focus:ring-0 focus:outline-none text-2xl font-black text-center text-slate-800 bg-transparent tracking-[0.5em] placeholder:tracking-normal w-full"
+                                            placeholder="------"
+                                        />
+                                    </div>
+                                    <p className="text-center text-xs text-slate-400 mt-2 font-medium">Nhập 6 số trong tin nhắn SMS</p>
                                 </div>
 
                                 <button
@@ -437,12 +449,12 @@ export default function DriverRegistration() {
                             </form>
                         )}
 
-                    <p className="mt-6 text-sm text-slate-400 text-center">
-                        Đã có hơn 500+ tài xế tham gia tuần này
-                    </p>
+                        <p className="mt-6 text-sm text-slate-400 text-center">
+                            Đã có hơn 500+ tài xế tham gia tuần này
+                        </p>
+                    </div>
                 </div>
             </div>
-        </div>
         </main >
     );
 }

@@ -105,6 +105,18 @@ export default function DriverLogin() {
             // Check if test phone number (for development)
             const TEST_PHONES = ['+84912345678', '+84987654321'];
             if (TEST_PHONES.includes(formattedPhone)) {
+                // Create a mock confirmation result for test phones
+                const mockConfirmationResult = {
+                    confirm: async (code: string) => {
+                        if (code === '123456') {
+                            return { user: { phoneNumber: formattedPhone } };
+                        } else {
+                            throw new Error('Invalid OTP');
+                        }
+                    }
+                };
+
+                setConfirmationResult(mockConfirmationResult);
                 showNotification(
                     'success',
                     'Đây là số điện thoại test.\n\nSử dụng mã OTP: 123456',
@@ -177,7 +189,11 @@ export default function DriverLogin() {
         setLoading(true);
 
         try {
+            console.log('🔍 Debug - confirmationResult:', confirmationResult);
+            console.log('🔍 Debug - OTP entered:', otp);
+
             if (!confirmationResult) {
+                console.error('❌ confirmationResult is null/undefined');
                 showNotification('warning', 'Vui lòng yêu cầu gửi lại mã xác thực.', 'Phiên hết hạn');
                 setStep('phone');
                 return;
