@@ -3,11 +3,19 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { Car, Phone, Lock, ArrowRight, Gift, KeyRound } from 'lucide-react';
+import NotificationModal from '@/components/ui/notification-modal';
 
 declare global {
     interface Window {
         recaptchaVerifier: any;
     }
+}
+
+interface NotificationState {
+    isOpen: boolean;
+    type: 'success' | 'error' | 'warning';
+    title?: string;
+    message: string;
 }
 
 export default function DriverLogin() {
@@ -23,6 +31,26 @@ export default function DriverLogin() {
     const [verifiedOtp, setVerifiedOtp] = useState('');
     const router = useRouter();
     const [confirmationResult, setConfirmationResult] = useState<any>(null);
+
+    // Notification State
+    const [notification, setNotification] = useState<NotificationState>({
+        isOpen: false,
+        type: 'success',
+        message: ''
+    });
+
+    const closeNotification = () => {
+        setNotification(prev => ({ ...prev, isOpen: false }));
+    };
+
+    const showNotification = (type: 'success' | 'error' | 'warning', message: string, title?: string) => {
+        setNotification({
+            isOpen: true,
+            type,
+            message,
+            title
+        });
+    };
 
     // Initialize Recaptcha
     useEffect(() => {
@@ -49,7 +77,7 @@ export default function DriverLogin() {
     const handleSendOtp = async (e: React.FormEvent) => {
         e.preventDefault();
         if (phone.length < 10) {
-            alert('Vui lòng nhập số điện thoại hợp lệ');
+            showNotification('error', 'Vui lòng nhập số điện thoại hợp lệ.', 'Số điện thoại lỗi');
             return;
         }
         setLoading(true);
@@ -69,11 +97,17 @@ export default function DriverLogin() {
             setConfirmationResult(result);
             setStep('otp');
             setResendCountdown(60);
-            alert('Mã OTP đã được gửi từ Google/Firebase. Vui lòng kiểm tra tin nhắn.');
+
+            showNotification(
+                'success',
+                `Mã đăng ký đã được gửi đến số điện thoại\n${phone}.\nVui lòng kiểm tra tin nhắn.`,
+                'Đã gửi mã xác thực'
+            );
 
         } catch (error: any) {
             console.error('Firebase Send OTP error:', error);
-            alert(`Lỗi gửi OTP: ${error.message}`);
+            showNotification('error', `Lỗi gửi OTP: ${error.message}`, 'Gửi thất bại');
+
             // Reset recaptcha
             if (window.recaptchaVerifier) {
                 window.recaptchaVerifier.clear();
@@ -90,7 +124,7 @@ export default function DriverLogin() {
 
         try {
             if (!confirmationResult) {
-                alert('Vui lòng gửi lại mã');
+                showNotification('warning', 'Vui lòng yêu cầu gửi lại mã xác thực.', 'Phiên hết hạn');
                 setStep('phone');
                 return;
             }
@@ -118,23 +152,27 @@ export default function DriverLogin() {
                     setIsNewDriver(true);
                     setStep('create-password');
                     setOtp('');
-                    alert(data.message);
+                    showNotification('success', data.message, 'Xác thực thành công');
                     return;
                 }
 
                 if (data.isNew) {
-                    alert(`🎉 ${data.message}`);
+                    showNotification('success', data.message, 'Chào mừng!');
                 } else {
-                    alert(data.message);
+                    showNotification('success', data.message, 'Đăng nhập thành công');
                 }
-                router.push('/tai-xe/dashboard');
+
+                // Delay redirect slightly for user to see success message
+                setTimeout(() => {
+                    router.push('/tai-xe/dashboard');
+                }, 1500);
             } else {
-                alert(data.error || 'Đăng nhập server thất bại.');
+                showNotification('error', data.error || 'Đăng nhập server thất bại.', 'Lỗi đăng nhập');
             }
 
         } catch (error: any) {
             console.error('Verify OTP error:', error);
-            alert(`Mã OTP không đúng hoặc đã hết hạn.`);
+            showNotification('error', 'Mã OTP không đúng hoặc đã hết hạn.', 'Xác thực thất bại');
         } finally {
             setLoading(false);
         }
@@ -151,14 +189,16 @@ export default function DriverLogin() {
             });
             const data = await res.json();
             if (res.ok) {
-                alert(data.message);
-                router.push('/tai-xe/dashboard');
+                showNotification('success', data.message, 'Đăng nhập thành công');
+                setTimeout(() => {
+                    router.push('/tai-xe/dashboard');
+                }, 1000);
             } else {
-                alert(data.error || 'Đăng nhập thất bại.');
+                showNotification('error', data.error || 'Đăng nhập thất bại.', 'Lỗi');
             }
         } catch (error) {
             console.error('Login error:', error);
-            alert('Có lỗi xảy ra.');
+            showNotification('error', 'Có lỗi xảy ra khi kết nối server.', 'Lỗi kết nối');
         } finally {
             setLoading(false);
         }
@@ -168,11 +208,11 @@ export default function DriverLogin() {
         e.preventDefault();
 
         if (password !== confirmPassword) {
-            alert('Mật khẩu xác nhận không khớp!');
+            showNotification('warning', 'Mật khẩu xác nhận không khớp!', 'Lỗi mật khẩu');
             return;
         }
         if (password.length < 6) {
-            alert('Mật khẩu phải có ít nhất 6 ký tự');
+            showNotification('warning', 'Mật khẩu phải có ít nhất 6 ký tự', 'Mật khẩu quá ngắn');
             return;
         }
         setLoading(true);
@@ -191,14 +231,16 @@ export default function DriverLogin() {
             const data = await res.json();
 
             if (res.ok) {
-                alert(`🎉 ${data.message}`);
-                router.push('/tai-xe/dashboard');
+                showNotification('success', data.message, 'Tạo tài khoản thành công');
+                setTimeout(() => {
+                    router.push('/tai-xe/dashboard');
+                }, 1500);
             } else {
-                alert(data.error || 'Lỗi tạo tài khoản.');
+                showNotification('error', data.error || 'Lỗi tạo tài khoản.', 'Lỗi chi tiết');
             }
         } catch (error) {
             console.error('Create password error:', error);
-            alert('Có lỗi xảy ra.');
+            showNotification('error', 'Có lỗi xảy ra khi tạo mật khẩu.', 'Lỗi hệ thống');
         } finally {
             setLoading(false);
         }
@@ -206,6 +248,14 @@ export default function DriverLogin() {
 
     return (
         <div className="min-h-screen bg-slate-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+            <NotificationModal
+                isOpen={notification.isOpen}
+                onClose={closeNotification}
+                type={notification.type}
+                title={notification.title}
+                message={notification.message}
+            />
+
             <div className="sm:mx-auto sm:w-full sm:max-w-md">
                 <div className="flex justify-center">
                     <div className="w-20 h-20 bg-amber-500 rounded-[1.2rem] flex items-center justify-center shadow-xl transform -rotate-3 mb-2">
@@ -483,21 +533,28 @@ export default function DriverLogin() {
                                     Nhập mã OTP (6 số)
                                 </label>
                                 <div className="max-w-[280px] mx-auto">
-                                    <div className="flex items-center gap-0 border border-slate-300 rounded-xl shadow-sm overflow-hidden focus-within:ring-4 focus-within:ring-amber-500/10 focus-within:border-amber-500 transition-all">
-                                        <div className="flex-shrink-0 w-14 h-14 bg-slate-100 flex items-center justify-center">
-                                            <KeyRound className="h-5 w-5 text-slate-500" />
+                                    <div className="flex items-center gap-0 border border-slate-300 rounded-xl shadow-sm overflow-hidden focus-within:ring-4 focus-within:ring-amber-500/10 focus-within:border-amber-500 transition-all bg-white relative">
+                                        <div className="flex-shrink-0 w-14 h-14 bg-slate-50 flex items-center justify-center border-r border-slate-100">
+                                            <KeyRound className="h-5 w-5 text-slate-400" />
                                         </div>
                                         <input
-                                            type="text"
+                                            type="tel"
+                                            pattern="[0-9]*"
+                                            inputMode="numeric"
+                                            autoComplete="one-time-code"
                                             required
                                             maxLength={6}
                                             value={otp}
-                                            onChange={(e) => setOtp(e.target.value)}
-                                            className="flex-1 px-4 py-4 border-0 focus:ring-0 focus:outline-none tracking-[0.5em] text-2xl font-black text-center text-slate-900 bg-transparent"
-                                            placeholder="••••••"
-                                            style={{ lineHeight: '100%' }}
+                                            onChange={(e) => {
+                                                // Only allow numbers
+                                                const val = e.target.value.replace(/\D/g, '');
+                                                if (val.length <= 6) setOtp(val);
+                                            }}
+                                            className="flex-1 px-2 h-14 border-0 focus:ring-0 focus:outline-none text-[22px] font-bold text-center text-slate-800 bg-transparent tracking-[0.5em] placeholder:tracking-normal w-full"
+                                            placeholder="------"
                                         />
                                     </div>
+                                    <p className="text-center text-xs text-slate-400 mt-2 font-medium">Nhập 6 số trong tin nhắn SMS</p>
                                 </div>
                             </div>
 
