@@ -4,6 +4,20 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { Shield, Car, CheckCircle, DollarSign, Clock, Users, Phone, Gift, KeyRound, ArrowRight } from 'lucide-react';
 import Link from 'next/link';
+import NotificationModal from '@/components/ui/notification-modal';
+
+declare global {
+    interface Window {
+        recaptchaVerifier: any;
+    }
+}
+
+interface NotificationState {
+    isOpen: boolean;
+    type: 'success' | 'error' | 'warning';
+    title?: string;
+    message: string;
+}
 
 export default function DriverRegistration() {
     const [step, setStep] = useState<'phone' | 'otp'>('phone');
@@ -11,7 +25,42 @@ export default function DriverRegistration() {
     const [otp, setOtp] = useState('');
     const [loading, setLoading] = useState(false);
     const [resendCountdown, setResendCountdown] = useState(0);
+    const [confirmationResult, setConfirmationResult] = useState<any>(null);
     const router = useRouter();
+
+    // Notification State
+    const [notification, setNotification] = useState<NotificationState>({
+        isOpen: false,
+        type: 'success',
+        message: ''
+    });
+
+    const closeNotification = () => {
+        setNotification(prev => ({ ...prev, isOpen: false }));
+    };
+
+    const showNotification = (type: 'success' | 'error' | 'warning', message: string, title?: string) => {
+        setNotification({
+            isOpen: true,
+            type,
+            message,
+            title
+        });
+    };
+
+    // Initialize Recaptcha
+    useEffect(() => {
+        if (!window.recaptchaVerifier) {
+            import('@/lib/firebase').then(({ auth, RecaptchaVerifier }) => {
+                window.recaptchaVerifier = new RecaptchaVerifier(auth, 'recaptcha-container', {
+                    'size': 'invisible',
+                    'callback': (response: any) => {
+                        // reCAPTCHA solved
+                    }
+                });
+            });
+        }
+    }, []);
 
     // Countdown timer for resend OTP
     useEffect(() => {
@@ -26,35 +75,41 @@ export default function DriverRegistration() {
     const handleSendOtp = async (e: React.FormEvent) => {
         e.preventDefault();
         if (phone.length < 10) {
-            alert('Vui lòng nhập số điện thoại hợp lệ');
+            showNotification('error', 'Vui lòng nhập số điện thoại hợp lệ.', 'Số điện thoại lỗi');
             return;
         }
         setLoading(true);
 
         try {
-            const res = await fetch('/api/drivers/send-otp', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ phone }),
-            });
+            // Import Firebase
+            const { auth, signInWithPhoneNumber } = await import('@/lib/firebase');
 
-            const data = await res.json();
+            // Format phone to +84 (Firebase requires E.164)
+            const formattedPhone = phone.startsWith('0')
+                ? '+84' + phone.slice(1)
+                : phone.startsWith('+84') ? phone : '+84' + phone;
 
-            if (res.ok) {
-                setStep('otp');
-                setResendCountdown(60); // Start 60 second countdown
-                if (data.devMode && data.otp) {
-                    // Development mode: Show OTP in alert
-                    alert(`[DEV MODE] Mã OTP của bạn là: ${data.otp}\n\nMã này có hiệu lực trong 5 phút.`);
-                } else {
-                    alert('Mã OTP đã được gửi đến số điện thoại của bạn. Vui lòng kiểm tra tin nhắn.');
-                }
-            } else {
-                alert(data.error || 'Không thể gửi mã OTP. Vui lòng thử lại.');
+            const appVerifier = window.recaptchaVerifier;
+            const result = await signInWithPhoneNumber(auth, formattedPhone, appVerifier);
+
+            setConfirmationResult(result);
+            setStep('otp');
+            setResendCountdown(60);
+
+            showNotification(
+                'success',
+                `Mã đăng ký đã được gửi đến số điện thoại\n${phone}.\nVui lòng kiểm tra tin nhắn.`,
+                'Đã gửi mã xác thực'
+            );
+
+        } catch (error: any) {
+            console.error('Firebase Send OTP error:', error);
+            showNotification('error', `Không thể gửi SMS. Vui lòng kiểm tra lại số điện thoại.`, 'Gửi thất bại');
+
+            // Reset recaptcha
+            if (window.recaptchaVerifier) {
+                window.recaptchaVerifier.clear();
             }
-        } catch (error) {
-            console.error('Send OTP error:', error);
-            alert('Có lỗi xảy ra. Vui lòng kiểm tra kết nối và thử lại.');
         } finally {
             setLoading(false);
         }
@@ -62,30 +117,41 @@ export default function DriverRegistration() {
 
     const handleVerifyOtp = async (e: React.FormEvent) => {
         e.preventDefault();
+        if (!confirmationResult) {
+            showNotification('error', 'Vui lòng gửi mã OTP trước.', 'Lỗi xác thực');
+            return;
+        }
         setLoading(true);
 
         try {
+            // Verify OTP with Firebase
+            const result = await confirmationResult.confirm(otp);
+            const user = result.user;
+
+            // Now verify with backend
             const res = await fetch('/api/drivers/verify-otp', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ phone, otp }),
+                body: JSON.stringify({ phone, otp, firebaseUid: user.uid }),
             });
 
             const data = await res.json();
 
             if (res.ok) {
                 if (data.isNew) {
-                    alert(`🎉 ${data.message}`);
+                    showNotification('success', `🎉 ${data.message}`, 'Chào mừng!');
                 } else {
-                    alert(data.message);
+                    showNotification('success', data.message, 'Đăng nhập thành công');
                 }
-                router.push('/tai-xe/dashboard');
+                setTimeout(() => {
+                    router.push('/tai-xe/dashboard');
+                }, 1500);
             } else {
-                alert(data.error || 'Xác thực thất bại. Vui lòng thử lại.');
+                showNotification('error', data.error || 'Xác thực thất bại. Vui lòng thử lại.', 'Lỗi');
             }
-        } catch (error) {
+        } catch (error: any) {
             console.error('Verify OTP error:', error);
-            alert('Có lỗi xảy ra. Vui lòng thử lại.');
+            showNotification('error', 'Mã OTP không đúng. Vui lòng thử lại.', 'Xác thực thất bại');
         } finally {
             setLoading(false);
         }
@@ -94,6 +160,13 @@ export default function DriverRegistration() {
 
     return (
         <main className="min-h-screen bg-slate-50">
+            <NotificationModal
+                isOpen={notification.isOpen}
+                onClose={closeNotification}
+                type={notification.type}
+                title={notification.title}
+                message={notification.message}
+            />
             {/* Hero Section with Launch Promotion */}
             <div className="bg-slate-900 text-white relative overflow-hidden py-20 px-4">
                 {/* Abstract Background */}
@@ -206,24 +279,26 @@ export default function DriverRegistration() {
 
                         {step === 'phone' ? (
                             <form className="space-y-6" onSubmit={handleSendOtp}>
+                                <div id="recaptcha-container"></div>
                                 <div>
                                     <label className="block text-sm font-bold text-slate-700 mb-2 ml-1">
                                         Số điện thoại
                                     </label>
                                     <div className="relative">
-                                        <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                            <div className="w-10 h-10 bg-slate-50 rounded-xl flex items-center justify-center border border-slate-100">
-                                                <Phone className="h-5 w-5 text-slate-400" />
+                                        <div className="flex items-center gap-0 border border-slate-300 rounded-xl shadow-sm overflow-hidden focus-within:ring-4 focus-within:ring-amber-500/10 focus-within:border-amber-500 transition-all">
+                                            <div className="flex-shrink-0 w-14 h-14 bg-slate-100 flex items-center justify-center">
+                                                <Phone className="h-5 w-5 text-slate-500" />
                                             </div>
+                                            <input
+                                                type="tel"
+                                                required
+                                                value={phone}
+                                                onChange={(e) => setPhone(e.target.value)}
+                                                className="flex-1 px-4 py-4 border-0 focus:ring-0 focus:outline-none font-bold text-slate-900 placeholder:font-normal placeholder:text-slate-400 text-lg bg-transparent"
+                                                placeholder="0912 xxx xxx"
+                                                style={{ lineHeight: '100%' }}
+                                            />
                                         </div>
-                                        <input
-                                            type="tel"
-                                            required
-                                            value={phone}
-                                            onChange={(e) => setPhone(e.target.value)}
-                                            className="block w-full pl-[3.5rem] pr-4 py-4 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-amber-500/10 focus:border-amber-500 transition-all font-bold text-slate-900 placeholder:font-normal placeholder:text-slate-400 text-lg"
-                                            placeholder="0912 xxx xxx"
-                                        />
                                     </div>
                                 </div>
 
