@@ -380,6 +380,11 @@ export default function DriverLogin() {
                 <p className="mt-3 text-center text-sm font-medium text-slate-500">
                     {step === 'create-password' ? 'Tạo mật khẩu để bảo mật tài khoản' : 'Đăng nhập nhanh bằng OTP hoặc Mật khẩu'}
                 </p>
+                {loginMethod === 'otp' && step === 'phone' && (
+                    <p className="mt-2 text-center text-xs text-slate-400">
+                        👋 Lần đầu? Nhập số điện thoại để nhận mã xác thực
+                    </p>
+                )}
             </div>
 
             <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md px-4">

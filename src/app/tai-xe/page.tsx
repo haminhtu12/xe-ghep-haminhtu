@@ -412,8 +412,11 @@ export default function DriverRegistration() {
                             </div>
                         </div>
                         <h2 className="text-3xl font-bold text-slate-800 mb-2 text-center">Đăng ký ngay</h2>
-                        <p className="text-slate-500 mb-6 text-center">
+                        <p className="text-slate-500 mb-2 text-center">
                             Chỉ cần 30 giây. <span className="font-bold text-amber-600">Tặng ngay 150.000đ</span>
+                        </p>
+                        <p className="text-sm text-slate-400 mb-6 text-center">
+                            👋 Lần đầu? Nhập số điện thoại để nhận mã xác thực
                         </p>
 
                         {/* Promotion Banner */}
