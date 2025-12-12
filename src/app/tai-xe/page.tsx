@@ -58,17 +58,46 @@ export default function DriverRegistration() {
 
     // Initialize Recaptcha
     useEffect(() => {
-        if (!window.recaptchaVerifier) {
-            import('@/lib/firebase').then(({ auth, RecaptchaVerifier }) => {
-                window.recaptchaVerifier = new RecaptchaVerifier(auth, 'recaptcha-container', {
-                    'size': 'invisible',
-                    'callback': (response: any) => {
-                        // reCAPTCHA solved
-                    }
-                });
-            });
-        }
+        const initRecaptcha = async () => {
+            if (typeof window !== 'undefined' && !window.recaptchaVerifier) {
+                try {
+                    const { auth, RecaptchaVerifier } = await import('@/lib/firebase');
+                    window.recaptchaVerifier = new RecaptchaVerifier(auth, 'recaptcha-container', {
+                        'size': 'invisible',
+                        'callback': (response: any) => {
+                            // reCAPTCHA solved
+                            console.log('reCAPTCHA solved');
+                        },
+                        'expired-callback': () => {
+                            // Reset when expired
+                            console.log('reCAPTCHA expired, resetting...');
+                            if (window.recaptchaVerifier) {
+                                window.recaptchaVerifier.clear();
+                                window.recaptchaVerifier = undefined;
+                            }
+                        }
+                    });
+                } catch (error) {
+                    console.error('Failed to initialize reCAPTCHA:', error);
+                }
+            }
+        };
+
+        initRecaptcha();
+
+        return () => {
+            // Cleanup on unmount
+            if (window.recaptchaVerifier) {
+                try {
+                    window.recaptchaVerifier.clear();
+                } catch (e) {
+                    console.log('reCAPTCHA already cleared');
+                }
+                window.recaptchaVerifier = undefined;
+            }
+        };
     }, []);
+
 
     // Countdown timer for resend OTP
     useEffect(() => {
@@ -218,13 +247,28 @@ export default function DriverRegistration() {
                 );
             }
 
-            // Reset recaptcha
+            // Reset recaptcha properly
             if (window.recaptchaVerifier) {
-                window.recaptchaVerifier.clear();
+                try {
+                    await window.recaptchaVerifier.clear();
+                    window.recaptchaVerifier = undefined;
+
+                    // Reinitialize for next attempt
+                    const { auth, RecaptchaVerifier } = await import('@/lib/firebase');
+                    window.recaptchaVerifier = new RecaptchaVerifier(auth, 'recaptcha-container', {
+                        'size': 'invisible',
+                        'callback': (response: any) => {
+                            console.log('reCAPTCHA solved');
+                        }
+                    });
+                } catch (e) {
+                    console.error('Failed to reset reCAPTCHA:', e);
+                }
             }
         } finally {
             setLoading(false);
         }
+
     };
 
     const handleVerifyOtp = async (e: React.FormEvent) => {

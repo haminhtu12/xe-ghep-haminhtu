@@ -60,16 +60,41 @@ export default function DriverLogin() {
 
     // Initialize Recaptcha
     useEffect(() => {
-        if (!window.recaptchaVerifier) {
-            import('@/lib/firebase').then(({ auth, RecaptchaVerifier }) => {
-                window.recaptchaVerifier = new RecaptchaVerifier(auth, 'recaptcha-container', {
-                    'size': 'invisible',
-                    'callback': (response: any) => {
-                        // reCAPTCHA solved, allow signInWithPhoneNumber.
-                    }
-                });
-            });
-        }
+        const initRecaptcha = async () => {
+            if (typeof window !== 'undefined' && !window.recaptchaVerifier) {
+                try {
+                    const { auth, RecaptchaVerifier } = await import('@/lib/firebase');
+                    window.recaptchaVerifier = new RecaptchaVerifier(auth, 'recaptcha-container', {
+                        'size': 'invisible',
+                        'callback': (response: any) => {
+                            console.log('reCAPTCHA solved');
+                        },
+                        'expired-callback': () => {
+                            console.log('reCAPTCHA expired, resetting...');
+                            if (window.recaptchaVerifier) {
+                                window.recaptchaVerifier.clear();
+                                window.recaptchaVerifier = undefined;
+                            }
+                        }
+                    });
+                } catch (error) {
+                    console.error('Failed to initialize reCAPTCHA:', error);
+                }
+            }
+        };
+
+        initRecaptcha();
+
+        return () => {
+            if (window.recaptchaVerifier) {
+                try {
+                    window.recaptchaVerifier.clear();
+                } catch (e) {
+                    console.log('reCAPTCHA already cleared');
+                }
+                window.recaptchaVerifier = undefined;
+            }
+        };
     }, []);
 
     // Countdown timer
