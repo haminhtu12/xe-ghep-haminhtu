@@ -2,8 +2,7 @@ import { NextResponse } from 'next/server';
 import { supabase } from '@/lib/supabase';
 import { sendOTP } from '@/lib/esms';
 
-const ESMS_API_KEY = process.env.ESMS_API_KEY;
-const ESMS_SECRET_KEY = process.env.ESMS_SECRET_KEY;
+
 
 export async function POST(request: Request) {
     try {
@@ -65,22 +64,9 @@ export async function POST(request: Request) {
 
         // Development Fallback or Missing Config
         // If config is missing, we use Dev Mode to print OTP to console
-        if (!VONAGE_API_KEY || !VONAGE_API_SECRET) {
-            console.log('='.repeat(50));
-            console.log('⚠️ VONAGE CONFIG MISSING - USING DEV MODE');
-            console.log(`Phone: ${normalizedPhone}`);
-            console.log(`OTP Code: ${otp}`);
-            console.log('='.repeat(50));
 
-            return NextResponse.json({
-                success: true,
-                message: '[DEV MODE] Chưa cấu hình Vonage. Mã OTP đã in ra console server.',
-                devMode: true,
-                otp: otp
-            });
-        }
 
-        // Send SMS via Vonage
+        // Send SMS via ESMS
         try {
             await sendOTP(normalizedPhone, otp);
 

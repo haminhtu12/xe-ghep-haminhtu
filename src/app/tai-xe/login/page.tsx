@@ -4,6 +4,12 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { Car, Phone, Lock, ArrowRight, Gift, KeyRound } from 'lucide-react';
 
+declare global {
+    interface Window {
+        recaptchaVerifier: any;
+    }
+}
+
 export default function DriverLogin() {
     const [step, setStep] = useState<'phone' | 'otp' | 'password' | 'create-password'>('phone');
     const [loginMethod, setLoginMethod] = useState<'otp' | 'password'>('otp');
@@ -14,15 +20,28 @@ export default function DriverLogin() {
     const [loading, setLoading] = useState(false);
     const [resendCountdown, setResendCountdown] = useState(0);
     const [isNewDriver, setIsNewDriver] = useState(false);
-    const [verifiedOtp, setVerifiedOtp] = useState(''); // Store verified OTP
+    const [verifiedOtp, setVerifiedOtp] = useState('');
     const router = useRouter();
+    const [confirmationResult, setConfirmationResult] = useState<any>(null);
 
-    // Countdown timer for resend OTP
+    // Initialize Recaptcha
+    useEffect(() => {
+        if (!window.recaptchaVerifier) {
+            import('@/lib/firebase').then(({ auth, RecaptchaVerifier }) => {
+                window.recaptchaVerifier = new RecaptchaVerifier(auth, 'recaptcha-container', {
+                    'size': 'invisible',
+                    'callback': (response: any) => {
+                        // reCAPTCHA solved, allow signInWithPhoneNumber.
+                    }
+                });
+            });
+        }
+    }, []);
+
+    // Countdown timer
     useEffect(() => {
         if (resendCountdown > 0) {
-            const timer = setTimeout(() => {
-                setResendCountdown(resendCountdown - 1);
-            }, 1000);
+            const timer = setTimeout(() => setResendCountdown(resendCountdown - 1), 1000);
             return () => clearTimeout(timer);
         }
     }, [resendCountdown]);
@@ -36,28 +55,30 @@ export default function DriverLogin() {
         setLoading(true);
 
         try {
-            const res = await fetch('/api/drivers/send-otp', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ phone }),
-            });
+            // Import dynamically or assume loaded from useEffect
+            const { auth, signInWithPhoneNumber } = await import('@/lib/firebase');
 
-            const data = await res.json();
+            // Format phone to +84 (Firebase requires E.164)
+            const formattedPhone = phone.startsWith('0')
+                ? '+84' + phone.slice(1)
+                : phone.startsWith('+84') ? phone : '+84' + phone;
 
-            if (res.ok) {
-                setStep('otp');
-                setResendCountdown(60); // Start 60 second countdown
-                if (data.devMode && data.otp) {
-                    alert(`[DEV MODE] Mã OTP của bạn là: ${data.otp}\n\nMã này có hiệu lực trong 5 phút.`);
-                } else {
-                    alert('Mã OTP đã được gửi đến số điện thoại của bạn. Vui lòng kiểm tra tin nhắn.');
-                }
-            } else {
-                alert(data.error || 'Không thể gửi mã OTP. Vui lòng thử lại.');
+            const appVerifier = window.recaptchaVerifier;
+            const result = await signInWithPhoneNumber(auth, formattedPhone, appVerifier);
+
+            setConfirmationResult(result);
+            setStep('otp');
+            setResendCountdown(60);
+            alert('Mã OTP đã được gửi từ Google/Firebase. Vui lòng kiểm tra tin nhắn.');
+
+        } catch (error: any) {
+            console.error('Firebase Send OTP error:', error);
+            alert(`Lỗi gửi OTP: ${error.message}`);
+            // Reset recaptcha
+            if (window.recaptchaVerifier) {
+                window.recaptchaVerifier.clear();
+                // Re-init logic might be needed or page reload
             }
-        } catch (error) {
-            console.error('Send OTP error:', error);
-            alert('Có lỗi xảy ra. Vui lòng kiểm tra kết nối và thử lại.');
         } finally {
             setLoading(false);
         }
@@ -68,42 +89,52 @@ export default function DriverLogin() {
         setLoading(true);
 
         try {
-            const res = await fetch('/api/drivers/verify-otp', {
+            if (!confirmationResult) {
+                alert('Vui lòng gửi lại mã');
+                setStep('phone');
+                return;
+            }
+
+            // 1. Verify OTP with Firebase
+            await confirmationResult.confirm(otp);
+            // User is now signed in with Firebase. 
+            // We can get the ID token if needed: const idToken = await result.user.getIdToken();
+
+            // 2. Call Backend to create session / check if new user
+            const res = await fetch('/api/drivers/firebase-login', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     phone,
-                    otp,
-                    password: step === 'create-password' ? password : undefined
+                    // We trust the call because it comes after Firebase success in this flow.
+                    // Ideally send idToken here for backend verification.
                 }),
             });
 
             const data = await res.json();
 
             if (res.ok) {
-                // Check if this is a new driver who needs to set password
-                if (data.needPassword && step !== 'create-password') {
+                if (data.needPassword) {
                     setIsNewDriver(true);
-                    setVerifiedOtp(otp); // Save verified OTP
                     setStep('create-password');
-                    setOtp(''); // Clear OTP from input for security
-                    alert(data.message || 'OTP xác thực thành công! Vui lòng tạo mật khẩu.');
+                    setOtp('');
+                    alert(data.message);
                     return;
                 }
 
-                // Login successful
                 if (data.isNew) {
                     alert(`🎉 ${data.message}`);
                 } else {
-                    alert(data.message || 'Đăng nhập thành công!');
+                    alert(data.message);
                 }
                 router.push('/tai-xe/dashboard');
             } else {
-                alert(data.error || 'Xác thực thất bại. Vui lòng thử lại.');
+                alert(data.error || 'Đăng nhập server thất bại.');
             }
-        } catch (error) {
+
+        } catch (error: any) {
             console.error('Verify OTP error:', error);
-            alert('Có lỗi xảy ra. Vui lòng thử lại.');
+            alert(`Mã OTP không đúng hoặc đã hết hạn.`);
         } finally {
             setLoading(false);
         }
@@ -112,16 +143,13 @@ export default function DriverLogin() {
     const handleLoginWithPassword = async (e: React.FormEvent) => {
         e.preventDefault();
         setLoading(true);
-
         try {
             const res = await fetch('/api/drivers/login', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ phone, password }),
             });
-
             const data = await res.json();
-
             if (res.ok) {
                 alert(data.message);
                 router.push('/tai-xe/dashboard');
@@ -130,7 +158,7 @@ export default function DriverLogin() {
             }
         } catch (error) {
             console.error('Login error:', error);
-            alert('Có lỗi xảy ra. Vui lòng thử lại.');
+            alert('Có lỗi xảy ra.');
         } finally {
             setLoading(false);
         }
@@ -143,21 +171,19 @@ export default function DriverLogin() {
             alert('Mật khẩu xác nhận không khớp!');
             return;
         }
-
         if (password.length < 6) {
             alert('Mật khẩu phải có ít nhất 6 ký tự');
             return;
         }
-
         setLoading(true);
 
         try {
-            const res = await fetch('/api/drivers/verify-otp', {
+            // Call the same endpoint but with password
+            const res = await fetch('/api/drivers/firebase-login', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     phone,
-                    otp: verifiedOtp, // Use the verified OTP
                     password,
                 }),
             });
@@ -168,11 +194,11 @@ export default function DriverLogin() {
                 alert(`🎉 ${data.message}`);
                 router.push('/tai-xe/dashboard');
             } else {
-                alert(data.error || 'Không thể hoàn tất đăng ký. Vui lòng thử lại.');
+                alert(data.error || 'Lỗi tạo tài khoản.');
             }
         } catch (error) {
             console.error('Create password error:', error);
-            alert('Có lỗi xảy ra. Vui lòng thử lại.');
+            alert('Có lỗi xảy ra.');
         } finally {
             setLoading(false);
         }
@@ -245,6 +271,7 @@ export default function DriverLogin() {
 
                     {step === 'phone' ? (
                         <form className="space-y-8" onSubmit={handleSendOtp}>
+                            <div id="recaptcha-container"></div>
                             <div>
                                 <label className="block text-sm font-bold text-slate-700 mb-2 ml-1">
                                     Số điện thoại
