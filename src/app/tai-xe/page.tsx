@@ -335,7 +335,7 @@ export default function DriverRegistration() {
                         {step === 'phone' ? (
                             <form className="space-y-6" onSubmit={handleSendOtp}>
                                 <div id="recaptcha-container"></div>
-                                <div>
+                                <div className="w-full">
                                     <label className="block text-sm font-bold text-slate-700 mb-2 ml-1">
                                         Số điện thoại
                                     </label>
@@ -395,14 +395,13 @@ export default function DriverRegistration() {
                                     </div>
                                 </div>
 
-                                <div>
-                                    <label className="block text-sm font-bold text-slate-700 mb-3 text-center">
-                                        Nhập mã OTP (6 số)
-                                    </label>
-                                    <div className="max-w-[280px] mx-auto">
-                                        <div className="flex items-center gap-0 border border-slate-300 rounded-xl shadow-sm overflow-hidden focus-within:ring-4 focus-within:ring-amber-500/10 focus-within:border-amber-500 transition-all bg-white relative">
-                                            <div className="flex-shrink-0 w-14 h-14 bg-slate-50 flex items-center justify-center border-r border-slate-100">
-                                                <KeyRound className="h-5 w-5 text-slate-400" />
+                                <div className="w-full">
+                                        <label className="block text-sm font-bold text-slate-700 mb-3 text-center">
+                                            Nhập mã OTP (6 số)
+                                        </label>
+                                        <div className="flex items-center gap-0 border border-slate-300 rounded-2xl shadow-sm overflow-hidden focus-within:ring-4 focus-within:ring-amber-500/10 focus-within:border-amber-500 transition-all bg-white">
+                                            <div className="flex-shrink-0 w-16 h-16 bg-slate-50 flex items-center justify-center border-r-2 border-slate-200">
+                                                <KeyRound className="h-6 w-6 text-slate-400" />
                                             </div>
                                             <input
                                                 type="tel"
@@ -417,12 +416,11 @@ export default function DriverRegistration() {
                                                     const val = e.target.value.replace(/\D/g, '');
                                                     if (val.length <= 6) setOtp(val);
                                                 }}
-                                                className="flex-1 px-2 h-14 border-0 focus:ring-0 focus:outline-none text-[22px] font-bold text-center text-slate-800 bg-transparent tracking-[0.5em] placeholder:tracking-normal w-full"
+                                                className="flex-1 px-4 h-16 border-0 focus:ring-0 focus:outline-none text-2xl font-black text-center text-slate-800 bg-transparent tracking-[0.5em] placeholder:tracking-normal w-full"
                                                 placeholder="------"
                                             />
                                         </div>
                                         <p className="text-center text-xs text-slate-400 mt-2 font-medium">Nhập 6 số trong tin nhắn SMS</p>
-                                    </div>
                                 </div>
 
                                 <button
@@ -439,12 +437,12 @@ export default function DriverRegistration() {
                             </form>
                         )}
 
-                        <p className="mt-6 text-sm text-slate-400 text-center">
-                            Đã có hơn 500+ tài xế tham gia tuần này
-                        </p>
-                    </div>
+                    <p className="mt-6 text-sm text-slate-400 text-center">
+                        Đã có hơn 500+ tài xế tham gia tuần này
+                    </p>
                 </div>
             </div>
-        </main>
+        </div>
+        </main >
     );
 }

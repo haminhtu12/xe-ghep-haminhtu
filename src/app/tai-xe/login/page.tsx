@@ -586,7 +586,7 @@ export default function DriverLogin() {
                                 <label className="block text-sm font-bold text-slate-700 mb-3 text-center">
                                     Nhập mã OTP (6 số)
                                 </label>
-                                <div className="max-w-[280px] mx-auto">
+                                <div className="mx-auto">
                                     <div className="flex items-center gap-0 border border-slate-300 rounded-xl shadow-sm overflow-hidden focus-within:ring-4 focus-within:ring-amber-500/10 focus-within:border-amber-500 transition-all bg-white relative">
                                         <div className="flex-shrink-0 w-14 h-14 bg-slate-50 flex items-center justify-center border-r border-slate-100">
                                             <KeyRound className="h-5 w-5 text-slate-400" />
