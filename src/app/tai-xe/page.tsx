@@ -20,9 +20,11 @@ interface NotificationState {
 }
 
 export default function DriverRegistration() {
-    const [step, setStep] = useState<'phone' | 'otp'>('phone');
+    const [step, setStep] = useState<'phone' | 'otp' | 'password'>('phone');
+    const [loginMethod, setLoginMethod] = useState<'otp' | 'password'>('otp');
     const [phone, setPhone] = useState('');
     const [otp, setOtp] = useState('');
+    const [password, setPassword] = useState('');
     const [loading, setLoading] = useState(false);
     const [resendCountdown, setResendCountdown] = useState(0);
     const [lastOtpSentTime, setLastOtpSentTime] = useState<number>(0);
@@ -191,20 +193,32 @@ export default function DriverRegistration() {
         setLoading(true);
 
         try {
-            // Verify OTP with Firebase
-            const result = await confirmationResult.confirm(otp);
-            const user = result.user;
+            // 1. Verify OTP with Firebase
+            await confirmationResult.confirm(otp);
+            // User is now signed in with Firebase
 
-            // Now verify with backend
-            const res = await fetch('/api/drivers/verify-otp', {
+            // 2. Call Backend to create session / check if new user
+            const res = await fetch('/api/drivers/firebase-login', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ phone, otp, firebaseUid: user.uid }),
+                body: JSON.stringify({
+                    phone,
+                    // We trust the call because it comes after Firebase success
+                }),
             });
 
             const data = await res.json();
 
             if (res.ok) {
+                if (data.needPassword) {
+                    // New user needs to create password - redirect to login page
+                    showNotification('success', data.message, 'Xác thực thành công');
+                    setTimeout(() => {
+                        router.push('/tai-xe/login');
+                    }, 1500);
+                    return;
+                }
+
                 if (data.isNew) {
                     showNotification('success', `🎉 ${data.message}`, 'Chào mừng!');
                 } else {
@@ -218,12 +232,37 @@ export default function DriverRegistration() {
             }
         } catch (error: any) {
             console.error('Verify OTP error:', error);
-            showNotification('error', 'Mã OTP không đúng. Vui lòng thử lại.', 'Xác thực thất bại');
+            showNotification('error', 'Mã OTP không đúng hoặc đã hết hạn.', 'Xác thực thất bại');
         } finally {
             setLoading(false);
         }
     };
 
+    const handleLoginWithPassword = async (e: React.FormEvent) => {
+        e.preventDefault();
+        setLoading(true);
+        try {
+            const res = await fetch('/api/drivers/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ phone, password }),
+            });
+            const data = await res.json();
+            if (res.ok) {
+                showNotification('success', data.message, 'Đăng nhập thành công');
+                setTimeout(() => {
+                    router.push('/tai-xe/dashboard');
+                }, 1000);
+            } else {
+                showNotification('error', data.error || 'Đăng nhập thất bại.', 'Lỗi');
+            }
+        } catch (error) {
+            console.error('Login error:', error);
+            showNotification('error', 'Có lỗi xảy ra khi kết nối server.', 'Lỗi kết nối');
+        } finally {
+            setLoading(false);
+        }
+    };
 
     return (
         <main className="min-h-screen bg-slate-50">
@@ -344,6 +383,38 @@ export default function DriverRegistration() {
                             </div>
                         </div>
 
+                        {/* Tab switcher - Only show for phone/password steps */}
+                        {['phone', 'password'].includes(step) && (
+                            <div className="flex gap-4 mb-6">
+                                <button
+                                    type="button"
+                                    onClick={() => {
+                                        setLoginMethod('otp');
+                                        setStep('phone');
+                                    }}
+                                    className={`flex-1 py-3 px-4 rounded-xl text-sm font-bold transition-all duration-200 border-b-2 text-center ${loginMethod === 'otp'
+                                        ? 'bg-amber-50 text-amber-700 border-amber-500 shadow-sm'
+                                        : 'bg-slate-50 text-slate-400 border-transparent hover:bg-slate-100 hover:text-slate-600'
+                                        }`}
+                                >
+                                    Đăng nhập OTP
+                                </button>
+                                <button
+                                    type="button"
+                                    onClick={() => {
+                                        setLoginMethod('password');
+                                        setStep('password');
+                                    }}
+                                    className={`flex-1 py-3 px-4 rounded-xl text-sm font-bold transition-all duration-200 border-b-2 text-center ${loginMethod === 'password'
+                                        ? 'bg-amber-50 text-amber-700 border-amber-500 shadow-sm'
+                                        : 'bg-slate-50 text-slate-400 border-transparent hover:bg-slate-100 hover:text-slate-600'
+                                        }`}
+                                >
+                                    Mật khẩu
+                                </button>
+                            </div>
+                        )}
+
                         {step === 'phone' ? (
                             <form className="space-y-6" onSubmit={handleSendOtp}>
                                 <div id="recaptcha-container"></div>
@@ -381,7 +452,7 @@ export default function DriverRegistration() {
                                     )}
                                 </button>
                             </form>
-                        ) : (
+                        ) : step === 'otp' ? (
                             <form className="space-y-8" onSubmit={handleVerifyOtp}>
                                 <div className="text-center mb-6">
                                     <p className="text-sm font-medium text-slate-500 mb-1">Mã xác thực đã gửi đến</p>
@@ -447,7 +518,79 @@ export default function DriverRegistration() {
                                     )}
                                 </button>
                             </form>
-                        )}
+                        ) : step === 'password' ? (
+                            <form className="space-y-6" onSubmit={handleLoginWithPassword}>
+                                <div className="w-full">
+                                    <label className="block text-sm font-bold text-slate-700 mb-2 ml-1">
+                                        Số điện thoại
+                                    </label>
+                                    <div className="relative">
+                                        <div className="flex items-center gap-0 border border-slate-300 rounded-xl shadow-sm overflow-hidden focus-within:ring-4 focus-within:ring-amber-500/10 focus-within:border-amber-500 transition-all">
+                                            <div className="flex-shrink-0 w-14 h-14 bg-slate-100 flex items-center justify-center">
+                                                <Phone className="h-5 w-5 text-slate-500" />
+                                            </div>
+                                            <input
+                                                type="tel"
+                                                required
+                                                value={phone}
+                                                onChange={(e) => setPhone(e.target.value)}
+                                                className="flex-1 px-4 py-4 border-0 focus:ring-0 focus:outline-none font-bold text-slate-900 placeholder:font-normal placeholder:text-slate-400 text-lg bg-transparent"
+                                                placeholder="0912 xxx xxx"
+                                                style={{ lineHeight: '100%' }}
+                                            />
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div className="w-full">
+                                    <label className="block text-sm font-bold text-slate-700 mb-2 ml-1">
+                                        Mật khẩu
+                                    </label>
+                                    <div className="relative">
+                                        <div className="flex items-center gap-0 border border-slate-300 rounded-xl shadow-sm overflow-hidden focus-within:ring-4 focus-within:ring-amber-500/10 focus-within:border-amber-500 transition-all">
+                                            <div className="flex-shrink-0 w-14 h-14 bg-slate-100 flex items-center justify-center">
+                                                <KeyRound className="h-5 w-5 text-slate-500" />
+                                            </div>
+                                            <input
+                                                type="password"
+                                                required
+                                                value={password}
+                                                onChange={(e) => setPassword(e.target.value)}
+                                                className="flex-1 px-4 py-4 border-0 focus:ring-0 focus:outline-none font-bold text-slate-900 placeholder:font-normal placeholder:text-slate-400 text-lg bg-transparent"
+                                                placeholder="••••••••"
+                                                style={{ lineHeight: '100%' }}
+                                            />
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div className="flex items-center justify-between text-sm px-1">
+                                    <button
+                                        type="button"
+                                        onClick={() => {
+                                            setLoginMethod('otp');
+                                            setStep('phone');
+                                        }}
+                                        className="text-amber-600 font-bold hover:text-amber-700 transition-colors"
+                                    >
+                                        Quên mật khẩu?
+                                    </button>
+                                </div>
+
+                                <button
+                                    type="submit"
+                                    disabled={loading}
+                                    className="w-full flex justify-center items-center gap-3 py-4 px-4 border border-transparent rounded-2xl shadow-xl shadow-amber-500/20 text-lg font-bold text-white bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 active:scale-[0.98] transition-all"
+                                >
+                                    {loading ? 'Đang đăng nhập...' : (
+                                        <>
+                                            Đăng Nhập <ArrowRight className="w-6 h-6" />
+                                        </>
+                                    )}
+                                </button>
+                            </form>
+                        ) : null}
+
 
                         <p className="mt-6 text-sm text-slate-400 text-center">
                             Đã có hơn 500+ tài xế tham gia tuần này
