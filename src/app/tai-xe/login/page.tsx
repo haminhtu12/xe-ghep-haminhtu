@@ -94,13 +94,33 @@ export default function DriverLogin() {
         setLoading(true);
 
         try {
-            // Import dynamically or assume loaded from useEffect
-            const { auth, signInWithPhoneNumber } = await import('@/lib/firebase');
-
             // Format phone to +84 (Firebase requires E.164)
             const formattedPhone = phone.startsWith('0')
                 ? '+84' + phone.slice(1)
                 : phone.startsWith('+84') ? phone : '+84' + phone;
+
+            // Check if phone already exists in database
+            const checkRes = await fetch('/api/drivers/check-phone', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ phone: formattedPhone }),
+            });
+            const { exists } = await checkRes.json();
+
+            if (exists) {
+                setLoading(false);
+                showNotification(
+                    'warning',
+                    'Số điện thoại này đã đăng ký.\n\n' +
+                    '🔑 Vui lòng đăng nhập bằng mật khẩu\n' +
+                    '❓ Hoặc click "Quên mật khẩu?" để lấy lại OTP',
+                    'Tài khoản đã tồn tại'
+                );
+                return;
+            }
+
+            // Import dynamically or assume loaded from useEffect
+            const { auth, signInWithPhoneNumber } = await import('@/lib/firebase');
 
             // Check if test phone number (for development)
             const TEST_PHONES = ['+84912345678', '+84987654321'];
