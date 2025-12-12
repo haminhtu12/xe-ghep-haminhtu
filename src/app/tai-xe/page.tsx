@@ -25,6 +25,7 @@ export default function DriverRegistration() {
     const [otp, setOtp] = useState('');
     const [loading, setLoading] = useState(false);
     const [resendCountdown, setResendCountdown] = useState(0);
+    const [lastOtpSentTime, setLastOtpSentTime] = useState<number>(0);
     const [confirmationResult, setConfirmationResult] = useState<any>(null);
     const router = useRouter();
 
@@ -78,6 +79,16 @@ export default function DriverRegistration() {
             showNotification('error', 'Vui lòng nhập số điện thoại hợp lệ.', 'Số điện thoại lỗi');
             return;
         }
+
+        // Client-side rate limiting
+        const now = Date.now();
+        const MIN_RESEND_INTERVAL = 60000; // 60 seconds
+        if (now - lastOtpSentTime < MIN_RESEND_INTERVAL && lastOtpSentTime > 0) {
+            const waitTime = Math.ceil((MIN_RESEND_INTERVAL - (now - lastOtpSentTime)) / 1000);
+            showNotification('warning', `Vui lòng đợi ${waitTime} giây trước khi gửi lại mã OTP.`, 'Gửi quá nhanh');
+            return;
+        }
+
         setLoading(true);
 
         try {
@@ -89,12 +100,28 @@ export default function DriverRegistration() {
                 ? '+84' + phone.slice(1)
                 : phone.startsWith('+84') ? phone : '+84' + phone;
 
+            // Check if test phone number (for development)
+            const TEST_PHONES = ['+84912345678', '+84987654321'];
+            if (TEST_PHONES.includes(formattedPhone)) {
+                showNotification(
+                    'success',
+                    'Đây là số điện thoại test.\n\nSử dụng mã OTP: 123456',
+                    '🧪 Test Mode'
+                );
+                setStep('otp');
+                setResendCountdown(60);
+                setLastOtpSentTime(now);
+                setLoading(false);
+                return;
+            }
+
             const appVerifier = window.recaptchaVerifier;
             const result = await signInWithPhoneNumber(auth, formattedPhone, appVerifier);
 
             setConfirmationResult(result);
             setStep('otp');
             setResendCountdown(60);
+            setLastOtpSentTime(now);
 
             showNotification(
                 'success',
@@ -104,7 +131,35 @@ export default function DriverRegistration() {
 
         } catch (error: any) {
             console.error('Firebase Send OTP error:', error);
-            showNotification('error', `Không thể gửi SMS. Vui lòng kiểm tra lại số điện thoại.`, 'Gửi thất bại');
+
+            // Handle specific Firebase errors
+            if (error.code === 'auth/too-many-requests') {
+                showNotification(
+                    'warning',
+                    'Số điện thoại này đã nhận quá nhiều mã OTP trong ngày.\n\n' +
+                    '⏰ Vui lòng thử lại sau 24 giờ\n' +
+                    '📞 Hoặc liên hệ hotline: 0334.909.668',
+                    '⚠️ Đã vượt giới hạn'
+                );
+            } else if (error.code === 'auth/invalid-phone-number') {
+                showNotification(
+                    'error',
+                    'Số điện thoại không hợp lệ.\nVui lòng kiểm tra lại định dạng.\n\nVí dụ: 0912345678',
+                    'Số điện thoại lỗi'
+                );
+            } else if (error.code === 'auth/quota-exceeded') {
+                showNotification(
+                    'warning',
+                    'Hệ thống đang bảo trì.\n\nVui lòng liên hệ hotline: 0334.909.668',
+                    'Tạm thời không khả dụng'
+                );
+            } else {
+                showNotification(
+                    'error',
+                    'Không thể gửi SMS. Vui lòng thử lại sau.\n\nNếu vấn đề vẫn tiếp diễn, liên hệ: 0334.909.668',
+                    'Gửi thất bại'
+                );
+            }
 
             // Reset recaptcha
             if (window.recaptchaVerifier) {
