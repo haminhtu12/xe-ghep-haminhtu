@@ -26,17 +26,17 @@ export default function Home() {
   return (
     <main className="min-h-screen pb-20">
       {/* Hero Section - Updated with Premium/Clean Styling */}
-      <section className="relative bg-slate-900 text-white pb-8 pt-20 md:pb-12 md:pt-28 overflow-hidden">
+      <section className="relative bg-slate-900 text-white pb-12 pt-60 md:pb-12 md:pt-28 overflow-hidden">
         {/* Abstract Background - Reduced Yellow, More Blue/Dark */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
           <div className="absolute -top-20 -right-20 w-[400px] h-[400px] bg-blue-900/20 rounded-full blur-[80px]"></div>
           <div className="absolute top-20 -left-20 w-[300px] h-[300px] bg-amber-500/5 rounded-full blur-[60px]"></div>
         </div>
 
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center z-10">
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center z-10 pt-16 md:pt-0">
 
 
-          <h1 className="text-2xl md:text-4xl lg:text-5xl font-bold tracking-tight mb-2 md:mb-3 leading-tight">
+          <h1 className="text-2xl md:text-4xl lg:text-5xl font-bold tracking-tight mb-2 md:mb-3 leading-tight mt-10 md:mt-0">
             Chuyên Tuyến <span className="text-transparent bg-clip-text bg-gradient-to-r from-white to-amber-200">Hà Nội ⇄ Thanh Hóa</span>
           </h1>
 
@@ -62,7 +62,7 @@ export default function Home() {
               </a>
             </div>
           ) : (
-            <div className="flex flex-col sm:flex-row gap-3 justify-center items-center mt-6 w-full max-w-xs mx-auto sm:max-w-none">
+            <div className="flex flex-col sm:flex-row gap-6 justify-center items-center mt-8 mb-4 w-full max-w-xs mx-auto sm:max-w-none">
               <button
                 onClick={() => document.getElementById('booking-form')?.scrollIntoView({ behavior: 'smooth' })}
                 className="w-full sm:w-auto bg-amber-500 text-white px-8 py-4 rounded-xl font-bold text-base shadow-lg shadow-amber-500/20 hover:shadow-amber-500/30 active:scale-[0.98] transition-all flex items-center justify-center gap-2"
@@ -72,7 +72,7 @@ export default function Home() {
               </button>
 
               <Link
-                href="/tai-xe"
+                href="/tai-xe/login"
                 className="w-full sm:w-auto bg-white/10 backdrop-blur-md border border-white/20 text-white px-8 py-4 rounded-xl font-bold text-base hover:bg-white/20 active:scale-[0.98] transition-all flex items-center justify-center gap-2"
               >
                 <LayoutDashboard className="w-5 h-5 text-amber-400" />
@@ -84,7 +84,7 @@ export default function Home() {
       </section>
 
       {/* Search Form - Overlapping layout with reduced negative margin for balance */}
-      <div id="booking-form" className="px-4 relative z-20 -mt-16">
+      <div id="booking-form" className="px-4 relative z-20 mt-6 md:-mt-16">
         <SearchForm />
       </div>
 

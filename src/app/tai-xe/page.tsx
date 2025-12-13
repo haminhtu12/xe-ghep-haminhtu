@@ -507,10 +507,10 @@ export default function DriverRegistration() {
                         )}
 
                         {step === 'phone' ? (
-                            <form className="space-y-6" onSubmit={handleSendOtp}>
+                            <form className="space-y-8" onSubmit={handleSendOtp}>
                                 <div id="recaptcha-container"></div>
                                 <div className="w-full">
-                                    <label className="block text-sm font-bold text-slate-700 mb-2 ml-1">
+                                    <label className="block text-sm font-bold text-slate-700 mb-4 ml-1">
                                         Số điện thoại
                                     </label>
                                     <div className="relative">

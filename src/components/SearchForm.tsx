@@ -439,21 +439,34 @@ export default function SearchForm() {
                                                 </div>
 
                                                 {/* Direction Selection */}
-                                                <div className="flex bg-slate-100 p-1 rounded-xl mb-6">
-                                                    <button
-                                                        type="button"
-                                                        onClick={() => setDirection('hn-th')}
-                                                        className={`flex-1 py-2 px-4 rounded-lg text-sm font-bold transition-all ${direction === 'hn-th' ? 'bg-white text-slate-800 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
-                                                    >
-                                                        Hà Nội ➝ Thanh Hóa
-                                                    </button>
-                                                    <button
-                                                        type="button"
-                                                        onClick={() => setDirection('th-hn')}
-                                                        className={`flex-1 py-2 px-4 rounded-lg text-sm font-bold transition-all ${direction === 'th-hn' ? 'bg-white text-slate-800 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
-                                                    >
-                                                        Thanh Hóa ➝ Hà Nội
-                                                    </button>
+                                                {/* Direction Selection - Route Bar */}
+                                                <div className="bg-slate-50 p-2 rounded-2xl border border-slate-200 mb-6">
+                                                    <div className="flex items-center gap-2 relative">
+                                                        {/* From */}
+                                                        <div className="flex-1 bg-white p-3 rounded-xl border border-slate-100 shadow-sm flex flex-col items-center justify-center">
+                                                            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-0.5">Điểm đi</span>
+                                                            <span className="font-bold text-slate-800 text-lg">
+                                                                {direction === 'hn-th' ? 'Hà Nội' : 'Thanh Hóa'}
+                                                            </span>
+                                                        </div>
+
+                                                        {/* Swap Button */}
+                                                        <button
+                                                            type="button"
+                                                            onClick={toggleDirection}
+                                                            className="w-10 h-10 bg-amber-500 rounded-full text-white shadow-lg shadow-amber-500/30 flex items-center justify-center hover:scale-110 active:scale-95 transition-all z-10 -mx-1"
+                                                        >
+                                                            <ArrowLeftRight className="w-5 h-5" />
+                                                        </button>
+
+                                                        {/* To */}
+                                                        <div className="flex-1 bg-white p-3 rounded-xl border border-slate-100 shadow-sm flex flex-col items-center justify-center">
+                                                            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-0.5">Điểm đến</span>
+                                                            <span className="font-bold text-slate-800 text-lg">
+                                                                {direction === 'hn-th' ? 'Thanh Hóa' : 'Hà Nội'}
+                                                            </span>
+                                                        </div>
+                                                    </div>
                                                 </div>
 
                                                 {/* Name */}

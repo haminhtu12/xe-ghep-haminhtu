@@ -46,7 +46,7 @@ export default function Header() {
     }
 
     return (
-        <header className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${scrolled || pathname !== '/' ? 'bg-white/90 backdrop-blur-md shadow-sm py-2' : 'bg-transparent py-3'}`}>
+        <header className={`fixed top-0 left-0 right-0 z-[100] transition-all duration-300 ${scrolled || pathname !== '/' ? 'bg-white shadow-md py-2' : 'bg-transparent py-3'}`}>
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="flex justify-between items-center">
                     {/* Logo */}
@@ -55,7 +55,7 @@ export default function Header() {
                             <Car className="w-4 h-4 md:w-5 md:h-5 text-white" />
                         </div>
                         <span className={`text-lg md:text-2xl font-bold ${scrolled || pathname !== '/' ? 'text-slate-800' : 'text-white'}`}>
-                            Xe<span className="text-amber-500">Ghép</span>
+                            Xe<span className="text-amber-500">Ghép PRO</span>
                         </span>
                     </Link>
 
@@ -119,49 +119,9 @@ export default function Header() {
                         )}
                     </nav>
 
-                    {/* Mobile Menu Button */}
-                    <button
-                        onClick={() => setIsMenuOpen(!isMenuOpen)}
-                        className={`md:hidden p-2 rounded-lg ${scrolled || pathname !== '/' ? 'text-slate-800' : 'text-white'}`}
-                    >
-                        {isMenuOpen ? <X className="w-7 h-7" /> : <Menu className="w-7 h-7" />}
-                    </button>
+                    {/* Mobile Menu Removed */}
                 </div>
             </div>
-
-            {/* Mobile Menu Overlay */}
-            {isMenuOpen && (
-                <div className="md:hidden absolute top-full left-0 right-0 bg-white border-t border-slate-100 shadow-xl p-4 animate-in slide-in-from-top-2">
-                    <nav className="flex flex-col gap-4">
-                        <Link href="/" className="px-4 py-3 rounded-xl hover:bg-slate-50 font-medium text-slate-700">
-                            Trang chủ
-                        </Link>
-                        {isDriver ? (
-                            <>
-                                <Link href="/tai-xe/dashboard" className="px-4 py-3 rounded-xl bg-amber-500 text-white font-bold flex items-center justify-between">
-                                    Trang Tài Xế
-                                    <LayoutDashboard className="w-5 h-5" />
-                                </Link>
-                                <a href="/api/drivers/logout" className="px-4 py-3 rounded-xl bg-red-50 text-red-600 font-bold flex items-center justify-between">
-                                    Đăng xuất
-                                    <LogOut className="w-5 h-5" />
-                                </a>
-                            </>
-                        ) : (
-                            <Link href="/tai-xe" className="px-4 py-3 rounded-xl bg-amber-50 text-amber-700 font-bold flex items-center justify-between">
-                                Đăng ký Tài xế
-                                <Car className="w-5 h-5" />
-                            </Link>
-                        )}
-                        <div className="border-t border-slate-100 pt-4 mt-2">
-                            <a href="tel:0912345678" className="px-4 py-3 rounded-xl bg-green-50 text-green-700 font-bold flex items-center gap-3 justify-center">
-                                <Phone className="w-5 h-5" />
-                                Hotline: 0334.909.668
-                            </a>
-                        </div>
-                    </nav>
-                </div>
-            )}
         </header>
     );
 }
