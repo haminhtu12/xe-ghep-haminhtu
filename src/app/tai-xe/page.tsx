@@ -610,47 +610,49 @@ export default function DriverRegistration() {
                                 </button>
                             </form>
                         ) : step === 'password' ? (
-                            <form className="space-y-6" onSubmit={handleLoginWithPassword}>
-                                <div className="w-full">
-                                    <label className="block text-sm font-bold text-slate-700 mb-2 ml-1">
-                                        Số điện thoại
-                                    </label>
-                                    <div className="relative">
-                                        <div className="flex items-center gap-0 border border-slate-300 rounded-xl shadow-sm overflow-hidden focus-within:ring-4 focus-within:ring-amber-500/10 focus-within:border-amber-500 transition-all">
-                                            <div className="flex-shrink-0 w-14 h-14 bg-slate-100 flex items-center justify-center">
-                                                <Phone className="h-5 w-5 text-slate-500" />
+                            <form className="space-y-8" onSubmit={handleLoginWithPassword}>
+                                <div className="space-y-6">
+                                    <div className="w-full">
+                                        <label className="block text-sm font-bold text-slate-700 mb-3 ml-1">
+                                            Số điện thoại
+                                        </label>
+                                        <div className="relative">
+                                            <div className="flex items-center gap-0 border border-slate-300 rounded-2xl shadow-sm overflow-hidden focus-within:ring-4 focus-within:ring-amber-500/10 focus-within:border-amber-500 transition-all">
+                                                <div className="flex-shrink-0 w-14 h-14 bg-slate-100 flex items-center justify-center">
+                                                    <Phone className="h-5 w-5 text-slate-500" />
+                                                </div>
+                                                <input
+                                                    type="tel"
+                                                    required
+                                                    value={phone}
+                                                    onChange={(e) => setPhone(e.target.value)}
+                                                    className="flex-1 px-4 py-4 border-0 focus:ring-0 focus:outline-none font-bold text-slate-900 placeholder:font-normal placeholder:text-slate-400 text-lg bg-transparent"
+                                                    placeholder="0912 xxx xxx"
+                                                    style={{ lineHeight: '100%' }}
+                                                />
                                             </div>
-                                            <input
-                                                type="tel"
-                                                required
-                                                value={phone}
-                                                onChange={(e) => setPhone(e.target.value)}
-                                                className="flex-1 px-4 py-4 border-0 focus:ring-0 focus:outline-none font-bold text-slate-900 placeholder:font-normal placeholder:text-slate-400 text-lg bg-transparent"
-                                                placeholder="0912 xxx xxx"
-                                                style={{ lineHeight: '100%' }}
-                                            />
                                         </div>
                                     </div>
-                                </div>
 
-                                <div className="w-full">
-                                    <label className="block text-sm font-bold text-slate-700 mb-2 ml-1">
-                                        Mật khẩu
-                                    </label>
-                                    <div className="relative">
-                                        <div className="flex items-center gap-0 border border-slate-300 rounded-xl shadow-sm overflow-hidden focus-within:ring-4 focus-within:ring-amber-500/10 focus-within:border-amber-500 transition-all">
-                                            <div className="flex-shrink-0 w-14 h-14 bg-slate-100 flex items-center justify-center">
-                                                <KeyRound className="h-5 w-5 text-slate-500" />
+                                    <div className="w-full">
+                                        <label className="block text-sm font-bold text-slate-700 mb-3 ml-1">
+                                            Mật khẩu
+                                        </label>
+                                        <div className="relative">
+                                            <div className="flex items-center gap-0 border border-slate-300 rounded-2xl shadow-sm overflow-hidden focus-within:ring-4 focus-within:ring-amber-500/10 focus-within:border-amber-500 transition-all">
+                                                <div className="flex-shrink-0 w-14 h-14 bg-slate-100 flex items-center justify-center">
+                                                    <KeyRound className="h-5 w-5 text-slate-500" />
+                                                </div>
+                                                <input
+                                                    type="password"
+                                                    required
+                                                    value={password}
+                                                    onChange={(e) => setPassword(e.target.value)}
+                                                    className="flex-1 px-4 py-4 border-0 focus:ring-0 focus:outline-none font-bold text-slate-900 placeholder:font-normal placeholder:text-slate-400 text-lg bg-transparent"
+                                                    placeholder="••••••••"
+                                                    style={{ lineHeight: '100%' }}
+                                                />
                                             </div>
-                                            <input
-                                                type="password"
-                                                required
-                                                value={password}
-                                                onChange={(e) => setPassword(e.target.value)}
-                                                className="flex-1 px-4 py-4 border-0 focus:ring-0 focus:outline-none font-bold text-slate-900 placeholder:font-normal placeholder:text-slate-400 text-lg bg-transparent"
-                                                placeholder="••••••••"
-                                                style={{ lineHeight: '100%' }}
-                                            />
                                         </div>
                                     </div>
                                 </div>
@@ -671,7 +673,7 @@ export default function DriverRegistration() {
                                 <button
                                     type="submit"
                                     disabled={loading}
-                                    className="w-full flex justify-center items-center gap-3 py-4 px-4 border border-transparent rounded-2xl shadow-xl shadow-amber-500/20 text-lg font-bold text-white bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 active:scale-[0.98] transition-all"
+                                    className="w-full flex justify-center items-center gap-3 py-4 px-4 border border-transparent rounded-2xl shadow-xl shadow-amber-500/20 text-lg font-bold text-white bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 active:scale-[0.98] transition-all h-[56px]"
                                 >
                                     {loading ? 'Đang đăng nhập...' : (
                                         <>
@@ -683,8 +685,8 @@ export default function DriverRegistration() {
                         ) : null}
 
 
-                        <p className="mt-6 text-sm text-slate-400 text-center">
-                            Đã có hơn 500+ tài xế tham gia tuần này
+                        <p className="mt-8 text-sm text-slate-400 text-center font-medium">
+                            Đã có hơn <span className="text-amber-500 font-bold">500+ tài xế</span> tham gia tuần này
                         </p>
                     </div>
                 </div>

@@ -1,8 +1,9 @@
 'use client';
 
 import SearchForm from '@/components/SearchForm';
-import { Car, Shield, Clock, DollarSign, LayoutDashboard, LogOut, Users, Check } from 'lucide-react';
+import { Car, Shield, Clock, DollarSign, LayoutDashboard, LogOut, Users, Check, ArrowRight } from 'lucide-react';
 import { useState, useEffect } from 'react';
+
 import Link from 'next/link';
 
 export default function Home() {
@@ -61,13 +62,23 @@ export default function Home() {
               </a>
             </div>
           ) : (
-            <button
-              onClick={() => document.getElementById('booking-form')?.scrollIntoView({ behavior: 'smooth' })}
-              className="bg-amber-500 text-white px-8 py-3 md:px-10 md:py-3.5 rounded-full font-bold text-sm md:text-base shadow-lg shadow-amber-500/20 hover:shadow-amber-500/30 hover:scale-105 transition-all flex items-center gap-2 mx-auto"
-            >
-              <Car className="w-4 h-4" />
-              Đặt xe ngay
-            </button>
+            <div className="flex flex-col sm:flex-row gap-3 justify-center items-center mt-6 w-full max-w-xs mx-auto sm:max-w-none">
+              <button
+                onClick={() => document.getElementById('booking-form')?.scrollIntoView({ behavior: 'smooth' })}
+                className="w-full sm:w-auto bg-amber-500 text-white px-8 py-4 rounded-xl font-bold text-base shadow-lg shadow-amber-500/20 hover:shadow-amber-500/30 active:scale-[0.98] transition-all flex items-center justify-center gap-2"
+              >
+                <Car className="w-5 h-5" />
+                Đặt xe ngay
+              </button>
+
+              <Link
+                href="/tai-xe"
+                className="w-full sm:w-auto bg-white/10 backdrop-blur-md border border-white/20 text-white px-8 py-4 rounded-xl font-bold text-base hover:bg-white/20 active:scale-[0.98] transition-all flex items-center justify-center gap-2"
+              >
+                <LayoutDashboard className="w-5 h-5 text-amber-400" />
+                Tài xế đăng ký
+              </Link>
+            </div>
           )}
         </div>
       </section>
@@ -136,47 +147,94 @@ export default function Home() {
       {/* Driver CTA Section - Hide if Driver */}
       {
         !isDriver && (
-          <section className="py-20 bg-slate-900 relative overflow-hidden">
-            <div className="absolute right-0 top-0 w-1/2 h-full bg-slate-800/30 skew-x-12 transform origin-top"></div>
+          <section className="py-20 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 relative overflow-hidden">
+            {/* Decorative Elements */}
+            <div className="absolute right-0 top-0 w-2/3 h-full bg-amber-500/5 -skew-x-12 transform origin-top translate-x-1/4"></div>
+            <div className="absolute left-0 bottom-0 w-96 h-96 bg-blue-500/10 rounded-full blur-[100px]"></div>
 
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 flex flex-col md:flex-row items-center justify-between gap-12">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 flex flex-col lg:flex-row items-center justify-between gap-12 lg:gap-20">
               <div className="text-left max-w-2xl">
-                <span className="text-amber-500 font-bold tracking-wider uppercase mb-2 block">Cơ hội cho tài xế</span>
-                <h2 className="text-3xl md:text-5xl font-bold mb-6 text-white leading-tight">
-                  Có xe nhàn rỗi? <br /> Kiếm thêm <span className="text-amber-500">15 - 20 triệu/tháng</span>
+                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-500 text-xs font-bold uppercase tracking-wider mb-4">
+                  <Car className="w-4 h-4" />
+                  Đối tác tài xế
+                </div>
+                <h2 className="text-3xl md:text-5xl lg:text-6xl font-black mb-6 text-white leading-tight">
+                  Lái xe tiện chuyến <br />
+                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-orange-400">Thu nhập hấp dẫn</span>
                 </h2>
-                <div className="space-y-4 mb-8">
-                  <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 rounded-full bg-green-500/20 flex items-center justify-center">
-                      <span className="text-green-500 font-bold">✓</span>
+                <div className="space-y-5 mb-10">
+                  <div className="flex items-start gap-4">
+                    <div className="w-10 h-10 rounded-xl bg-green-500/10 flex items-center justify-center border border-green-500/20 shrink-0">
+                      <Check className="w-5 h-5 text-green-500" strokeWidth={3} />
                     </div>
-                    <p className="text-xl text-slate-300">Kết hợp chở khách tiện chuyến - <span className="text-white font-bold">Không áp doanh số</span></p>
+                    <div>
+                      <h4 className="text-lg font-bold text-white">Không áp doanh số</h4>
+                      <p className="text-slate-400 text-base">Chạy bao nhiêu hưởng bấy nhiêu, tự do thời gian.</p>
+                    </div>
                   </div>
-                  <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 rounded-full bg-green-500/20 flex items-center justify-center">
-                      <span className="text-green-500 font-bold">✓</span>
+                  <div className="flex items-start gap-4">
+                    <div className="w-10 h-10 rounded-xl bg-green-500/10 flex items-center justify-center border border-green-500/20 shrink-0">
+                      <Check className="w-5 h-5 text-green-500" strokeWidth={3} />
                     </div>
-                    <p className="text-xl text-slate-300">Hệ thống tự động bắn khách</p>
+                    <div>
+                      <h4 className="text-lg font-bold text-white">Khách hàng sẵn có</h4>
+                      <p className="text-slate-400 text-base">Hệ thống tự động bắn cuốc khách tiện đường cho bạn.</p>
+                    </div>
                   </div>
-                  <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 rounded-full bg-green-500/20 flex items-center justify-center">
-                      <span className="text-green-500 font-bold">✓</span>
+                  <div className="flex items-start gap-4">
+                    <div className="w-10 h-10 rounded-xl bg-green-500/10 flex items-center justify-center border border-green-500/20 shrink-0">
+                      <Check className="w-5 h-5 text-green-500" strokeWidth={3} />
                     </div>
-                    <p className="text-xl text-slate-300">Nhận tiền mặt ngay sau chuyến đi</p>
+                    <div>
+                      <h4 className="text-lg font-bold text-white">Thanh toán ngay</h4>
+                      <p className="text-slate-400 text-base">Nhận tiền mặt trực tiếp từ khách ngay sau chuyến đi.</p>
+                    </div>
                   </div>
                 </div>
-                <div className="flex gap-4">
-                  <a href="/tai-xe" className="bg-amber-500 text-white px-8 py-4 rounded-xl font-bold text-lg hover:bg-amber-600 transition-all shadow-lg hover:shadow-amber-500/20">
-                    Đăng ký ngay
-                  </a>
-                  <a href="/tai-xe" className="px-8 py-4 rounded-xl font-bold text-lg text-slate-300 border border-slate-700 hover:bg-slate-800 transition-all">
-                    Tìm hiểu thêm
-                  </a>
+                <div className="flex flex-col sm:flex-row gap-4">
+                  <Link href="/tai-xe" className="bg-gradient-to-r from-amber-500 to-orange-600 text-white px-8 py-4 rounded-2xl font-bold text-lg hover:shadow-xl hover:shadow-amber-500/20 transition-all hover:-translate-y-1 text-center">
+                    Đăng ký chạy thử ngay
+                  </Link>
+                  <Link href="/tai-xe" className="px-8 py-4 rounded-2xl font-bold text-lg text-slate-300 border border-slate-700 hover:bg-slate-800 hover:text-white transition-all text-center">
+                    Xem chính sách
+                  </Link>
                 </div>
               </div>
 
-              {/* Abstract Graphic Element placeholder */}
-              <div className="w-full md:w-1/3 aspect-square bg-gradient-to-tr from-amber-500 to-orange-600 rounded-3xl opacity-20 rotate-12 transform translate-x-10"></div>
+              {/* Right side Visual/Card */}
+              <div className="w-full lg:w-1/3 relative group cursor-pointer" onClick={() => window.location.href = '/tai-xe'}>
+                <div className="absolute inset-0 bg-gradient-to-r from-amber-500 to-orange-600 rounded-3xl blur-2xl opacity-20 group-hover:opacity-30 transition-opacity"></div>
+                <div className="bg-slate-800/50 backdrop-blur-xl border border-slate-700 p-8 rounded-3xl relative hover:border-amber-500/50 transition-colors">
+                  <div className="flex justify-between items-start mb-6">
+                    <div>
+                      <p className="text-slate-400 text-sm font-medium">Thu nhập trung bình</p>
+                      <h3 className="text-3xl font-bold text-white mt-1">15 - 20tr<span className="text-lg font-normal text-slate-500">/tháng</span></h3>
+                    </div>
+                    <div className="bg-green-500/20 text-green-400 px-3 py-1 rounded-full text-xs font-bold border border-green-500/30">
+                      +12% vs tháng trước
+                    </div>
+                  </div>
+                  <div className="space-y-4">
+                    <div className="h-2 bg-slate-700 rounded-full overflow-hidden">
+                      <div className="h-full bg-amber-500 w-[70%]"></div>
+                    </div>
+                    <div className="flex justify-between text-sm">
+                      <span className="text-slate-400">Đã đăng ký</span>
+                      <span className="text-white font-bold">500+ Tài xế</span>
+                    </div>
+                  </div>
+                  <div className="mt-8 pt-6 border-t border-slate-700 flex items-center justify-between">
+                    <div className="flex -space-x-3">
+                      {[1, 2, 3, 4].map((i) => (
+                        <div key={i} className="w-8 h-8 rounded-full bg-slate-600 border-2 border-slate-800"></div>
+                      ))}
+                    </div>
+                    <div className="text-amber-500 font-bold text-sm flex items-center gap-1 group-hover:gap-2 transition-all">
+                      Tham gia ngay <ArrowRight className="w-4 h-4" />
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
           </section>
         )

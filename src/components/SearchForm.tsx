@@ -438,6 +438,24 @@ export default function SearchForm() {
                                                     </div>
                                                 </div>
 
+                                                {/* Direction Selection */}
+                                                <div className="flex bg-slate-100 p-1 rounded-xl mb-6">
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => setDirection('hn-th')}
+                                                        className={`flex-1 py-2 px-4 rounded-lg text-sm font-bold transition-all ${direction === 'hn-th' ? 'bg-white text-slate-800 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
+                                                    >
+                                                        Hà Nội ➝ Thanh Hóa
+                                                    </button>
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => setDirection('th-hn')}
+                                                        className={`flex-1 py-2 px-4 rounded-lg text-sm font-bold transition-all ${direction === 'th-hn' ? 'bg-white text-slate-800 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
+                                                    >
+                                                        Thanh Hóa ➝ Hà Nội
+                                                    </button>
+                                                </div>
+
                                                 {/* Name */}
                                                 <div>
                                                     <label className="block text-sm font-bold text-slate-700 mb-2">
@@ -468,7 +486,29 @@ export default function SearchForm() {
                                                     />
                                                 </div>
 
-                                                {/* Pickup Address with Autocomplete */}
+                                                {/* Time Selection */}
+                                                <div>
+                                                    <label className="block text-sm font-bold text-slate-700 mb-2">
+                                                        Giờ đón
+                                                    </label>
+                                                    <div className="relative">
+                                                        <select
+                                                            value={time}
+                                                            onChange={(e) => setTime(e.target.value)}
+                                                            className="w-full px-4 py-3 border-2 border-slate-200 rounded-xl focus:border-amber-400 focus:ring-4 focus:ring-amber-500/10 outline-none transition-all appearance-none cursor-pointer bg-white"
+                                                        >
+                                                            {Array.from({ length: 24 }).map((_, i) => {
+                                                                const h = i.toString().padStart(2, '0');
+                                                                return (
+                                                                    <option key={h} value={`${h}:00`}>{`${h}:00`}</option>
+                                                                );
+                                                            })}
+                                                        </select>
+                                                        <Clock className="absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400 pointer-events-none" />
+                                                    </div>
+                                                </div>
+
+                                                {/* Pickup Address */}
                                                 <div className="relative">
                                                     <label className="block text-sm font-bold text-slate-700 mb-2">
                                                         Điểm đón <span className="text-red-500">*</span>
@@ -478,36 +518,11 @@ export default function SearchForm() {
                                                             type="text"
                                                             required
                                                             placeholder="Nhập địa chỉ đón..."
-                                                            className="w-full px-4 py-3 pl-10 border-2 border-slate-200 rounded-xl focus:border-amber-400 focus:ring-4 focus:ring-amber-500/10 outline-none transition-all placeholder:text-slate-500"
+                                                            className="w-full px-4 py-3 border-2 border-slate-200 rounded-xl focus:border-amber-400 focus:ring-4 focus:ring-amber-500/10 outline-none transition-all placeholder:text-slate-500"
                                                             value={formData.pickupAddress}
-                                                            onChange={(e) => handleAddressSearch(e.target.value)}
-                                                            onFocus={() => formData.pickupAddress && setShowSuggestions(true)}
+                                                            onChange={(e) => setFormData({ ...formData, pickupAddress: e.target.value })}
                                                         />
-                                                        <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
-                                                        {isSearchingAddress && (
-                                                            <Loader2 className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 animate-spin text-amber-500" />
-                                                        )}
                                                     </div>
-
-                                                    {/* Suggestions Dropdown */}
-                                                    {showSuggestions && suggestions.length > 0 && (
-                                                        <ul className="absolute z-50 w-full bg-white border border-slate-200 rounded-xl mt-1 shadow-xl max-h-60 overflow-y-auto">
-                                                            {suggestions.map((item: any, index: number) => (
-                                                                <li
-                                                                    key={index}
-                                                                    onClick={() => selectAddress(item)}
-                                                                    className="px-4 py-3 hover:bg-amber-50 cursor-pointer border-b border-slate-100 last:border-0 text-sm text-slate-700 flex items-start gap-2"
-                                                                >
-                                                                    <MapPin className="w-4 h-4 text-amber-500 mt-0.5 shrink-0" />
-                                                                    <span>{item.display_name}</span>
-                                                                </li>
-                                                            ))}
-                                                        </ul>
-                                                    )}
-                                                    {/* Click outside to close - simple implementation */}
-                                                    {showSuggestions && (
-                                                        <div className="fixed inset-0 z-40" onClick={() => setShowSuggestions(false)}></div>
-                                                    )}
                                                 </div>
 
                                                 {/* Dropoff Address */}
