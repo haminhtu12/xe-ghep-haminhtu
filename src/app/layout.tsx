@@ -4,7 +4,10 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import ContactButtons from "@/components/ContactButtons";
 import RecentBookingNotification from "@/components/RecentBookingNotification";
+import FloatingContact from "@/components/FloatingContact";
 import Header from "@/components/Header";
+import TopBar from "@/components/TopBar";
+import FacebookPixel from "@/components/FacebookPixel";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -29,8 +32,11 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased font-sans`}
       >
+        <FloatingContact />
+        <FacebookPixel />
+        <TopBar />
         <Header />
         {children}
         <ContactButtons />
