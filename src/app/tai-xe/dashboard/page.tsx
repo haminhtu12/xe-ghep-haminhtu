@@ -212,7 +212,7 @@ export default function DriverDashboard() {
                     </div>
                     <button
                         onClick={() => setShowTopUpModal(true)}
-                        className="w-full bg-white text-orange-700 hover:bg-orange-50 py-6 rounded-3xl text-xl font-black shadow-2xl shadow-orange-900/20 transition-all active:scale-[0.98] flex items-center justify-center gap-3 relative z-10 group mt-4 border-b-4 border-orange-200"
+                        className="w-full bg-white text-orange-700 hover:bg-orange-50 py-6 rounded-3xl text-xl font-black shadow-2xl shadow-orange-900/20 transition-all active:scale-[0.98] flex items-center justify-center gap-3 relative z-10 group mt-6 border-b-4 border-orange-200"
                     >
                         <PlusCircle className="w-8 h-8 group-hover:scale-110 transition-transform text-orange-600" strokeWidth={3} />
                         <span className="tracking-wide">NẠP TIỀN NGAY</span>
@@ -220,10 +220,10 @@ export default function DriverDashboard() {
                 </div>
             </div>
 
-            <div className="px-4 -mt-4 relative z-10 space-y-6">
+            <div className="px-4 mt-6 relative z-10 space-y-8">
 
                 {/* Main Tab Switcher - Separated & Larger */}
-                <div className="flex gap-4">
+                <div className="flex gap-4 mb-2">
                     <button
                         onClick={() => setActiveTab('find')}
                         className={`flex-1 py-5 rounded-2xl font-bold text-[15px] transition-all flex flex-col items-center justify-center gap-2 shadow-lg ${activeTab === 'find'
