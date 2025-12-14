@@ -76,13 +76,20 @@ export default function DriversAdminPage() {
     const handleDelete = async (id: string) => {
         if (!confirm('Bạn có chắc chắn muốn xóa tài xế này không? Hành động này không thể hoàn tác.')) return;
         try {
-            await fetch(`/api/drivers?id=${id}`, {
+            const res = await fetch(`/api/drivers?id=${id}`, {
                 method: 'DELETE',
             });
+            const data = await res.json();
+
+            if (!res.ok) {
+                alert(data.error || 'Lỗi khi xóa tài xế');
+                return;
+            }
+
             fetchDrivers();
         } catch (error) {
             console.error('Failed to delete driver:', error);
-            alert('Lỗi khi xóa tài xế');
+            alert('Lỗi kết nối khi xóa tài xế');
         }
     };
 
@@ -99,7 +106,8 @@ export default function DriversAdminPage() {
                         name: data.name,
                         phone: data.phone,
                         carType: data.car_type || 'Xe 5 chỗ',
-                        licensePlate: data.license_plate
+                        licensePlate: data.license_plate,
+                        status: 'approved'
                     }),
                 });
                 if (!res.ok) throw new Error('Failed to create');
@@ -525,7 +533,6 @@ export default function DriversAdminPage() {
                                             <label className="block text-sm font-semibold text-slate-700 mb-2">Biển số</label>
                                             <input
                                                 type="text"
-                                                required
                                                 value={driverModal.data.license_plate || ''}
                                                 onChange={(e) => setDriverModal(prev => ({ ...prev, data: { ...prev.data, license_plate: e.target.value } }))}
                                                 className="w-full px-4 py-2.5 rounded-lg border border-slate-300 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 outline-none transition-all font-mono uppercase"

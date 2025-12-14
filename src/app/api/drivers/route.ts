@@ -7,10 +7,10 @@ const TELEGRAM_CHAT_ID = process.env.TELEGRAM_CHAT_ID;
 export async function POST(request: Request) {
     try {
         const body = await request.json();
-        const { name, phone, carType, licensePlate } = body;
+        const { name, phone, carType, licensePlate, status } = body;
 
         // 1. Validation
-        if (!name || !phone || !carType || !licensePlate) {
+        if (!name || !phone || !carType) {
             return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
         }
 
@@ -22,8 +22,8 @@ export async function POST(request: Request) {
                     name,
                     phone,
                     car_type: carType,
-                    license_plate: licensePlate,
-                    status: 'pending'
+                    license_plate: licensePlate || '',
+                    status: status || 'pending'
                 }
             ])
             .select()
@@ -137,6 +137,27 @@ export async function DELETE(request: Request) {
             return NextResponse.json({ error: 'Missing driver ID' }, { status: 400 });
         }
 
+        // 1. Delete related transactions first
+        const { error: transError } = await supabase
+            .from('driver_transactions')
+            .delete()
+            .eq('driver_id', id);
+
+        if (transError && transError.code !== '42P01') { // Ignore if table doesn't exist
+            console.error('Error deleting transactions:', transError);
+        }
+
+        // 2. Delete related bookings
+        const { error: bookingError } = await supabase
+            .from('bookings')
+            .delete()
+            .eq('driver_id', id);
+
+        if (bookingError) {
+            console.error('Error deleting bookings:', bookingError);
+        }
+
+        // 3. Delete driver
         const { error } = await supabase
             .from('drivers')
             .delete()
@@ -144,7 +165,14 @@ export async function DELETE(request: Request) {
 
         if (error) {
             console.error('Database error:', error);
-            return NextResponse.json({ error: 'Database error' }, { status: 500 });
+            // Translate common FK error for easier debugging
+            if (error.message?.includes('foreign key constraint')) {
+                return NextResponse.json({
+                    error: 'Không thể xóa: Tài xế này còn dữ liệu liên quan (giao dịch, chuyến đi) và hệ thống không thể tự động xóa.',
+                    details: error
+                }, { status: 500 });
+            }
+            return NextResponse.json({ error: error.message || 'Database error', details: error }, { status: 500 });
         }
 
         return NextResponse.json({ success: true });
