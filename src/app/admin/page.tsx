@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { CheckCircle, Clock, XCircle, Phone, MapPin, Calendar, LogOut, Share2 } from 'lucide-react';
+import { CheckCircle, Clock, XCircle, Phone, MapPin, Calendar, LogOut, Share2, Plus, Edit, Trash2 } from 'lucide-react';
 
 interface Booking {
     id: string;
@@ -23,6 +23,22 @@ export default function AdminPage() {
     const [bookings, setBookings] = useState<Booking[]>([]);
     const [loading, setLoading] = useState(true);
     const [filter, setFilter] = useState<string>('all');
+
+    // Modal State
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [editingBooking, setEditingBooking] = useState<Booking | null>(null);
+    const [formData, setFormData] = useState({
+        name: '',
+        phone: '',
+        pickup_address: '',
+        dropoff_address: '',
+        service_type: 'Trọn gói',
+        estimated_price: 0,
+        seat_count: 1,
+        note: '',
+        direction: 'hn-th'
+    });
+
     const router = useRouter();
 
     useEffect(() => {
@@ -97,6 +113,75 @@ Ae nào tiện đường vợt giúp em nhé! 👇`;
         alert('Đã copy kèo! Dán vào nhóm Zalo ngay.');
     };
 
+    const handleDelete = async (id: string) => {
+        if (!confirm('Bạn có chắc chắn muốn xóa đơn hàng này?')) return;
+
+        try {
+            await fetch(`/api/bookings?id=${id}`, { method: 'DELETE' });
+            fetchBookings();
+        } catch (error) {
+            console.error('Failed to delete booking:', error);
+            alert('Không thể xóa đơn hàng');
+        }
+    };
+
+    const handleEdit = (booking: Booking) => {
+        setEditingBooking(booking);
+        setFormData({
+            name: booking.name,
+            phone: booking.phone,
+            pickup_address: booking.pickup_address,
+            dropoff_address: booking.dropoff_address || '',
+            service_type: booking.service_type,
+            estimated_price: booking.estimated_price,
+            seat_count: booking.seat_count,
+            note: booking.note || '',
+            direction: booking.direction
+        });
+        setIsModalOpen(true);
+    };
+
+    const handleCreate = () => {
+        setEditingBooking(null);
+        setFormData({
+            name: '',
+            phone: '',
+            pickup_address: '',
+            dropoff_address: '',
+            service_type: 'Trọn gói',
+            estimated_price: 0,
+            seat_count: 1,
+            note: '',
+            direction: 'hn-th'
+        });
+        setIsModalOpen(true);
+    };
+
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        try {
+            const url = '/api/bookings';
+            const method = editingBooking ? 'PATCH' : 'POST';
+            const body = editingBooking ? { id: editingBooking.id, ...formData } : formData;
+
+            const res = await fetch(url, {
+                method,
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(body),
+            });
+
+            if (res.ok) {
+                setIsModalOpen(false);
+                fetchBookings();
+            } else {
+                alert('Có lỗi xảy ra');
+            }
+        } catch (error) {
+            console.error('Submit error:', error);
+            alert('Lỗi kết nối');
+        }
+    };
+
     if (loading) {
         return (
             <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 to-slate-100">
@@ -128,15 +213,24 @@ Ae nào tiện đường vợt giúp em nhé! 👇`;
                     </div>
 
                     {/* Navigation Tabs */}
-                    <div className="flex gap-3 pt-4 border-t border-slate-100">
-                        <button className="px-4 py-2 bg-amber-500 text-white rounded-xl font-semibold shadow-md">
-                            Đơn hàng
-                        </button>
+                    <div className="flex gap-3 pt-4 border-t border-slate-100 items-center justify-between">
+                        <div className="flex gap-3">
+                            <button className="px-4 py-2 bg-amber-500 text-white rounded-xl font-semibold shadow-md">
+                                Đơn hàng
+                            </button>
+                            <button
+                                onClick={() => router.push('/admin/drivers')}
+                                className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl font-semibold transition-colors"
+                            >
+                                Tài xế
+                            </button>
+                        </div>
                         <button
-                            onClick={() => router.push('/admin/drivers')}
-                            className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl font-semibold transition-colors"
+                            onClick={handleCreate}
+                            className="px-4 py-2 bg-green-600 text-white rounded-xl font-semibold shadow-md hover:bg-green-700 transition-colors flex items-center gap-2"
                         >
-                            Tài xế
+                            <Plus className="w-5 h-5" />
+                            Tạo đơn
                         </button>
                     </div>
                 </div>
@@ -262,11 +356,157 @@ Ae nào tiện đường vợt giúp em nhé! 👇`;
                                         </button>
                                     )}
                                 </div>
+
+                                <div className="mt-4 pt-4 border-t border-slate-100 flex justify-end gap-2">
+                                    <button
+                                        onClick={() => handleEdit(booking)}
+                                        className="p-2 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                                        title="Sửa"
+                                    >
+                                        <Edit className="w-4 h-4" />
+                                    </button>
+                                    <button
+                                        onClick={() => handleDelete(booking.id)}
+                                        className="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                                        title="Xóa"
+                                    >
+                                        <Trash2 className="w-4 h-4" />
+                                    </button>
+                                </div>
                             </div>
                         ))
                     )}
                 </div>
             </div>
+
+            {/* CRUD Modal */}
+            {
+                isModalOpen && (
+                    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+                        <div className="bg-white rounded-2xl p-6 w-full max-w-lg shadow-2xl max-h-[90vh] overflow-y-auto">
+                            <h2 className="text-xl font-bold mb-4">{editingBooking ? 'Sửa đơn hàng' : 'Tạo đơn hàng mới'}</h2>
+                            <form onSubmit={handleSubmit} className="space-y-4">
+                                <div className="grid grid-cols-2 gap-4">
+                                    <div>
+                                        <label className="block text-sm font-medium text-slate-700 mb-1">Tên khách</label>
+                                        <input
+                                            type="text"
+                                            required
+                                            className="w-full p-2 border rounded-xl"
+                                            value={formData.name}
+                                            onChange={e => setFormData({ ...formData, name: e.target.value })}
+                                        />
+                                    </div>
+                                    <div>
+                                        <label className="block text-sm font-medium text-slate-700 mb-1">Số điện thoại</label>
+                                        <input
+                                            type="tel"
+                                            required
+                                            className="w-full p-2 border rounded-xl"
+                                            value={formData.phone}
+                                            onChange={e => setFormData({ ...formData, phone: e.target.value })}
+                                        />
+                                    </div>
+                                </div>
+
+                                <div className="grid grid-cols-2 gap-4">
+                                    <div>
+                                        <label className="block text-sm font-medium text-slate-700 mb-1">Giá (VNĐ)</label>
+                                        <input
+                                            type="number"
+                                            required
+                                            className="w-full p-2 border rounded-xl"
+                                            value={formData.estimated_price}
+                                            onChange={e => setFormData({ ...formData, estimated_price: Number(e.target.value) })}
+                                        />
+                                    </div>
+                                    <div>
+                                        <label className="block text-sm font-medium text-slate-700 mb-1">Số ghế</label>
+                                        <input
+                                            type="number"
+                                            required
+                                            min="1"
+                                            className="w-full p-2 border rounded-xl"
+                                            value={formData.seat_count}
+                                            onChange={e => setFormData({ ...formData, seat_count: Number(e.target.value) })}
+                                        />
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <label className="block text-sm font-medium text-slate-700 mb-1">Loại xe / Dịch vụ</label>
+                                    <select
+                                        className="w-full p-2 border rounded-xl"
+                                        value={formData.service_type}
+                                        onChange={e => setFormData({ ...formData, service_type: e.target.value })}
+                                    >
+                                        <option value="Trọn gói">Trọn gói</option>
+                                        <option value="Ghép ghế">Ghép ghế</option>
+                                        <option value="Giao hàng">Giao hàng</option>
+                                    </select>
+                                </div>
+
+                                <div>
+                                    <label className="block text-sm font-medium text-slate-700 mb-1">Hướng đi</label>
+                                    <select
+                                        className="w-full p-2 border rounded-xl"
+                                        value={formData.direction}
+                                        onChange={e => setFormData({ ...formData, direction: e.target.value })}
+                                    >
+                                        <option value="hn-th">Hà Nội ➝ Thanh Hóa</option>
+                                        <option value="th-hn">Thanh Hóa ➝ Hà Nội</option>
+                                    </select>
+                                </div>
+
+                                <div>
+                                    <label className="block text-sm font-medium text-slate-700 mb-1">Điểm đón</label>
+                                    <input
+                                        type="text"
+                                        required
+                                        className="w-full p-2 border rounded-xl"
+                                        value={formData.pickup_address}
+                                        onChange={e => setFormData({ ...formData, pickup_address: e.target.value })}
+                                    />
+                                </div>
+
+                                <div>
+                                    <label className="block text-sm font-medium text-slate-700 mb-1">Điểm trả</label>
+                                    <input
+                                        type="text"
+                                        className="w-full p-2 border rounded-xl"
+                                        value={formData.dropoff_address}
+                                        onChange={e => setFormData({ ...formData, dropoff_address: e.target.value })}
+                                    />
+                                </div>
+
+                                <div>
+                                    <label className="block text-sm font-medium text-slate-700 mb-1">Ghi chú</label>
+                                    <textarea
+                                        className="w-full p-2 border rounded-xl"
+                                        value={formData.note}
+                                        onChange={e => setFormData({ ...formData, note: e.target.value })}
+                                    />
+                                </div>
+
+                                <div className="flex justify-end gap-3 mt-6">
+                                    <button
+                                        type="button"
+                                        onClick={() => setIsModalOpen(false)}
+                                        className="px-4 py-2 bg-slate-100 text-slate-700 rounded-xl font-bold hover:bg-slate-200"
+                                    >
+                                        Hủy
+                                    </button>
+                                    <button
+                                        type="submit"
+                                        className="px-4 py-2 bg-amber-500 text-white rounded-xl font-bold hover:bg-amber-600 shadow-lg shadow-amber-500/20"
+                                    >
+                                        {editingBooking ? 'Cập nhật' : 'Tạo đơn'}
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                )}
         </div>
     );
 }
