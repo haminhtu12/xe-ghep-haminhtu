@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { CheckCircle, Clock, XCircle, Phone, MapPin, Calendar, LogOut } from 'lucide-react';
+import { CheckCircle, Clock, XCircle, Phone, MapPin, Calendar, LogOut, Share2 } from 'lucide-react';
 
 interface Booking {
     id: string;
@@ -81,6 +81,20 @@ export default function AdminPage() {
                 {labels[status as keyof typeof labels]}
             </span>
         );
+    };
+
+    const handleCopyDeal = (booking: Booking) => {
+        const route = booking.direction === 'hn-th' ? 'Hà Nội ➝ Thanh Hóa' : 'Thanh Hóa ➝ Hà Nội';
+        const message = `🔥 KÈO THƠM: ${route}
+⏰ ${new Date(booking.created_at).toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' })} - ${booking.service_type}
+💰 Giá: ${booking.estimated_price.toLocaleString('vi-VN')}đ
+📍 Đón: ${booking.pickup_address}
+📍 Trả: ${booking.dropoff_address || 'Trung tâm'}
+📞 Khách: ${booking.phone}
+Ae nào tiện đường vợt giúp em nhé! 👇`;
+
+        navigator.clipboard.writeText(message);
+        alert('Đã copy kèo! Dán vào nhóm Zalo ngay.');
     };
 
     if (loading) {
@@ -162,7 +176,16 @@ export default function AdminPage() {
                                             </a>
                                         </p>
                                     </div>
-                                    {getStatusBadge(booking.status)}
+                                    <div className="flex items-center gap-2">
+                                        <button
+                                            onClick={() => handleCopyDeal(booking)}
+                                            className="p-2 bg-amber-50 text-amber-600 hover:bg-amber-100 rounded-full transition-colors"
+                                            title="Copy kèo gửi Zalo"
+                                        >
+                                            <Share2 className="w-4 h-4" />
+                                        </button>
+                                        {getStatusBadge(booking.status)}
+                                    </div>
                                 </div>
 
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">

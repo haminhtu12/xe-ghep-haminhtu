@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { CheckCircle, XCircle, Phone, Car, Calendar, LogOut, Wallet, Plus, Search, Edit, Trash2, ShieldCheck, Filter, X, MoreHorizontal } from 'lucide-react';
+import { CheckCircle, XCircle, Phone, Car, Calendar, LogOut, Wallet, Plus, Search, Edit, Trash2, ShieldCheck, Filter, X, MoreHorizontal, MessageCircle, Link as LinkIcon } from 'lucide-react';
 
 interface Driver {
     id: string;
@@ -91,6 +91,24 @@ export default function DriversAdminPage() {
             console.error('Failed to delete driver:', error);
             alert('Lỗi kết nối khi xóa tài xế');
         }
+    };
+
+    const handleZaloChat = (driver: Driver) => {
+        // 1. Copy Intro Message (Trust building for Xe Ghep 24h)
+        const message = `Chào bác ${driver.name}, em là Admin bên tổng đài **Xe Ghép 24h**. Em thấy bác hay chạy tuyến này nên muốn mời hợp tác. Hiện em đang có đơn khách cần đi, phí siêu rẻ chỉ 30k/1 khách. Bác có tiện xe nhận không ạ?`;
+        navigator.clipboard.writeText(message);
+
+        // 2. Open Zalo
+        window.open(`https://zalo.me/${driver.phone}`, '_blank');
+
+        // 3. Notify
+        alert('Đã copy lời chào (đã ẩn link)! Anh dán vào Zalo, nếu họ Ok thì quay lại đây bấm nút Link gửi sau nhé.');
+    };
+
+    const handleCopyLink = (driver: Driver) => {
+        const message = `Bác vào link này đăng nhập nhé:\n👉 https://xe-ghep.vercel.app/driver/login\n\n- SĐT: ${driver.phone}\n- Mật khẩu: (Bác tự nhập hoặc dùng OTP)`;
+        navigator.clipboard.writeText(message);
+        alert('Đã copy link đăng nhập!');
     };
 
     const handleDriverSubmit = async (e: React.FormEvent) => {
@@ -348,8 +366,24 @@ export default function DriversAdminPage() {
                                                     </div>
                                                     <div>
                                                         <div className="font-semibold text-slate-900 leading-tight">{driver.name}</div>
-                                                        <div className="text-sm text-slate-500 flex items-center gap-1 mt-0.5">
-                                                            <Phone className="w-3 h-3" /> {driver.phone}
+                                                        <div className="flex items-center gap-2 mt-0.5">
+                                                            <div className="text-sm text-slate-500 flex items-center gap-1">
+                                                                <Phone className="w-3 h-3" /> {driver.phone}
+                                                            </div>
+                                                            <button
+                                                                onClick={() => handleZaloChat(driver)}
+                                                                className="text-blue-600 hover:text-blue-700 bg-blue-50 hover:bg-blue-100 p-2 rounded-lg transition-colors border border-blue-100 shadow-sm"
+                                                                title="Chat Zalo & Giới thiệu"
+                                                            >
+                                                                <MessageCircle className="w-5 h-5" />
+                                                            </button>
+                                                            <button
+                                                                onClick={() => handleCopyLink(driver)}
+                                                                className="text-slate-500 hover:text-slate-700 bg-slate-100 hover:bg-slate-200 p-2 rounded-lg transition-colors border border-slate-200 shadow-sm"
+                                                                title="Copy Link Login"
+                                                            >
+                                                                <LinkIcon className="w-5 h-5" />
+                                                            </button>
                                                         </div>
                                                     </div>
                                                 </div>
