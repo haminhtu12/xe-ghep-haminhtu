@@ -212,32 +212,37 @@ export default function DriverDashboard() {
                     </div>
                     <button
                         onClick={() => setShowTopUpModal(true)}
-                        className="w-full bg-white text-orange-700 hover:bg-amber-50 py-3.5 rounded-xl text-sm font-bold shadow-sm transition-all active:scale-[0.98] flex items-center justify-center gap-2 relative z-10 group"
+                        className="w-full bg-white text-orange-700 hover:bg-orange-50 py-6 rounded-3xl text-xl font-black shadow-2xl shadow-orange-900/20 transition-all active:scale-[0.98] flex items-center justify-center gap-3 relative z-10 group mt-4 border-b-4 border-orange-200"
                     >
-                        <PlusCircle className="w-5 h-5 group-hover:scale-110 transition-transform" />
-                        Nạp tiền ngay
+                        <PlusCircle className="w-8 h-8 group-hover:scale-110 transition-transform text-orange-600" strokeWidth={3} />
+                        <span className="tracking-wide">NẠP TIỀN NGAY</span>
                     </button>
                 </div>
             </div>
 
             <div className="px-4 -mt-4 relative z-10 space-y-6">
 
-                {/* Main Tab Switcher - More Distinct */}
-                <div className="bg-white p-1.5 rounded-2xl shadow-lg shadow-slate-200/50 flex border border-slate-100">
+                {/* Main Tab Switcher - Separated & Larger */}
+                <div className="flex gap-4">
                     <button
                         onClick={() => setActiveTab('find')}
-                        className={`flex-1 py-4 rounded-xl font-bold text-sm transition-all flex items-center justify-center gap-2.5 ${activeTab === 'find' ? 'bg-amber-500 text-white shadow-md transform scale-[1.02]' : 'text-slate-500 hover:bg-slate-50 border border-transparent'}`}
+                        className={`flex-1 py-5 rounded-2xl font-bold text-[15px] transition-all flex flex-col items-center justify-center gap-2 shadow-lg ${activeTab === 'find'
+                            ? 'bg-amber-500 text-white shadow-amber-500/30 transform scale-[1.02]'
+                            : 'bg-white text-slate-400 hover:bg-slate-50 border border-slate-100'
+                            }`}
                     >
-                        <MapPin className={activeTab === 'find' ? 'text-white' : 'text-slate-400'} size={20} />
-                        Tìm Khách
+                        <MapPin className={activeTab === 'find' ? 'text-white' : 'text-slate-300'} size={28} strokeWidth={2.5} />
+                        TÌM KHÁCH
                     </button>
-                    <div className="w-px bg-slate-100 my-2 mx-1"></div>
                     <button
                         onClick={() => setActiveTab('my-bookings')}
-                        className={`flex-1 py-4 rounded-xl font-bold text-sm transition-all flex items-center justify-center gap-2.5 ${activeTab === 'my-bookings' ? 'bg-emerald-600 text-white shadow-md transform scale-[1.02]' : 'text-slate-500 hover:bg-slate-50 border border-transparent'}`}
+                        className={`flex-1 py-5 rounded-2xl font-bold text-[15px] transition-all flex flex-col items-center justify-center gap-2 shadow-lg ${activeTab === 'my-bookings'
+                            ? 'bg-emerald-600 text-white shadow-emerald-500/30 transform scale-[1.02]'
+                            : 'bg-white text-slate-400 hover:bg-slate-50 border border-slate-100'
+                            }`}
                     >
-                        <CheckCircle className={activeTab === 'my-bookings' ? 'text-white' : 'text-slate-400'} size={20} />
-                        Chuyến Của Tôi
+                        <CheckCircle className={activeTab === 'my-bookings' ? 'text-white' : 'text-slate-300'} size={28} strokeWidth={2.5} />
+                        CHUYẾN CỦA TÔI
                     </button>
                 </div>
 
