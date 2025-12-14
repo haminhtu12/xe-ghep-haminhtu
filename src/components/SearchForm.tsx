@@ -1,17 +1,24 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { MapPin, Calendar, ArrowRight, ArrowLeftRight, Car, Users, Clock, User, Phone, FileText, Loader2, ChevronRight, ChevronLeft, Check, X, Search } from 'lucide-react';
+import { MapPin, Calendar, ArrowRight, ArrowLeftRight, Car, Users, Clock, User, Phone, FileText, Loader2, ChevronRight, ChevronLeft, Check, X, Search, Crown, Armchair } from 'lucide-react';
 import { generateDrivers } from '@/data/mockDrivers';
 
 const SERVICE_TYPES = [
-    { id: 'xe-ghep', name: 'Xe Tiện Chuyến', icon: Users, price: 400000, desc: 'Đi chung, tiết kiệm' },
-    { id: 'bao-xe', name: 'Bao Xe Trọn Gói', icon: Car, price: 1300000, desc: 'Riêng tư, đưa đón tận nơi' },
+    { id: 'xe-ghep', name: 'Xe Ghép / Vé Lẻ', icon: Users, price: 0, desc: '350k - 450k/ghế' },
+    { id: 'bao-hang-ghe', name: 'Bao Hàng Ghế', icon: Armchair, price: 900000, desc: '900k - Trọn hàng sau' },
+    { id: 'bao-xe', name: 'Bao Xe Trọn Gói', icon: Car, price: 0, desc: 'Xe riêng, đón tận nơi' },
 ];
 
 const VEHICLE_TYPES = [
-    { id: '4-5-cho', name: 'Xe 4-5 chỗ', price: 1300000 },
-    { id: '7-cho', name: 'Xe 7 chỗ', price: 1500000 },
+    { id: '5-cho', name: 'Xe 5 chỗ', price: 1200000 },
+    { id: '7-cho', name: 'Xe 7 chỗ', price: 1300000 },
+];
+
+const SEAT_OPTIONS = [
+    { id: 'ghe-cuoi', name: 'Ghế cuối (x7)', price: 350000 },
+    { id: 'ghe-thuong', name: 'Ghế thường', price: 400000 },
+    { id: 'ghe-dau', name: 'Ghế đầu VIP', price: 450000 },
 ];
 
 export default function SearchForm() {
@@ -22,7 +29,8 @@ export default function SearchForm() {
     const [date, setDate] = useState(new Date().toISOString().split('T')[0]);
     const [time, setTime] = useState('08:00'); // Default time
     const [seatCount, setSeatCount] = useState(1);
-    const [vehicleType, setVehicleType] = useState('4-5-cho');
+    const [seatType, setSeatType] = useState('ghe-thuong');
+    const [vehicleType, setVehicleType] = useState('5-cho');
     const [estimatedPrice, setEstimatedPrice] = useState<number>(400000);
     const [isLoading, setIsLoading] = useState(false);
     const [isSuccess, setIsSuccess] = useState(false);
@@ -94,19 +102,21 @@ export default function SearchForm() {
     }, []);
 
     // Auto-update price when service changes
+    // Auto-update price when service changes
     useEffect(() => {
         const service = SERVICE_TYPES.find(s => s.id === serviceType);
         if (service) {
             if (service.id === 'xe-ghep') {
-                setEstimatedPrice(service.price * seatCount);
+                const seatPrice = SEAT_OPTIONS.find(s => s.id === seatType)?.price || 400000;
+                setEstimatedPrice(seatPrice * seatCount);
             } else if (service.id === 'bao-xe') {
                 const vehicle = VEHICLE_TYPES.find(v => v.id === vehicleType);
-                setEstimatedPrice(vehicle?.price || service.price);
-            } else {
+                setEstimatedPrice(vehicle?.price || 1200000);
+            } else if (service.id === 'bao-hang-ghe') {
                 setEstimatedPrice(service.price);
             }
         }
-    }, [serviceType, seatCount, vehicleType]);
+    }, [serviceType, seatCount, vehicleType, seatType]);
 
     const toggleDirection = () => {
         setDirection(prev => prev === 'hn-th' ? 'th-hn' : 'hn-th');
@@ -159,6 +169,7 @@ export default function SearchForm() {
                     estimatedPrice,
                     seatCount: serviceType === 'xe-ghep' ? seatCount : 1,
                     vehicleType: serviceType === 'bao-xe' ? vehicleType : null,
+                    seatType: serviceType === 'xe-ghep' ? seatType : null,
                 }),
             });
 
@@ -193,7 +204,7 @@ export default function SearchForm() {
 
                 <div className="space-y-4 md:space-y-4">
                     {/* Service Type Selection */}
-                    <div className="grid grid-cols-2 md:grid-cols-2 gap-3 md:gap-4">
+                    <div className="grid grid-cols-3 gap-2 md:gap-3">
                         {SERVICE_TYPES.map((service) => {
                             const isActive = serviceType === service.id;
                             const Icon = service.icon;
@@ -202,19 +213,19 @@ export default function SearchForm() {
                                     key={service.id}
                                     type="button"
                                     onClick={() => setServiceType(service.id)}
-                                    className={`flex flex-col items-center p-3 rounded-xl border transition-all duration-200 relative overflow-hidden ${isActive
+                                    className={`flex flex-col items-center p-2 md:p-3 rounded-xl border transition-all duration-200 relative overflow-hidden ${isActive
                                         ? 'bg-white border-amber-500 shadow-sm ring-1 ring-amber-500'
                                         : 'bg-white border-slate-200 hover:border-amber-300 hover:bg-slate-50'
                                         }`}
                                 >
-                                    <div className={`p-2 rounded-full mb-2 ${isActive ? 'bg-amber-50 text-amber-600' : 'bg-slate-100 text-slate-400'}`}>
-                                        <Icon className="w-5 h-5" />
+                                    <div className={`p-1.5 md:p-2 rounded-full mb-1 ${isActive ? 'bg-amber-50 text-amber-600' : 'bg-slate-100 text-slate-400'}`}>
+                                        <Icon className="w-4 h-4 md:w-5 md:h-5" />
                                     </div>
-                                    <span className={`font-bold text-sm ${isActive ? 'text-slate-900' : 'text-slate-500'}`}>{service.name}</span>
-                                    <span className={`text-[10px] mt-1 ${isActive ? 'text-amber-600 font-medium' : 'text-slate-400'}`}>{service.desc}</span>
+                                    <span className={`font-bold text-[11px] md:text-sm text-center leading-tight ${isActive ? 'text-slate-900' : 'text-slate-500'}`}>{service.name}</span>
+                                    <span className={`text-[9px] md:text-[10px] mt-0.5 text-center leading-tight ${isActive ? 'text-amber-600 font-medium' : 'text-slate-400'}`}>{service.desc}</span>
 
                                     {isActive && (
-                                        <div className="absolute top-3 right-3 w-2 h-2 bg-amber-500 rounded-full" />
+                                        <div className="absolute top-1.5 right-1.5 w-1.5 h-1.5 bg-amber-500 rounded-full" />
                                     )}
                                 </button>
                             );
@@ -265,29 +276,29 @@ export default function SearchForm() {
 
                     {/* Date & Time & Seat Count */}
                     <div className="grid grid-cols-12 gap-3">
-                        {/* Date Picker (5 cols) */}
-                        <div className="col-span-7 bg-slate-50 p-3 md:p-2.5 rounded-2xl border border-slate-200 flex items-center gap-2 cursor-pointer hover:border-amber-200 transition-colors">
-                            <Calendar className="w-7 h-7 md:w-8 md:h-8 text-amber-500 shrink-0" />
+                        {/* Date Picker (6 cols) */}
+                        <div className="col-span-6 md:col-span-4 bg-slate-50 p-2 md:p-2.5 rounded-2xl border border-slate-200 flex items-center gap-2 cursor-pointer hover:border-amber-200 transition-colors">
+                            <Calendar className="w-5 h-5 md:w-6 md:h-6 text-amber-500 shrink-0" />
                             <div className="flex-1 min-w-0">
                                 <label className="text-[10px] font-bold text-slate-400 uppercase block mb-0.5">Ngày đi</label>
                                 <input
                                     type="date"
                                     value={date}
                                     onChange={(e) => setDate(e.target.value)}
-                                    className="bg-transparent w-full text-sm md:text-base font-bold text-slate-800 outline-none cursor-pointer p-0"
+                                    className="bg-transparent w-full text-xs md:text-sm font-bold text-slate-800 outline-none cursor-pointer p-0"
                                 />
                             </div>
                         </div>
 
-                        {/* Time Picker (5 cols) */}
-                        <div className="col-span-5 bg-slate-50 p-3 md:p-2.5 rounded-2xl border border-slate-200 flex items-center gap-2 cursor-pointer hover:border-amber-200 transition-colors">
-                            <Clock className="w-6 h-6 md:w-7 md:h-7 text-amber-500 shrink-0" />
+                        {/* Time Picker (6 cols) */}
+                        <div className="col-span-6 md:col-span-4 bg-slate-50 p-2 md:p-2.5 rounded-2xl border border-slate-200 flex items-center gap-2 cursor-pointer hover:border-amber-200 transition-colors">
+                            <Clock className="w-5 h-5 md:w-6 md:h-6 text-amber-500 shrink-0" />
                             <div className="flex-1 min-w-0">
                                 <label className="text-[10px] font-bold text-slate-400 uppercase block mb-0.5">Giờ đón</label>
                                 <select
                                     value={time}
                                     onChange={(e) => setTime(e.target.value)}
-                                    className="bg-transparent w-full text-sm md:text-base font-bold text-slate-800 outline-none cursor-pointer p-0 appearance-none"
+                                    className="bg-transparent w-full text-xs md:text-sm font-bold text-slate-800 outline-none cursor-pointer p-0 appearance-none"
                                 >
                                     {Array.from({ length: 24 }).map((_, i) => {
                                         const h = i.toString().padStart(2, '0');
@@ -299,26 +310,26 @@ export default function SearchForm() {
                             </div>
                         </div>
 
-                        {/* Seat Selection (Full width on mobile, or integrated) */}
-                        {serviceType === 'xe-ghep' && (
-                            <div className="col-span-12 bg-slate-50 p-3 md:p-2.5 rounded-2xl border border-slate-200 flex items-center justify-between">
+                        {/* Seat Count (Full on mobile, 4 on desktop) */}
+                        {(serviceType === 'xe-ghep') && (
+                            <div className="col-span-12 md:col-span-4 bg-slate-50 p-2 md:p-2.5 rounded-2xl border border-slate-200 flex items-center justify-between">
                                 <div className="flex items-center gap-2">
                                     <Users className="w-5 h-5 text-slate-400" />
                                     <span className="text-sm font-bold text-slate-700">Số ghế</span>
                                 </div>
-                                <div className="flex items-center gap-4 bg-white rounded-full px-3 py-1.5 border border-slate-100 shadow-sm">
+                                <div className="flex items-center gap-3 bg-white rounded-full px-2 py-1 border border-slate-100 shadow-sm">
                                     <button
                                         type="button"
                                         onClick={() => setSeatCount(Math.max(1, seatCount - 1))}
-                                        className="w-9 h-9 flex items-center justify-center text-slate-400 hover:text-amber-600 font-bold text-lg active:scale-90 transition-transform rounded-full hover:bg-slate-50"
+                                        className="w-7 h-7 flex items-center justify-center text-slate-400 hover:text-amber-600 font-bold text-lg active:scale-90 transition-transform rounded-full hover:bg-slate-50"
                                     >
                                         -
                                     </button>
-                                    <span className="text-base font-bold text-slate-900 w-5 text-center">{seatCount}</span>
+                                    <span className="text-sm font-bold text-slate-900 w-4 text-center">{seatCount}</span>
                                     <button
                                         type="button"
                                         onClick={() => setSeatCount(Math.min(7, seatCount + 1))}
-                                        className="w-9 h-9 flex items-center justify-center text-slate-400 hover:text-amber-600 font-bold text-lg active:scale-90 transition-transform rounded-full hover:bg-slate-50"
+                                        className="w-7 h-7 flex items-center justify-center text-slate-400 hover:text-amber-600 font-bold text-lg active:scale-90 transition-transform rounded-full hover:bg-slate-50"
                                     >
                                         +
                                     </button>
@@ -326,6 +337,29 @@ export default function SearchForm() {
                             </div>
                         )}
                     </div>
+
+                    {/* SEAT TYPE SELECTION (Dynamic) */}
+                    {serviceType === 'xe-ghep' && (
+                        <div className="space-y-2">
+                            <label className="text-xs font-bold text-slate-500 uppercase">Chọn loại ghế</label>
+                            <div className="grid grid-cols-3 gap-2">
+                                {SEAT_OPTIONS.map((opt) => (
+                                    <button
+                                        key={opt.id}
+                                        type="button"
+                                        onClick={() => setSeatType(opt.id)}
+                                        className={`p-2 rounded-xl border text-center transition-all ${seatType === opt.id
+                                            ? 'bg-amber-50 border-amber-500 text-amber-700'
+                                            : 'bg-white border-slate-200 text-slate-600 hover:border-amber-200'}`}
+                                    >
+                                        <div className="text-xs font-bold mb-0.5">{opt.name}</div>
+                                        <div className="text-[10px] opacity-80">{opt.price.toLocaleString()}đ</div>
+                                    </button>
+                                ))}
+                            </div>
+                        </div>
+                    )
+                    }
 
                     {/* Vehicle Type Selection (Only for Bao Xe) */}
                     {serviceType === 'bao-xe' && (
@@ -427,18 +461,31 @@ export default function SearchForm() {
                                         {step === 2 && (
                                             <div className="space-y-4 animate-in fade-in slide-in-from-right-4 duration-300">
                                                 <div className="bg-amber-50 border border-amber-100 rounded-xl p-4 flex items-start gap-3 mb-6">
-                                                    <div className="p-2 bg-white rounded-full shadow-sm">
+                                                    <div className="p-2 bg-white rounded-full shadow-sm shrink-0">
                                                         <Car className="w-5 h-5 text-amber-500" />
                                                     </div>
-                                                    <div>
-                                                        <p className="font-bold text-slate-800 text-sm">Chuyến đi của bạn</p>
-                                                        <p className="text-slate-600 text-xs mt-0.5">
+                                                    <div className="flex-1 min-w-0">
+                                                        <div className="flex justify-between items-start">
+                                                            <div>
+                                                                <p className="font-bold text-slate-800 text-sm uppercase">
+                                                                    {SERVICE_TYPES.find(s => s.id === serviceType)?.name}
+                                                                </p>
+                                                                {serviceType === 'xe-ghep' && (
+                                                                    <p className="text-xs text-amber-700 font-medium">
+                                                                        {SEAT_OPTIONS.find(s => s.id === seatType)?.name} x {seatCount}
+                                                                    </p>
+                                                                )}
+                                                            </div>
+                                                            <p className="font-bold text-amber-600 text-sm">
+                                                                {estimatedPrice.toLocaleString('vi-VN')}đ
+                                                            </p>
+                                                        </div>
+                                                        <p className="text-slate-500 text-xs mt-1 border-t border-amber-200/50 pt-1">
                                                             {direction === 'hn-th' ? 'Hà Nội ➝ Thanh Hóa' : 'Thanh Hóa ➝ Hà Nội'} • {new Date(date).toLocaleDateString('vi-VN')} • {time}
                                                         </p>
                                                     </div>
                                                 </div>
 
-                                                {/* Direction Selection */}
                                                 {/* Direction Selection - Route Bar */}
                                                 <div className="bg-slate-50 p-2 rounded-2xl border border-slate-200 mb-6">
                                                     <div className="flex items-center gap-2 relative">
@@ -591,6 +638,20 @@ export default function SearchForm() {
                                                                     <ArrowRight className="w-4 h-4 text-slate-400" />
                                                                     <span className="text-orange-600">{direction === 'hn-th' ? 'Thanh Hóa' : 'Hà Nội'}</span>
                                                                 </div>
+                                                            </div>
+                                                            {serviceType === 'xe-ghep' && (
+                                                                <div className="col-span-2 border-t border-dashed border-slate-200 pt-2 mt-1">
+                                                                    <div className="flex justify-between items-center">
+                                                                        <span className="text-slate-500 text-xs">Loại ghế</span>
+                                                                        <span className="font-bold text-amber-600 text-sm">
+                                                                            {SEAT_OPTIONS.find(s => s.id === seatType)?.name} x {seatCount}
+                                                                        </span>
+                                                                    </div>
+                                                                </div>
+                                                            )}
+                                                            <div className="col-span-2 border-t border-slate-100 pt-2 mt-1 flex justify-between items-center">
+                                                                <span className="font-bold text-slate-800">Tạm tính</span>
+                                                                <span className="font-bold text-xl text-amber-600">{estimatedPrice.toLocaleString('vi-VN')}đ</span>
                                                             </div>
                                                         </div>
                                                     </div>

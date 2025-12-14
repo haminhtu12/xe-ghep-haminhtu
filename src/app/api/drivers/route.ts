@@ -91,11 +91,29 @@ export async function GET() {
 
 export async function PATCH(request: Request) {
     try {
-        const { id, status } = await request.json();
+        const body = await request.json();
+        const { id, ...updates } = body;
+
+        if (!id) {
+            return NextResponse.json({ error: 'Missing driver ID' }, { status: 400 });
+        }
+
+        // Clean updates object (remove undefined/null values if necessary, though simpler is often better)
+        // Ensure we map camelCase from frontend to snake_case for DB if needed, 
+        // but here the existing code uses `status` directly.
+        // The DB columns we know are: name, phone, car_type, license_plate, status.
+        // Let's map them explicitly to be safe.
+
+        const dbUpdates: any = {};
+        if (updates.name) dbUpdates.name = updates.name;
+        if (updates.phone) dbUpdates.phone = updates.phone;
+        if (updates.carType) dbUpdates.car_type = updates.carType;
+        if (updates.licensePlate) dbUpdates.license_plate = updates.licensePlate;
+        if (updates.status) dbUpdates.status = updates.status;
 
         const { error } = await supabase
             .from('drivers')
-            .update({ status })
+            .update(dbUpdates)
             .eq('id', id);
 
         if (error) {
@@ -106,6 +124,32 @@ export async function PATCH(request: Request) {
         return NextResponse.json({ success: true });
     } catch (error) {
         console.error('Update driver API Error:', error);
+        return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
+    }
+}
+
+export async function DELETE(request: Request) {
+    try {
+        const { searchParams } = new URL(request.url);
+        const id = searchParams.get('id');
+
+        if (!id) {
+            return NextResponse.json({ error: 'Missing driver ID' }, { status: 400 });
+        }
+
+        const { error } = await supabase
+            .from('drivers')
+            .delete()
+            .eq('id', id);
+
+        if (error) {
+            console.error('Database error:', error);
+            return NextResponse.json({ error: 'Database error' }, { status: 500 });
+        }
+
+        return NextResponse.json({ success: true });
+    } catch (error) {
+        console.error('Delete driver API Error:', error);
         return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
     }
 }

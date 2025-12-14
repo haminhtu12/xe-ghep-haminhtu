@@ -7,7 +7,7 @@ const TELEGRAM_CHAT_ID = process.env.TELEGRAM_CHAT_ID;
 export async function POST(request: Request) {
     try {
         const body = await request.json();
-        const { name, phone, serviceType, direction, pickupAddress, dropoffAddress, note, estimatedPrice, seatCount } = body;
+        const { name, phone, serviceType, direction, pickupAddress, dropoffAddress, note, estimatedPrice, seatCount, seatType } = body;
 
         // 1. Validate basic data
         if (!name || !phone || !pickupAddress) {
@@ -28,6 +28,18 @@ export async function POST(request: Request) {
         const priceText = estimatedPrice ? estimatedPrice.toLocaleString('vi-VN') : '0';
         const now = new Date().toLocaleString('vi-VN', { timeZone: 'Asia/Ho_Chi_Minh' });
 
+        // Translate Service Type for readability
+        let refinedServiceType = serviceType;
+        if (serviceType === 'xe-ghep') refinedServiceType = 'Xe Ghép';
+        if (serviceType === 'bao-hang-ghe') refinedServiceType = 'Bao Hàng Ghế';
+        if (serviceType === 'bao-xe') refinedServiceType = 'Bao Xe Trọn Gói';
+
+        // Translate Seat Type
+        let refinedSeatInfo = `${seatCount || 1} ghế`;
+        if (seatType === 'ghe-dau') refinedSeatInfo += ' (VIP Đầu)';
+        if (seatType === 'ghe-cuoi') refinedSeatInfo += ' (Ghế Cuối)';
+        if (seatType === 'ghe-thuong') refinedSeatInfo += ' (Ghế Thường)';
+
         const message = `
 🔔 *ĐƠN KHÁCH MỚI* 🔔
 --------------------
@@ -36,8 +48,9 @@ export async function POST(request: Request) {
 ☎️ *SĐT:* \`${phone}\` (Chạm để gọi/copy)
 📍 *Đón:* ${pickupAddress}
 🏁 *Trả:* ${dropoffAddress || 'Trung tâm'}
-💰 *Giá:* ${priceText}đ (${seatCount || 1} ghế)
-🚘 *Loại xe:* ${serviceType}
+💰 *Giá:* ${priceText}đ
+💺 *Yêu cầu:* ${refinedSeatInfo}
+🚘 *Loại xe:* ${refinedServiceType}
 📝 *Ghi chú:* ${note || 'Không có'}
 ⏰ *Thời gian đặt:* ${now}
 --------------------
@@ -83,6 +96,8 @@ _Copy tin nhắn này gửi vào nhóm Zalo tài xế!_
                     seat_count: seatCount || 1,
                     note: note || null,
                     status: 'pending',
+                    seat_type: seatType, // Added seat_type
+                    price: estimatedPrice, // Added price (assuming 'price' is the column name for estimatedPrice)
                 },
             ])
             .select()
